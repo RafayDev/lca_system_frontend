@@ -1,11 +1,11 @@
 import React from 'react'
-import Dashboard from '../Layouts/Dashboard.js'
+import Dashboard from '../Layouts/Dashboard'
 
 function Home() {
   return (
-    <Dashboard>
+
       <h1>Home</h1>
-    </Dashboard>
+  
   )
 }
 

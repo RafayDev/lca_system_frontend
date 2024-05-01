@@ -11,6 +11,7 @@ import {
   TableContainer,
 } from "@chakra-ui/react";
 import AddModel from "./AddModel";
+import DeleteModal from "./DeleteModal";
 
 function User() {
   const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
@@ -61,7 +62,7 @@ function User() {
             <Tbody>
               {
                 users.map((user) => (
-                  <Tr>
+                  <Tr key={user._id}>
                     <Td>{user.name}</Td>
                     <Td>{user.email}</Td>
                     <Td>{user.role}</Td>
@@ -69,9 +70,7 @@ function User() {
                       <button className="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded">
                         Edit
                       </button>
-                      <button className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ml-2">
-                        Delete
-                      </button>
+                      <DeleteModal userId={user._id} getUsers={getUsers}/>
                     </Td>
                   </Tr>
                 ))

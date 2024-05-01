@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import Cookies from 'js-cookie';
 
 const Login = () => {
+  const BASE_URL = process.env.BASE_URL || 'http://localhost:5000';
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -31,7 +32,7 @@ const Login = () => {
     }),
     onSubmit: async (values) => {
       try {
-        const response = await axios.post('http://localhost:5000/users/login', values);
+        const response = await axios.post(`${BASE_URL}/users/login`, values);
         if (response.status === 200) {
           // Login successful
           toast({

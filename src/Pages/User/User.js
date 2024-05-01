@@ -1,22 +1,49 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Cookies from "js-cookie";
 import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
   TableContainer,
 } from "@chakra-ui/react";
+import AddModel from "./AddModel";
 
 function User() {
+  const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const onAddOpen = () => setIsAddOpen(true);
+  const onAddClose = () => setIsAddOpen(false);
+  const [users, setUsers] = useState([]);
+  const getUsers = () => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    };
+    axios
+      .get(`${BASE_URL}/users`, config)
+      .then((response) => {
+        console.log(response.data);
+        setUsers(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    getUsers();
+  }, []);
   return (
     <>
       <h1 className="text-2xl font-bold">All Users</h1>
       <div className="flex flex-wrap justify-end">
-        <button className="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded">
+        <button className="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded" onClick={onAddOpen}>
           Add User
         </button>
       </div>
@@ -32,23 +59,28 @@ function User() {
               </Tr>
             </Thead>
             <Tbody>
-              <Tr>
-                <Td>John Doe</Td>
-                <Td>2w5Yz@example.com</Td>
-                <Td>Admin</Td>
-                <Td>
-                  <button className="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded">
-                    Edit
-                  </button>
-                  <button className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ml-2">
-                    Delete
-                  </button>
-                </Td>
-              </Tr>
+              {
+                users.map((user) => (
+                  <Tr>
+                    <Td>{user.name}</Td>
+                    <Td>{user.email}</Td>
+                    <Td>{user.role}</Td>
+                    <Td>
+                      <button className="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded">
+                        Edit
+                      </button>
+                      <button className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ml-2">
+                        Delete
+                      </button>
+                    </Td>
+                  </Tr>
+                ))
+              }
             </Tbody>
           </Table>
         </TableContainer>
       </div>
+      <AddModel isOpen={isAddOpen} onClose={onAddClose} getUsers={getUsers} />
     </>
   );
 }

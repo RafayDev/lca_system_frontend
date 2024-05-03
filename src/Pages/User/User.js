@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import AddModel from "./AddModel";
 import DeleteModal from "./DeleteModal";
+import UpdateModal from "./UpdateModal";
 
 function User() {
   const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
@@ -67,9 +68,7 @@ function User() {
                     <Td>{user.email}</Td>
                     <Td>{user.role}</Td>
                     <Td>
-                      <button className="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded">
-                        Edit
-                      </button>
+                      <UpdateModal user={user} getUsers={getUsers}/>
                       <DeleteModal userId={user._id} getUsers={getUsers}/>
                     </Td>
                   </Tr>

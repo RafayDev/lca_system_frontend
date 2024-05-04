@@ -56,7 +56,7 @@ function Teacher() {
               <Tr>
                 <Th>Name</Th>
                 <Th>Email</Th>
-                <Th>Teacher Role</Th>
+                <Th>Resume</Th>
                 <Th>Actions</Th>
               </Tr>
             </Thead>
@@ -66,7 +66,7 @@ function Teacher() {
                   <Tr key={teacher._id}>
                     <Td>{teacher.name}</Td>
                     <Td>{teacher.email}</Td>
-                    <Td>{teacher.role}</Td>
+                    <Td>{teacher.resume}</Td>
                     <Td>
                       <UpdateModal teacher={teacher} getteachers={getTeachers}/>
                       <DeleteModal teacherId={teacher._id} getteachers={getTeachers}/>

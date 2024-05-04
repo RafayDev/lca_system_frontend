@@ -29,14 +29,13 @@ function AddModel({ isOpen, onClose,getTeachers }) {
     initialValues: {
       name: "",
       email: "",
-      password: "",
-      role: "",
+      phone: "",
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Required"),
       email: Yup.string().email("Invalid email address").required("Required"),
-      password: Yup.string().required("Required"),
-      role: Yup.string().required("Required"),
+      phone: Yup.string().required("Required"),
+      // role: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
         // console.log(values)
@@ -117,32 +116,21 @@ function AddModel({ isOpen, onClose,getTeachers }) {
                   </Box>
                 ) : null}
               </FormControl>
-              <FormControl id="password">
-                <FormLabel>Password</FormLabel>
+              <FormControl id="phone">
+                <FormLabel>Phone</FormLabel>
                 <Input
-                  type="password"
-                  name="password"
-                  value={formik.values.password}
+                  type="phone"
+                  name="phone"
+                  value={formik.values.phone}
                   onChange={formik.handleChange}
                 />
-                {formik.touched.password && formik.errors.password ? (
+                {formik.touched.password && formik.errors.phone ? (
                   <Box color="red" fontSize="sm">
-                    {formik.errors.password}
+                    {formik.errors.phone}
                   </Box>
                 ) : null}
               </FormControl>
-              <FormControl id="role">
-                <FormLabel>Role</FormLabel>
-                <Select placeholder="Select Role" name="role" onChange={formik.handleChange}>
-                  <option value="admin">Admin</option>
-                  <option value="teacher">teacher </option>
-                </Select>
-                {formik.touched.role && formik.errors.role ? (
-                  <Box color="red" fontSize="sm">
-                    {formik.errors.role}
-                  </Box>
-                ) : null}
-              </FormControl>
+              
             </VStack>
           </ModalBody>
 

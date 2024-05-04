@@ -31,15 +31,13 @@ function AddModel({ course, getCourses }) {
   const formik = useFormik({
     initialValues: {
       name: course.name,
-      email: course.email,
-      password: "",
-      role: course.role,
+      description: course.description,
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Required"),
-      email: Yup.string().email("Invalid email address").required("Required"),
+      // email: Yup.string().email("Invalid email address").required("Required"),
     //   password: Yup.string().required("Required"),
-      role: Yup.string().required("Required"),
+    description: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
         // console.log(values)
@@ -109,43 +107,17 @@ function AddModel({ course, getCourses }) {
                   </Box>
                 ) : null}
               </FormControl>
-              <FormControl id="email">
-                <FormLabel>Email</FormLabel>
+              <FormControl id="description">
+                <FormLabel>Description</FormLabel>
                 <Input
-                  type="email"
-                  name="email"
-                  value={formik.values.email}
+                  type="description"
+                  name="description"
+                  value={formik.values.description}
                   onChange={formik.handleChange}
                 />
-                {formik.touched.email && formik.errors.email ? (
+                {formik.touched.description && formik.errors.description ? (
                   <Box color="red" fontSize="sm">
-                    {formik.errors.email}
-                  </Box>
-                ) : null}
-              </FormControl>
-              <FormControl id="password">
-                <FormLabel>Password</FormLabel>
-                <Input
-                  type="password"
-                  name="password"
-                  value={formik.values.password}
-                  onChange={formik.handleChange}
-                />
-                {formik.touched.password && formik.errors.password ? (
-                  <Box color="red" fontSize="sm">
-                    {formik.errors.password}
-                  </Box>
-                ) : null}
-              </FormControl>
-              <FormControl id="role">
-                <FormLabel>Role</FormLabel>
-                <Select placeholder="Select Role" name="role" onChange={formik.handleChange} value={formik.values.role}>
-                  <option value="admin">Admin</option>
-                  <option value="course">Course </option>
-                </Select>
-                {formik.touched.role && formik.errors.role ? (
-                  <Box color="red" fontSize="sm">
-                    {formik.errors.role}
+                    {formik.errors.description}
                   </Box>
                 ) : null}
               </FormControl>

@@ -47,6 +47,7 @@ function AddModel({ teacher, getTeachers }) {
         const config = {
           headers: {
             Authorization: `Bearer ${authToken}`,
+            "Content-Type": "multipart/form-data",
           },
         };
         const response = await axios.post(
@@ -62,7 +63,7 @@ function AddModel({ teacher, getTeachers }) {
             isClosable: true,
           });
           getTeachers();
-          onClose();
+          setIsOpen(false);
         } else {
           // Handle other status codes if needed
           toast({

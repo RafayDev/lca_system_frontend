@@ -28,7 +28,7 @@ function Batch() {
       },
     };
     axios
-      .get(`${BASE_URL}/batchs`, config)
+      .get(`${BASE_URL}/batches`, config)
       .then((response) => {
         console.log(response.data);
         setBatchs(response.data);
@@ -56,6 +56,9 @@ function Batch() {
               <Tr>
                 <Th>Name</Th>
                 <Th>Description</Th>
+                <Th>Start Date</Th>
+                <Th>End Date</Th>
+                <Th>Action</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -63,9 +66,13 @@ function Batch() {
                 batchs.map((batch) => (
                   <Tr key={batch._id}>
                     <Td>{batch.name}</Td>
+                    <Td>{batch.description}</Td>
+                    <Td>{batch.startdate}</Td>
+                    <Td>{batch.enddate}</Td>
                     <Td>
                       <UpdateModal batch={batch} getbatchs={getBatchs}/>
                       <DeleteModal batchId={batch._id} getbatchs={getBatchs}/>
+                      
                     </Td>
                   </Tr>
                 ))

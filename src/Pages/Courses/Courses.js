@@ -56,6 +56,7 @@ function Course() {
               <Tr>
                 <Th>Name</Th>
                 <Th>Description</Th>
+                <Th>Action</Th>
               </Tr>
             </Thead>
             <Tbody>

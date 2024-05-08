@@ -27,7 +27,7 @@ const DeleteModal = ({batchId, getbatchs}) => {
       },
     };
     axios
-      .delete(`${BASE_URL}/batchs/delete/${batchId}`, config)
+      .delete(`${BASE_URL}/batches/delete/${batchId}`, config)
       .then((response) => {
         // console.log(response.data);
         getbatchs();

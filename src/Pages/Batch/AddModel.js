@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import {
   Modal,
   ModalOverlay,
@@ -20,6 +21,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import Cookies from "js-cookie";
+import DatePicker from "react-datepicker";
 
 function AddModel({ isOpen, onClose, getBatchs }) {
   const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
@@ -29,10 +31,14 @@ function AddModel({ isOpen, onClose, getBatchs }) {
     initialValues: {
       name: "",
       description: "",
+      startdate: "",
+      enddate: "",
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Required"),
-      email: Yup.string().email("Invalid email address").required("Required"),
+      description: Yup.string().required("Required"),
+      startdate: Yup.string().required("Required"),
+      enddate: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
       // console.log(values)
@@ -43,7 +49,7 @@ function AddModel({ isOpen, onClose, getBatchs }) {
           },
         };
         const response = await axios.post(
-          `${BASE_URL}/batchs/add`,
+          `${BASE_URL}/batches/add`,
           values,
           config
         );
@@ -108,16 +114,51 @@ function AddModel({ isOpen, onClose, getBatchs }) {
                 <Input
                   type="description"
                   name="description"
-                  value={formik.values.email}
+                  value={formik.values.description}
                   onChange={formik.handleChange}
                 />
-                {formik.touched.email && formik.errors.email ? (
+                {formik.touched.description && formik.errors.description ? (
                   <Box color="red" fontSize="sm">
-                    {formik.errors.email}
+                    {formik.errors.description}
                   </Box>
                 ) : null}
               </FormControl>
-              
+
+              <FormControl id="startdate">
+                <FormLabel>Start Date</FormLabel>
+                <Input
+                  placeholder="Select Start Date"
+                  size="md"
+                  type="date"
+                  value={formik.values.startdate}
+                  onChange={(e) =>
+                    formik.setFieldValue("startdate", e.target.value)
+                  }
+                />
+                {formik.touched.startdate && formik.errors.startdate ? (
+                  <Box color="red" fontSize="sm">
+                    {formik.errors.startdate}
+                  </Box>
+                ) : null}
+              </FormControl>
+
+              <FormControl id="enddate">
+                <FormLabel>End Date</FormLabel>
+                <Input
+                  placeholder="Select End Date"
+                  size="md"
+                  type="date"
+                  value={formik.values.enddate}
+                  onChange={(e) =>
+                    formik.setFieldValue("enddate", e.target.value)
+                  }
+                />
+                {formik.touched.enddate && formik.errors.enddate ? (
+                  <Box color="red" fontSize="sm">
+                    {formik.errors.enddate}
+                  </Box>
+                ) : null}
+              </FormControl>
             </VStack>
           </ModalBody>
 

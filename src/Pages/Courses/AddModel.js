@@ -123,7 +123,7 @@ function AddModel({ isOpen, onClose,getCourses }) {
             <Button variant="ghost" mr={3} onClick={onClose}>
               Close
             </Button>
-            <Button colorScheme="cyan" color={"white"} type="submit">
+            <Button colorScheme="yellow" color={"white"} type="submit">
               Add
             </Button>
           </ModalFooter>

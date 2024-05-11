@@ -45,7 +45,7 @@ function Course() {
     <>
       <h1 className="text-2xl font-bold">All Courses</h1>
       <div className="flex flex-wrap justify-end">
-        <button className="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded" onClick={onAddOpen}>
+        <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onClick={onAddOpen}>
           Add Course
         </button>
       </div>

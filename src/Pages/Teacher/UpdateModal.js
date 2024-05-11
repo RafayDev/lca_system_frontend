@@ -91,7 +91,7 @@ function AddModel({ teacher, getTeachers }) {
   return (
     <>
       <button
-        className="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded"
+        className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
         onClick={onOpen}
       >
         Edit

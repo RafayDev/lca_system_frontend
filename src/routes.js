@@ -1,5 +1,8 @@
 import { FiHome } from "react-icons/fi";
 import { FaUsers } from "react-icons/fa";
+import { LiaChalkboardTeacherSolid } from "react-icons/lia";
+import { SiBookstack } from "react-icons/si";
+import { SiGoogleclassroom } from "react-icons/si";
 import Home from "./Pages/Home.js";
 import User from "./Pages/User/User.js";
 import Teacher from "./Pages/Teacher/Teacher.js";
@@ -11,19 +14,19 @@ export const routes = [
   { name: "Users", icon: FaUsers, component: <User />, path: "/user" },
   {
     name: "Teachers",
-    icon: FaUsers,
+    icon: LiaChalkboardTeacherSolid,
     component: <Teacher />,
     path: "/teacher",
   },
   {
     name: "Batches",
-    icon: FaUsers,
+    icon: SiGoogleclassroom,
     component: <Batches />,
     path: "/batch",
   },
   {
     name: "Courses",
-    icon: FaUsers,
+    icon: SiBookstack,
     component: <Courses />,
     path: "/course",
   },

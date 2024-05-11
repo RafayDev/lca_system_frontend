@@ -13,6 +13,7 @@ import {
 import AddModel from "./AddModel";
 import DeleteModal from "./DeleteModal";
 import UpdateModal from "./UpdateModal";
+import AssignCourses from "./AssignCourses";
 
 function Batch() {
   const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
@@ -72,7 +73,7 @@ function Batch() {
                     <Td>
                       <UpdateModal batch={batch} getbatchs={getBatchs}/>
                       <DeleteModal batchId={batch._id} getbatchs={getBatchs}/>
-                      
+                      <AssignCourses batchId={batch._id}/>
                     </Td>
                   </Tr>
                 ))

@@ -9,6 +9,8 @@ import Teacher from "./Pages/Teacher/Teacher.js";
 import Courses from "./Pages/Courses/Courses.js";
 import Batches from "./Pages/Batch/Batch.js";
 import Students from "./Pages/Students/Student.js";
+import Roles from "./Pages/Roles/Roles.js";
+import Permissions from "./Pages/Permissions/Permissions.js";
 
 export const routes = [
   { name: "Home", icon: FiHome, component: <Home />, path: "/dashboard" },
@@ -37,5 +39,16 @@ export const routes = [
     component: <Courses />,
     path: "/course",
   },
-  
+  {
+    name: "Roles",
+    icon: SiBookstack,
+    component: <Roles />,
+    path: "/role",
+  },
+  {
+    name: "Permissions",
+    icon: SiBookstack,
+    component: <Permissions />,
+    path: "/permission",
+  },  
 ];

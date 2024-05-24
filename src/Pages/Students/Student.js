@@ -13,6 +13,8 @@ import {
 import AddModel from "./AddModel";
 import DeleteModal from "./DeleteModal";
 import UpdateModal from "./UpdateModal";
+import { useDispatch } from "react-redux";
+import { fetchBatches } from "../../Features/batchSlice";
 
 function Student() {
   const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
@@ -21,6 +23,8 @@ function Student() {
   const onAddOpen = () => setIsAddOpen(true);
   const onAddClose = () => setIsAddOpen(false);
   const [students, setStudents] = useState([]);
+
+  const dispatch = useDispatch();
 
   const hasPermission = (permissionsToCheck) => {
     const storedPermissions = sessionStorage.getItem("permissions");
@@ -46,6 +50,7 @@ function Student() {
 
   useEffect(() => {
     getStudents();
+    dispatch(fetchBatches({ authToken }));
   }, []);
   return (
     <>

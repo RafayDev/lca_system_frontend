@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -14,13 +14,17 @@ import {
   VStack,
   Box,
   useToast,
+  Select,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useSelector } from "react-redux";
+import { selectAllBatches } from "../../Features/batchSlice";
 
 function AddStudnet({ isOpen, onClose, getStudnets }) {
+  const batches = useSelector(selectAllBatches);
   
   const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
   const toast = useToast();
@@ -35,6 +39,7 @@ function AddStudnet({ isOpen, onClose, getStudnets }) {
       name: Yup.string().required("Required"),
       email: Yup.string().email("Invalid email address").required("Required"),
       phone: Yup.string().required("Required"),
+      paid_fee: Yup.number().required("Required"),
     }),
     onSubmit: async (values) => {
       const formData = new FormData();
@@ -44,6 +49,7 @@ function AddStudnet({ isOpen, onClose, getStudnets }) {
       formData.append("total_fee", values.total_fee);
       formData.append("pending_fee", values.pending_fee);
       formData.append("paid_fee", values.paid_fee);
+      formData.append("batch", values.batch);
 
       try {
         const config = {
@@ -156,6 +162,21 @@ function AddStudnet({ isOpen, onClose, getStudnets }) {
                     </Box>
                   ) : null}
                 </FormControl>
+              <FormControl id="batch">
+                <FormLabel>Batch</FormLabel>
+                <Select placeholder="Select Batch" name="batch" onChange={formik.handleChange} value={formik.values.batch}>
+                  {batches.map((batch) => (
+                    <option key={batch._id} value={batch._id}>
+                      {batch.name}
+                    </option>
+                  ))}
+                </Select>
+                {formik.touched.batch && formik.errors.batch ? (
+                  <Box color="red" fontSize="sm">
+                    {formik.errors.batch}
+                  </Box>
+                ) : null}
+              </FormControl>
                 
               </VStack>
             </ModalBody>

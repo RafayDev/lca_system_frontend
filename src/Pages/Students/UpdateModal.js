@@ -20,8 +20,14 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useSelector } from "react-redux";
+import { selectAllBatches } from "../../Features/batchSlice.js";
 
 function AddModel({ student, getStudents }) {
+  const batches = useSelector(selectAllBatches);
+
+  console.log(student);
+
   const [isOpen, setIsOpen] = React.useState(false);
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
@@ -33,11 +39,13 @@ function AddModel({ student, getStudents }) {
       name: student.name,
       email: student.email,
       phone: student.phone,
+      batch: student.batch,
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Required"),
       email: Yup.string().email("Invalid email address").required("Required"),
       phone: Yup.string().required("Required"),
+      batch: Yup.string().required("Required"),
       // role: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
@@ -145,7 +153,26 @@ function AddModel({ student, getStudents }) {
                     </Box>
                   ) : null}
                 </FormControl>
-                
+                <FormControl id="batch">
+                  <FormLabel>Batch</FormLabel>
+                  <Select
+                    placeholder="Select Batch"
+                    name="batch"
+                    onChange={formik.handleChange}
+                    value={formik.values.batch}
+                  >
+                    {batches.map((batch) => (
+                      <option key={batch._id} value={batch._id} selected={batch._id === student.batch}>
+                        {batch.name}
+                      </option>
+                    ))}
+                  </Select>
+                  {formik.touched.batch && formik.errors.batch ? (
+                    <Box color="red" fontSize="sm">
+                      {formik.errors.batch}
+                    </Box>
+                  ) : null}
+                </FormControl>
               </VStack>
             </ModalBody>
 

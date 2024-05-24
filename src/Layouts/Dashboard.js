@@ -5,8 +5,13 @@ import { Box, useColorModeValue, Drawer, DrawerContent } from '@chakra-ui/react'
 import { useDisclosure } from '@chakra-ui/react';
 import Sidebar from '../Components/Sidebar.js';
 import MobileNav from '../Components/MobileNav.js';
+import { extractUserIdFromToken } from '../utlls/useful.js';
+import { useDispatch } from 'react-redux';
+import { fetchUserById } from '../Features/authSlice.js';
 
 function Dashboard() {
+  const dispatch = useDispatch();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,8 +22,11 @@ function Dashboard() {
     if (!authToken) {
       // Redirect to the login page if not authenticated
       navigate('/login');
+    } else {
+      const userId = extractUserIdFromToken(authToken);
+      dispatch(fetchUserById({ userId, authToken }));
     }
-   
+
     if(pathname=='/'){
       navigate('/dashboard')
     }

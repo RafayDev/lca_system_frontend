@@ -13,6 +13,7 @@ import {
 import AddModel from "./AddModel";
 import DeleteModal from "./DeleteModal";
 import UpdateModal from "./UpdateModal";
+import AssignPermissions from "./AssignPermissions";
 
 function Roles() {
     const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
@@ -68,6 +69,7 @@ function Roles() {
                                         <Td>
                                             <UpdateModal role={role} getroles={getRoles} />
                                             <DeleteModal roleId={role._id} getroles={getRoles} />
+                                            <AssignPermissions roleId={role._id}/>
                                         </Td>
                                     </Tr>
                                 ))

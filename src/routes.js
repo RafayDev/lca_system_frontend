@@ -3,6 +3,8 @@ import { FaUsers } from "react-icons/fa";
 import { LiaChalkboardTeacherSolid } from "react-icons/lia";
 import { SiBookstack } from "react-icons/si";
 import { SiGoogleclassroom } from "react-icons/si";
+import { FaList } from "react-icons/fa";
+import { FaListCheck } from "react-icons/fa6";
 import Home from "./Pages/Home.js";
 import User from "./Pages/User/User.js";
 import Teacher from "./Pages/Teacher/Teacher.js";
@@ -41,13 +43,13 @@ export const routes = [
   },
   {
     name: "Roles",
-    icon: SiBookstack,
+    icon: FaList,
     component: <Roles />,
     path: "/role",
   },
   {
     name: "Permissions",
-    icon: SiBookstack,
+    icon: FaListCheck,
     component: <Permissions />,
     path: "/permission",
   },  

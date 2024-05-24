@@ -21,6 +21,13 @@ function Teacher() {
   const onAddOpen = () => setIsAddOpen(true);
   const onAddClose = () => setIsAddOpen(false);
   const [teachers, setTeachers] = useState([]);
+
+  const hasPermission = (permissionsToCheck) => {
+    const storedPermissions = sessionStorage.getItem("permissions");
+    const permissionsArray = storedPermissions ? storedPermissions.split(",") : [];
+    return permissionsToCheck.some(permission => permissionsArray.includes(permission));
+  };
+
   const getTeachers = () => {
     const config = {
       headers: {
@@ -30,7 +37,6 @@ function Teacher() {
     axios
       .get(`${BASE_URL}/teachers`, config)
       .then((response) => {
-        console.log(response.data);
         setTeachers(response.data);
       })
       .catch((error) => {
@@ -41,13 +47,16 @@ function Teacher() {
   useEffect(() => {
     getTeachers();
   }, []);
+
   return (
     <>
       <h1 className="text-2xl font-bold">All Teachers</h1>
       <div className="flex flex-wrap justify-end">
-        <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onClick={onAddOpen}>
-          Add Teacher
-        </button>
+        {hasPermission(["Add_Teacher"]) && (
+          <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onClick={onAddOpen}>
+            Add Teacher
+          </button>
+        )}
       </div>
       <div className="w-full p-4 bg-white mt-5">
         <TableContainer>
@@ -68,8 +77,12 @@ function Teacher() {
                     <Td>{teacher.email}</Td>
                     <Td>{teacher.resume}</Td>
                     <Td>
-                      <UpdateModal teacher={teacher} getteachers={getTeachers}/>
-                      <DeleteModal teacherId={teacher._id} getteachers={getTeachers}/>
+                      {hasPermission(["Update_Teacher"]) && (
+                        <UpdateModal teacher={teacher} getteachers={getTeachers} />
+                      )}
+                      {hasPermission(["Delete_Teacher"]) && (
+                        <DeleteModal teacherId={teacher._id} getteachers={getTeachers} />
+                      )}
                     </Td>
                   </Tr>
                 ))

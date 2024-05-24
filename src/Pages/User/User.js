@@ -21,6 +21,12 @@ function User() {
   const onAddOpen = () => setIsAddOpen(true);
   const onAddClose = () => setIsAddOpen(false);
   const [users, setUsers] = useState([]);
+
+  const hasPermission = (permissionsToCheck) => {
+    const storedPermissions = sessionStorage.getItem("permissions");
+    const permissionsArray = storedPermissions ? storedPermissions.split(",") : [];
+    return permissionsToCheck.some(permission => permissionsArray.includes(permission));
+  };
   const getUsers = () => {
     const config = {
       headers: {
@@ -45,9 +51,11 @@ function User() {
     <>
       <h1 className="text-2xl font-bold">All Users</h1>
       <div className="flex flex-wrap justify-end">
-        <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onClick={onAddOpen}>
-          Add User
-        </button>
+        {hasPermission(["Add_User"]) && (
+          <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onClick={onAddOpen}>
+            Add User
+          </button>
+        )}
       </div>
       <div className="w-full p-4 bg-white mt-5">
         <TableContainer>
@@ -68,8 +76,12 @@ function User() {
                     <Td>{user.email}</Td>
                     <Td>{user.role}</Td>
                     <Td>
-                      <UpdateModal user={user} getUsers={getUsers}/>
-                      <DeleteModal userId={user._id} getUsers={getUsers}/>
+                      {hasPermission(["Update_User"]) && (
+                        <UpdateModal user={user} getUsers={getUsers} />
+                      )}
+                      {hasPermission(["Delete_User"]) && (
+                        <DeleteModal userId={user._id} getUsers={getUsers} />
+                      )}
                     </Td>
                   </Tr>
                 ))

@@ -23,6 +23,12 @@ function Batch() {
   const onAddOpen = () => setIsAddOpen(true);
   const onAddClose = () => setIsAddOpen(false);
   const [batchs, setBatchs] = useState([]);
+
+  const hasPermission = (permissionsToCheck) => {
+    const storedPermissions = sessionStorage.getItem("permissions");
+    const permissionsArray = storedPermissions ? storedPermissions.split(",") : [];
+    return permissionsToCheck.some(permission => permissionsArray.includes(permission));
+  };
   const getBatchs = () => {
     const config = {
       headers: {
@@ -47,9 +53,11 @@ function Batch() {
     <>
       <h1 className="text-2xl font-bold">All Batchs</h1>
       <div className="flex flex-wrap justify-end">
-        <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onClick={onAddOpen}>
-          Add Batch
-        </button>
+        {hasPermission(["Add_Batch"]) && (
+          <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onClick={onAddOpen}>
+            Add Batch
+          </button>
+        )}
       </div>
       <div className="w-full p-4 bg-white mt-5">
         <TableContainer>
@@ -72,10 +80,18 @@ function Batch() {
                     <Td>{batch.startdate}</Td>
                     <Td>{batch.enddate}</Td>
                     <Td>
-                      <UpdateModal batch={batch} getbatchs={getBatchs}/>
-                      <DeleteModal batchId={batch._id} getbatchs={getBatchs}/>
-                      <AssignCourses batchId={batch._id}/>
-                      <AssignTeachers batchId={batch._id}/>
+                      {hasPermission(["Update_Batch"]) && (
+                        <UpdateModal batch={batch} getbatchs={getBatchs} />
+                      )}
+                      {hasPermission(["Delete_Batch"]) && (
+                        <DeleteModal batchId={batch._id} getbatchs={getBatchs} />
+                      )}
+                      {hasPermission(["Add_Courses"]) && (
+                        <AssignCourses batchId={batch._id} />
+                      )}
+                      {hasPermission(["Add_Teachers"]) && (
+                        <AssignTeachers batchId={batch._id} />
+                      )}
                     </Td>
                   </Tr>
                 ))

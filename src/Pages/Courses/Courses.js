@@ -21,6 +21,12 @@ function Course() {
   const onAddOpen = () => setIsAddOpen(true);
   const onAddClose = () => setIsAddOpen(false);
   const [courses, setCourses] = useState([]);
+
+  const hasPermission = (permissionsToCheck) => {
+    const storedPermissions = sessionStorage.getItem("permissions");
+    const permissionsArray = storedPermissions ? storedPermissions.split(",") : [];
+    return permissionsToCheck.some(permission => permissionsArray.includes(permission));
+  };
   const getCourses = () => {
     const config = {
       headers: {
@@ -45,9 +51,11 @@ function Course() {
     <>
       <h1 className="text-2xl font-bold">All Courses</h1>
       <div className="flex flex-wrap justify-end">
-        <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onClick={onAddOpen}>
-          Add Course
-        </button>
+        {hasPermission(["Add_Course"]) && (
+          <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onClick={onAddOpen}>
+            Add Course
+          </button>
+        )}
       </div>
       <div className="w-full p-4 bg-white mt-5">
         <TableContainer>
@@ -66,8 +74,12 @@ function Course() {
                     <Td>{course.name}</Td>
                     <Td>{course.description}</Td>
                     <Td>
-                      <UpdateModal course={course} getcourses={getCourses}/>
-                      <DeleteModal courseId={course._id} getcourses={getCourses}/>
+                      {hasPermission(["Update_Course"]) && (
+                        <UpdateModal course={course} getcourses={getCourses} />
+                      )}
+                      {hasPermission(["Delete_Course"]) && (
+                        <DeleteModal courseId={course._id} getcourses={getCourses} />
+                      )}
                     </Td>
                   </Tr>
                 ))

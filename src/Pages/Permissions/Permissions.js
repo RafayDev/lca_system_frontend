@@ -21,6 +21,12 @@ function Permissions() {
     const onAddOpen = () => setIsAddOpen(true);
     const onAddClose = () => setIsAddOpen(false);
     const [permissions, setPermissions] = useState([]);
+
+    const hasPermission = (permissionsToCheck) => {
+        const storedPermissions = sessionStorage.getItem("permissions");
+        const permissionsArray = storedPermissions ? storedPermissions.split(",") : [];
+        return permissionsToCheck.some(permission => permissionsArray.includes(permission));
+    };
     const getPermissions = () => {
         const config = {
             headers: {
@@ -45,9 +51,11 @@ function Permissions() {
         <>
             <h1 className="text-2xl font-bold">All Permissions</h1>
             <div className="flex flex-wrap justify-end">
-                <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onClick={onAddOpen}>
-                    Add Permission
-                </button>
+                {hasPermission(["Add_Permission"]) && (
+                    <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onClick={onAddOpen}>
+                        Add Permission
+                    </button>
+                )}
             </div>
             <div className="w-full p-4 bg-white mt-5">
                 <TableContainer>
@@ -66,8 +74,12 @@ function Permissions() {
                                         <Td>{perm.name}</Td>
                                         <Td>{perm.description}</Td>
                                         <Td>
-                                            <UpdateModal perm={perm} getpermissions={getPermissions} />
-                                            <DeleteModal permId={perm._id} getpermissions={getPermissions} />
+                                            {hasPermission(["Update_Permission"]) && (
+                                                <UpdateModal perm={perm} getpermissions={getPermissions} />
+                                            )}
+                                            {hasPermission(["Delete_Permission"]) && (
+                                                <DeleteModal permId={perm._id} getpermissions={getPermissions} />
+                                            )}
                                         </Td>
                                     </Tr>
                                 ))

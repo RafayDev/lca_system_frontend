@@ -21,6 +21,12 @@ function Student() {
   const onAddOpen = () => setIsAddOpen(true);
   const onAddClose = () => setIsAddOpen(false);
   const [students, setStudents] = useState([]);
+
+  const hasPermission = (permissionsToCheck) => {
+    const storedPermissions = sessionStorage.getItem("permissions");
+    const permissionsArray = storedPermissions ? storedPermissions.split(",") : [];
+    return permissionsToCheck.some(permission => permissionsArray.includes(permission));
+  };
   const getStudents = () => {
     const config = {
       headers: {
@@ -45,9 +51,11 @@ function Student() {
     <>
       <h1 className="text-2xl font-bold">All Students</h1>
       <div className="flex flex-wrap justify-end">
+      {hasPermission(["Add_Student"]) && (
         <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onClick={onAddOpen}>
           Add Student
         </button>
+      )}
       </div>
       <div className="w-full p-4 bg-white mt-5">
         <TableContainer>
@@ -68,8 +76,12 @@ function Student() {
                     <Td>{student.email}</Td>
                     <Td>{student.phone}</Td>
                     <Td>
+                    {hasPermission(["Update_Student"]) && (
                       <UpdateModal student={student} getstudents={getStudents}/>
+                    )}
+                    {hasPermission(["Delete_Student"]) && (
                       <DeleteModal studentId={student._id} getstudents={getStudents}/>
+                    )}
                     </Td>
                   </Tr>
                 ))

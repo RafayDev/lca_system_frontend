@@ -8,10 +8,17 @@ import User from "./Pages/User/User.js";
 import Teacher from "./Pages/Teacher/Teacher.js";
 import Courses from "./Pages/Courses/Courses.js";
 import Batches from "./Pages/Batch/Batch.js";
+import Students from "./Pages/Students/Student.js";
 
 export const routes = [
   { name: "Home", icon: FiHome, component: <Home />, path: "/dashboard" },
   { name: "Users", icon: FaUsers, component: <User />, path: "/user" },
+  {
+    name: "Students",
+    icon: FaUsers,
+    component: <Students />,
+    path: "/student",
+  },
   {
     name: "Teachers",
     icon: LiaChalkboardTeacherSolid,
@@ -30,4 +37,5 @@ export const routes = [
     component: <Courses />,
     path: "/course",
   },
+  
 ];

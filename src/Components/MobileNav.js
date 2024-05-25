@@ -25,6 +25,7 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../Features/authSlice.js";
 import { useNavigate } from "react-router-dom";
 import Cookies from 'js-cookie';
+import ChangeAvatarModal from "./Modals/User/ChangeAvatarModal";
 
 export default function MobileNav({ onOpen, ...rest }) {
   const user = useSelector(selectUser);
@@ -119,9 +120,7 @@ export default function MobileNav({ onOpen, ...rest }) {
               bg={useColorModeValue("white", "gray.900")}
               borderColor={useColorModeValue("gray.200", "gray.700")}
             >
-              <MenuItem>Profile</MenuItem>
-              <MenuItem>Settings</MenuItem>
-              <MenuItem>Billing</MenuItem>
+              <ChangeAvatarModal user={user} />
               <MenuDivider />
               <MenuItem onClick={handleLogout}>Sign out</MenuItem>
             </MenuList>

@@ -65,9 +65,11 @@ const NavItem = ({ icon, children, to, ...rest }) => {
         role="group"
         cursor="pointer"
         _hover={{
-          bg: "yellow.500",
-          color: "white",
+          bg: to !== window.location.pathname ? "gray.100" : "",
+          color: to !== window.location.pathname ? "gray.900" : "",
         }}
+        bg={to === window.location.pathname ? "yellow.500" : ""}
+        color={to === window.location.pathname ? "white" : ""}
         {...rest}
       >
         {icon && (
@@ -75,7 +77,7 @@ const NavItem = ({ icon, children, to, ...rest }) => {
             mr="4"
             fontSize="16"
             _groupHover={{
-              color: "white",
+              color: to !== window.location.pathname ? "gray.900" : "",
             }}
             as={icon}
           />

@@ -1,0 +1,99 @@
+import React, { useState, useEffect } from "react";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Button,
+  VStack,
+  MenuItem,
+} from "@chakra-ui/react";
+import { Avatar } from "@files-ui/react";
+import { useDisclosure } from "@chakra-ui/react";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../../Features/authSlice";
+import { fetchUserById } from "../../../Features/authSlice";
+import { useDispatch } from "react-redux";
+
+const imageSrc =
+  "https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9";
+
+function ChangeAvatarModal() {
+  const user = useSelector(selectUser);
+  const dispatch = useDispatch();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [imageSource, setImageSource] = useState(user?.avatar ?? imageSrc);
+  const [isLoaded, setIsLoaded] = useState(false);
+  
+  const BASE_URL = process.env.BASE_URL || 'http://localhost:5000';
+  const authToken = Cookies.get('authToken');
+
+  const handleChangeSource = async (selectedFile) => {
+    setImageSource(selectedFile);
+  };
+
+  const handleChangeAvatar = async () => {
+    setIsLoaded(true);
+    const formData = new FormData();
+    formData.append("id", user._id);
+    formData.append("avatar", imageSource);
+    await axios.post(`${BASE_URL}/users/avatar`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${authToken}`,
+      },
+    })
+    .then((response) => {
+      setImageSource(response.data.avatar);
+      dispatch(fetchUserById({ userId: user._id, authToken }));
+      setIsLoaded(false);
+      onClose();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }
+
+  useEffect(() => {
+    setImageSource(user?.avatar ?? imageSrc);
+  }, [user]);
+
+  return (
+    <>
+      <MenuItem onClick={onOpen}>Change Avatar</MenuItem>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Change Avatar</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack spacing={4}>
+              <Avatar
+                src={imageSource}
+                alt="Avatar"
+                changeLabel="Select Image"
+                onChange={handleChangeSource}
+              />
+            </VStack>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={onClose}>
+              Close
+            </Button>
+            <Button onClick={handleChangeAvatar} colorScheme="yellow" color={"white"} type="submit" loadingText="Saving" isLoading={isLoaded}>
+              Save
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
+  );
+}
+
+export default ChangeAvatarModal;

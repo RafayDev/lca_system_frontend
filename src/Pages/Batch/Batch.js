@@ -15,6 +15,7 @@ import DeleteModal from "./DeleteModal";
 import UpdateModal from "./UpdateModal";
 import AssignCourses from "./AssignCourses";
 import AssignTeachers from "./AssignTeachers";
+import { Plus } from "lucide-react";
 
 function Batch() {
   const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
@@ -26,8 +27,12 @@ function Batch() {
 
   const hasPermission = (permissionsToCheck) => {
     const storedPermissions = sessionStorage.getItem("permissions");
-    const permissionsArray = storedPermissions ? storedPermissions.split(",") : [];
-    return permissionsToCheck.some(permission => permissionsArray.includes(permission));
+    const permissionsArray = storedPermissions
+      ? storedPermissions.split(",")
+      : [];
+    return permissionsToCheck.some((permission) =>
+      permissionsArray.includes(permission)
+    );
   };
   const getBatchs = () => {
     const config = {
@@ -51,15 +56,21 @@ function Batch() {
   }, []);
   return (
     <>
-      <h1 className="text-2xl font-bold">All Batchs</h1>
-      <div className="flex flex-wrap justify-end">
-        {hasPermission(["Add_Batch"]) && (
-          <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onClick={onAddOpen}>
-            Add Batch
-          </button>
-        )}
+      <div className="flex justify-between items-center">
+        <h1 className="text-xl font-semibold ml-6">All Batchs</h1>
+        <div className="flex flex-wrap justify-end">
+          {hasPermission(["Add_Batch"]) && (
+            <button
+              className="bg-white hover:bg-[#FFCB82] hover:text-[#85652D] font-medium pl-[14px] pr-[18px] py-[10px] rounded-xl flex gap-1.5 transition-colors duration-300 border border-[#E0E8EC] hover:border-[#FFCB82]"
+              onClick={onAddOpen}
+            >
+              <Plus size={24} />
+              Add Batch
+            </button>
+          )}
+        </div>
       </div>
-      <div className="w-full p-4 bg-white mt-5">
+      <div className="w-full bg-white mt-3 rounded-xl border border-[#E0E8EC]">
         <TableContainer>
           <Table variant="simple">
             <Thead>
@@ -68,34 +79,32 @@ function Batch() {
                 <Th>Description</Th>
                 <Th>Start Date</Th>
                 <Th>End Date</Th>
-                <Th>Action</Th>
+                <Th isNumeric>Action</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {
-                batchs.map((batch) => (
-                  <Tr key={batch._id}>
-                    <Td>{batch.name}</Td>
-                    <Td>{batch.description}</Td>
-                    <Td>{batch.startdate}</Td>
-                    <Td>{batch.enddate}</Td>
-                    <Td>
-                      {hasPermission(["Update_Batch"]) && (
-                        <UpdateModal batch={batch} getbatchs={getBatchs} />
-                      )}
-                      {hasPermission(["Delete_Batch"]) && (
-                        <DeleteModal batchId={batch._id} getbatchs={getBatchs} />
-                      )}
-                      {hasPermission(["Add_Courses"]) && (
-                        <AssignCourses batchId={batch._id} />
-                      )}
-                      {hasPermission(["Add_Teachers"]) && (
-                        <AssignTeachers batchId={batch._id} />
-                      )}
-                    </Td>
-                  </Tr>
-                ))
-              }
+              {batchs.map((batch) => (
+                <Tr key={batch._id}>
+                  <Td>{batch.name}</Td>
+                  <Td>{batch.description}</Td>
+                  <Td>{batch.startdate}</Td>
+                  <Td>{batch.enddate}</Td>
+                  <Td className="space-x-3 flex justify-end" isNumeric>
+                    {hasPermission(["Update_Batch"]) && (
+                      <UpdateModal batch={batch} getbatchs={getBatchs} />
+                    )}
+                    {hasPermission(["Delete_Batch"]) && (
+                      <DeleteModal batchId={batch._id} getbatchs={getBatchs} />
+                    )}
+                    {hasPermission(["Delete_Batch"]) && (
+                      <AssignCourses batchId={batch._id} />
+                    )}
+                    {hasPermission(["Delete_Batch"]) && (
+                      <AssignTeachers batchId={batch._id} />
+                    )}
+                  </Td>
+                </Tr>
+              ))}
             </Tbody>
           </Table>
         </TableContainer>

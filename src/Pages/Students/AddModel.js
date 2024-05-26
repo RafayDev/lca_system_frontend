@@ -101,16 +101,17 @@ function AddStudnet({ isOpen, onClose, getStudnets }) {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Add Studnet</ModalHeader>
+          <ModalHeader className="text-xl font-semibold">Add Studnet</ModalHeader>
           <ModalCloseButton />
           <form onSubmit={formik.handleSubmit}>
             <ModalBody>
               <VStack spacing={4}>
                 <FormControl id="name">
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel fontSize={14}>Name</FormLabel>
                   <Input
                     type="text"
                     name="name"
+                    borderRadius={"0.5rem"}
                     value={formik.values.name}
                     onChange={formik.handleChange}
                   />
@@ -121,10 +122,11 @@ function AddStudnet({ isOpen, onClose, getStudnets }) {
                   ) : null}
                 </FormControl>
                 <FormControl id="email">
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel fontSize={14}>Email</FormLabel>
                   <Input
                     type="email"
                     name="email"
+                    borderRadius={"0.5rem"}
                     value={formik.values.email}
                     onChange={formik.handleChange}
                   />
@@ -135,10 +137,11 @@ function AddStudnet({ isOpen, onClose, getStudnets }) {
                   ) : null}
                 </FormControl>
                 <FormControl id="phone">
-                  <FormLabel>Phone</FormLabel>
+                  <FormLabel fontSize={14}>Phone</FormLabel>
                   <Input
                     type="phone"
                     name="phone"
+                    borderRadius={"0.5rem"}
                     value={formik.values.phone}
                     onChange={formik.handleChange}
                   />
@@ -149,10 +152,11 @@ function AddStudnet({ isOpen, onClose, getStudnets }) {
                   ) : null}
                 </FormControl>
                 <FormControl id="paid_fee">
-                  <FormLabel>Paid Fee</FormLabel>
+                  <FormLabel fontSize={14}>Paid Fee</FormLabel>
                   <Input
                     type="number"
                     name="paid_fee"
+                    borderRadius={"0.5rem"}
                     value={formik.values.paid_fee}
                     onChange={formik.handleChange}
                   />
@@ -163,8 +167,8 @@ function AddStudnet({ isOpen, onClose, getStudnets }) {
                   ) : null}
                 </FormControl>
               <FormControl id="batch">
-                <FormLabel>Batch</FormLabel>
-                <Select placeholder="Select Batch" name="batch" onChange={formik.handleChange} value={formik.values.batch}>
+                <FormLabel fontSize={14}>Batch</FormLabel>
+                <Select placeholder="Select Batch" name="batch" borderRadius={"0.5rem"} onChange={formik.handleChange} value={formik.values.batch}>
                   {batches.map((batch) => (
                     <option key={batch._id} value={batch._id}>
                       {batch.name}
@@ -182,10 +186,13 @@ function AddStudnet({ isOpen, onClose, getStudnets }) {
             </ModalBody>
 
             <ModalFooter>
-              <Button variant="ghost" mr={3} onClick={onClose}>
+              <Button variant="ghost" mr={3} borderRadius={"0.75rem"} onClick={onClose}>
                 Close
               </Button>
-              <Button colorScheme="yellow" color={"white"} type="submit">
+              <Button borderRadius={"0.75rem"} backgroundColor={"#FFCB82"} color={"#85652D"} _hover={{
+              backgroundColor: "#E3B574",
+              color: "#654E26",
+            }} fontWeight={"500"} type="submit">
                 Add Studnet
               </Button>
             </ModalFooter>

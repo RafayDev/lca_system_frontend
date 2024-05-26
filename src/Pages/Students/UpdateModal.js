@@ -22,6 +22,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useSelector } from "react-redux";
 import { selectAllBatches } from "../../Features/batchSlice.js";
+import { Pen } from "lucide-react";
 
 function AddModel({ student, getStudents }) {
   const batches = useSelector(selectAllBatches);
@@ -98,24 +99,25 @@ function AddModel({ student, getStudents }) {
   return (
     <>
       <button
-        className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+        className="hover:bg-[#FFCB82] hover:text-[#85652D] font-medium p-[10px] rounded-xl transition-colors duration-300"
         onClick={onOpen}
       >
-        Edit
+        <Pen size={18} />
       </button>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Update Student</ModalHeader>
+          <ModalHeader className="text-xl font-semibold">Update Student</ModalHeader>
           <ModalCloseButton />
           <form onSubmit={formik.handleSubmit}>
             <ModalBody>
               <VStack spacing={4}>
                 <FormControl id="name">
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel fontSize={14}>Name</FormLabel>
                   <Input
                     type="text"
                     name="name"
+                    borderRadius={"0.5rem"}
                     value={formik.values.name}
                     onChange={formik.handleChange}
                   />
@@ -126,10 +128,11 @@ function AddModel({ student, getStudents }) {
                   ) : null}
                 </FormControl>
                 <FormControl id="email">
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel fontSize={14}>Email</FormLabel>
                   <Input
                     type="email"
                     name="email"
+                    borderRadius={"0.5rem"}
                     value={formik.values.email}
                     onChange={formik.handleChange}
                   />
@@ -140,10 +143,11 @@ function AddModel({ student, getStudents }) {
                   ) : null}
                 </FormControl>
                 <FormControl id="phone">
-                  <FormLabel>Phone</FormLabel>
+                  <FormLabel fontSize={14}>Phone</FormLabel>
                   <Input
                     type="phone"
                     name="phone"
+                    borderRadius={"0.5rem"}
                     value={formik.values.phone}
                     onChange={formik.handleChange}
                   />
@@ -154,10 +158,11 @@ function AddModel({ student, getStudents }) {
                   ) : null}
                 </FormControl>
                 <FormControl id="batch">
-                  <FormLabel>Batch</FormLabel>
+                  <FormLabel fontSize={14}>Batch</FormLabel>
                   <Select
                     placeholder="Select Batch"
                     name="batch"
+                    borderRadius={"0.5rem"}
                     onChange={formik.handleChange}
                     value={formik.values.batch}
                   >
@@ -177,10 +182,18 @@ function AddModel({ student, getStudents }) {
             </ModalBody>
 
             <ModalFooter>
-              <Button variant="ghost" mr={3} onClick={onClose}>
+              <Button variant="ghost" mr={3} borderRadius={"0.75rem"} onClick={onClose}>
                 Close
               </Button>
-              <Button colorScheme="cyan" color={"white"} type="submit">
+              <Button
+                borderRadius={"0.75rem"}
+                backgroundColor={"#82B4FF"}
+                color={"#2D4185"}
+                _hover={{
+                  backgroundColor: "#74A0E3",
+                  color: "#223163",
+                }}
+                fontWeight={"500"} type="submit">
                 Update
               </Button>
             </ModalFooter>

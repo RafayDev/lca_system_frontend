@@ -84,16 +84,17 @@ function AddModel({ isOpen, onClose,getUsers }) {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Add User</ModalHeader>
+        <ModalHeader className="text-xl font-semibold">Add User</ModalHeader>
         <ModalCloseButton />
         <form onSubmit={formik.handleSubmit}>
           <ModalBody>
             <VStack spacing={4}>
               <FormControl id="name">
-                <FormLabel>Name</FormLabel>
+                <FormLabel fontSize={14}>Name</FormLabel>
                 <Input
                   type="text"
                   name="name"
+                  borderRadius={"0.5rem"}
                   value={formik.values.name}
                   onChange={formik.handleChange}
                 />
@@ -104,10 +105,11 @@ function AddModel({ isOpen, onClose,getUsers }) {
                 ) : null}
               </FormControl>
               <FormControl id="email">
-                <FormLabel>Email</FormLabel>
+                <FormLabel fontSize={14}>Email</FormLabel>
                 <Input
                   type="email"
                   name="email"
+                  borderRadius={"0.5rem"}
                   value={formik.values.email}
                   onChange={formik.handleChange}
                 />
@@ -118,10 +120,11 @@ function AddModel({ isOpen, onClose,getUsers }) {
                 ) : null}
               </FormControl>
               <FormControl id="password">
-                <FormLabel>Password</FormLabel>
+                <FormLabel fontSize={14}>Password</FormLabel>
                 <Input
                   type="password"
                   name="password"
+                  borderRadius={"0.5rem"}
                   value={formik.values.password}
                   onChange={formik.handleChange}
                 />
@@ -132,8 +135,8 @@ function AddModel({ isOpen, onClose,getUsers }) {
                 ) : null}
               </FormControl>
               <FormControl id="role">
-                <FormLabel>Role</FormLabel>
-                <Select placeholder="Select Role" name="role" onChange={formik.handleChange}>
+                <FormLabel fontSize={14}>Role</FormLabel>
+                <Select placeholder="Select Role" borderRadius={"0.5rem"} name="role" onChange={formik.handleChange}>
                   <option value="admin">Admin</option>
                   <option value="user">User </option>
                 </Select>
@@ -147,10 +150,13 @@ function AddModel({ isOpen, onClose,getUsers }) {
           </ModalBody>
 
           <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onClose}>
+            <Button variant="ghost" mr={3} borderRadius={"0.75rem"} onClick={onClose}>
               Close
             </Button>
-            <Button colorScheme="yellow" color={"white"} type="submit">
+            <Button borderRadius={"0.75rem"} backgroundColor={"#FFCB82"} color={"#85652D"} _hover={{
+              backgroundColor: "#E3B574",
+              color: "#654E26",
+            }} fontWeight={"500"} type="submit">
               Add
             </Button>
           </ModalFooter>

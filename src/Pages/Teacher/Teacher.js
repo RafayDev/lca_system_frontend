@@ -13,6 +13,10 @@ import {
 import AddModel from "./AddModel";
 import DeleteModal from "./DeleteModal";
 import UpdateModal from "./UpdateModal";
+import { Plus } from "lucide-react";
+
+const defaultAvatar =
+  "https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9";
 
 function Teacher() {
   const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
@@ -24,8 +28,12 @@ function Teacher() {
 
   const hasPermission = (permissionsToCheck) => {
     const storedPermissions = sessionStorage.getItem("permissions");
-    const permissionsArray = storedPermissions ? storedPermissions.split(",") : [];
-    return permissionsToCheck.some(permission => permissionsArray.includes(permission));
+    const permissionsArray = storedPermissions
+      ? storedPermissions.split(",")
+      : [];
+    return permissionsToCheck.some((permission) =>
+      permissionsArray.includes(permission)
+    );
   };
 
   const getTeachers = () => {
@@ -50,48 +58,70 @@ function Teacher() {
 
   return (
     <>
-      <h1 className="text-2xl font-bold">All Teachers</h1>
-      <div className="flex flex-wrap justify-end">
-        {hasPermission(["Add_Teacher"]) && (
-          <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onClick={onAddOpen}>
-            Add Teacher
-          </button>
-        )}
+      <div className="flex justify-between items-center">
+        <h1 className="text-xl font-semibold ml-6">All Teachers</h1>
+        <div className="flex flex-wrap justify-end">
+          {hasPermission(["Add_Teacher"]) && (
+            <button
+              className="bg-white hover:bg-[#FFCB82] hover:text-[#85652D] font-medium pl-[14px] pr-[18px] py-[10px] rounded-xl flex gap-1.5 transition-colors duration-300 border border-[#E0E8EC] hover:border-[#FFCB82]"
+              onClick={onAddOpen}
+            >
+              <Plus size={24} />
+              Add Teacher
+            </button>
+          )}
+        </div>
       </div>
-      <div className="w-full p-4 bg-white mt-5">
+      <div className="w-full bg-white mt-3 rounded-xl border border-[#E0E8EC]">
         <TableContainer>
           <Table variant="simple">
             <Thead>
               <Tr>
+                <Th>Image</Th>
                 <Th>Name</Th>
                 <Th>Email</Th>
                 <Th>Resume</Th>
-                <Th>Actions</Th>
+                <Th isNumeric>Actions</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {
-                teachers.map((teacher) => (
-                  <Tr key={teacher._id}>
-                    <Td>{teacher.name}</Td>
-                    <Td>{teacher.email}</Td>
-                    <Td>{teacher.resume}</Td>
-                    <Td>
-                      {hasPermission(["Update_Teacher"]) && (
-                        <UpdateModal teacher={teacher} getteachers={getTeachers} />
-                      )}
-                      {hasPermission(["Delete_Teacher"]) && (
-                        <DeleteModal teacherId={teacher._id} getteachers={getTeachers} />
-                      )}
-                    </Td>
-                  </Tr>
-                ))
-              }
+              {teachers.map((teacher) => (
+                <Tr key={teacher._id}>
+                  <Td>
+                    <img
+                      src={teacher.image || defaultAvatar}
+                      alt={teacher.name}
+                      className="w-10 h-10 rounded-full"
+                    />
+                  </Td>
+                  <Td>{teacher.name}</Td>
+                  <Td>{teacher.email}</Td>
+                  <Td>{teacher.resume}</Td>
+                  <Td className="space-x-3" isNumeric>
+                    {hasPermission(["Update_Teacher"]) && (
+                      <UpdateModal
+                        teacher={teacher}
+                        getteachers={getTeachers}
+                      />
+                    )}
+                    {hasPermission(["Delete_Teacher"]) && (
+                      <DeleteModal
+                        teacherId={teacher._id}
+                        getteachers={getTeachers}
+                      />
+                    )}
+                  </Td>
+                </Tr>
+              ))}
             </Tbody>
           </Table>
         </TableContainer>
       </div>
-      <AddModel isOpen={isAddOpen} onClose={onAddClose} getTeachers={getTeachers} />
+      <AddModel
+        isOpen={isAddOpen}
+        onClose={onAddClose}
+        getTeachers={getTeachers}
+      />
     </>
   );
 }

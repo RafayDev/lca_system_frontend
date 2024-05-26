@@ -15,6 +15,7 @@ import Cookies from "js-cookie";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Batch from "./Batch";
+import { Check } from "lucide-react";
 const AssignCourses = ({ batchId }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const onOpen = () => setIsOpen(true);
@@ -103,16 +104,19 @@ const AssignCourses = ({ batchId }) => {
   return (
     <>
       <button
-        className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded ml-2"
+        className="hover:bg-[#7AEF85] hover:text-[#257947] font-medium p-[10px] rounded-xl transition-colors duration-300 flex flex-nowrap items-center gap-1.5 pr-3"
         onClick={onOpen}
       >
-        Assign Courses
+        <Check size={18} />
+        <span>Courses</span>
       </button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Assign Courses to Batch</ModalHeader>
+          <ModalHeader className="text-xl font-semibold">
+            Assign Courses to Batch
+          </ModalHeader>
           <ModalCloseButton />
           <form onSubmit={formik.handleSubmit}>
             <ModalBody>
@@ -140,10 +144,25 @@ const AssignCourses = ({ batchId }) => {
               </div>
             </ModalBody>
             <ModalFooter>
-              <Button variant="ghost" mr={3} onClick={onClose}>
+              <Button
+                variant="ghost"
+                mr={3}
+                borderRadius={"0.75rem"}
+                onClick={onClose}
+              >
                 Close
               </Button>
-              <Button colorScheme="yellow" color={"white"} type="submit">
+              <Button
+                borderRadius={"0.75rem"}
+                backgroundColor={"#7AEF85"}
+                color={"#257947"}
+                _hover={{
+                  backgroundColor: "#65C76E",
+                  color: "#184E2E",
+                }}
+                fontWeight={"500"}
+                type="submit"
+              >
                 Assign
               </Button>
             </ModalFooter>

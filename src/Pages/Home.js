@@ -1,20 +1,79 @@
+import { Stat, StatHelpText, StatLabel, StatNumber } from "@chakra-ui/react";
+import { GraduationCap } from "lucide-react";
 import React from "react";
-import { AiFillAccountBook, AiOutlineMail, AiFillPhone } from 'react-icons/ai';
-import { FaUserGraduate, FaBriefcase } from 'react-icons/fa';
 
 function Home() {
+  const data = [
+    {
+      title: "Overall Students Count",
+      value: 0,
+      helpText: "Some Text ...",
+      icon: <GraduationCap size={32} color="#d69e2e" />,
+    },
+    {
+      title: "Active Students Count",
+      value: 0,
+      helpText: "Some Text ...",
+      icon: <GraduationCap size={32} color="#d69e2e" />,
+    },
+    {
+      title: "Former Students Count",
+      value: 0,
+      helpText: "Some Text ...",
+      icon: <GraduationCap size={32} color="#d69e2e" />,
+    },
+    {
+      title: "Overall Fees Collected",
+      value: 0,
+      helpText: "Some Text ...",
+      icon: <GraduationCap size={32} color="#d69e2e" />,
+    },
+    {
+      title: "Total Active Students Fees Collected",
+      value: 0,
+      helpText: "Some Text ...",
+      icon: <GraduationCap size={32} color="#d69e2e" />,
+    },
+    {
+      title: "Total Active Students Fees Pending",
+      value: 0,
+      helpText: "Some Text ...",
+      icon: <GraduationCap size={32} color="#d69e2e" />,
+    },
+    {
+      title: "Batch Count",
+      value: 0,
+      helpText: "Some Text ...",
+      icon: <GraduationCap size={32} color="#d69e2e" />,
+    },
+    {
+      title: "Course Count",
+      value: 0,
+      helpText: "Some Text ...",
+      icon: <GraduationCap size={32} color="#d69e2e" />,
+    },
+  ];
+
   return (
     <>
-      <h1 className="text-2xl font-bold">Welcome to LCA System</h1>
-      <div className="flex flex-wrap justify-left">
-      <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/4 p-4">
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <AiFillAccountBook className="text-3xl text-teal-500 mx-auto" />
-          <h3 className="text-xl font-semibold mt-4">LCA</h3>
-          <p className="text-gray-600">Software Engineer</p>
-        </div>
+      <h1 className="text-xl font-semibold ml-6 mb-5">Welcome to LCA System</h1>
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+        {data.map((item, index) => (
+          <div className="w-full">
+            <div
+              key={index}
+              className="bg-white rounded-lg border border-[#E0E8EC] p-6 flex justify-between items-start"
+            >
+              <Stat>
+                <StatLabel>{item.title}</StatLabel>
+                <StatNumber>{item.value}</StatNumber>
+                <StatHelpText>{item.helpText}</StatHelpText>
+              </Stat>
+              <div className="p-2 bg-[#d69e2e]/30 rounded-lg">{item.icon}</div>
+            </div>
+          </div>
+        ))}
       </div>
-    </div>
     </>
   );
 }

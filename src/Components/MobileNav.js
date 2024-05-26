@@ -24,8 +24,9 @@ import { selectUser } from "../Features/authSlice.js";
 import { useDispatch } from "react-redux";
 import { setUser } from "../Features/authSlice.js";
 import { useNavigate } from "react-router-dom";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import ChangeAvatarModal from "./Modals/User/ChangeAvatarModal";
+import { ChevronDown, Info } from "lucide-react";
 
 export default function MobileNav({ onOpen, ...rest }) {
   const user = useSelector(selectUser);
@@ -36,7 +37,7 @@ export default function MobileNav({ onOpen, ...rest }) {
   const handleLogout = () => {
     sessionStorage.removeItem("authToken");
     sessionStorage.removeItem("permissions");
-    Cookies.remove('authToken');
+    Cookies.remove("authToken");
     dispatch(setUser(null));
 
     toast({
@@ -55,9 +56,9 @@ export default function MobileNav({ onOpen, ...rest }) {
       px={{ base: 4, md: 4 }}
       height="20"
       alignItems="center"
-      bg={useColorModeValue("white", "gray.900")}
-      borderBottomWidth="1px"
-      borderBottomColor={useColorModeValue("gray.200", "gray.700")}
+      bg={useColorModeValue("transparent", "gray.900")}
+      // borderBottomWidth="1px"
+      // borderBottomColor={useColorModeValue("gray.200", "gray.700")}
       justifyContent={{ base: "space-between", md: "flex-end" }}
       {...rest}
     >
@@ -69,28 +70,21 @@ export default function MobileNav({ onOpen, ...rest }) {
         icon={<FiMenu />}
       />
 
-      <Text
-        display={{ base: "flex", md: "none" }}
-        fontSize="2xl"
-        fontFamily="monospace"
-        fontWeight="bold"
-      >
-        Logo
-      </Text>
-
-      <HStack spacing={{ base: "0", md: "6" }}>
-        <IconButton
-          size="lg"
-          variant="ghost"
-          aria-label="open menu"
-          icon={<FiBell />}
-        />
-        <Flex alignItems={"center"}>
+      <HStack spacing={{ base: "0", md: "6" }} width={"100%"}>
+        <Flex width={"100%"} alignItems={"center"} justifyContent={"space-between"}>
+          <div className="bg-white border capitalize border-[#E0E8EC] text-[#6E879C] px-3 text-sm py-1 rounded-lg ml-2 flex justify-center items-center gap-1">
+            <Info size={16} className="inline-block mr-1" />
+            Welcome back to Lahore CSS academy Dashboard
+          </div>
           <Menu>
             <MenuButton
               py={2}
+              px={4}
+              borderRadius={"xl"}
               transition="all 0.3s"
+              className="bg-white border border-[#E0E8EC] mr-2"
               _focus={{ boxShadow: "none" }}
+              _hover={{ bg: useColorModeValue("gray.100", "gray.700") }}
             >
               <HStack>
                 <Avatar
@@ -105,24 +99,26 @@ export default function MobileNav({ onOpen, ...rest }) {
                   alignItems="flex-start"
                   spacing="1px"
                   ml="2"
+                  className="font-medium"
                 >
                   <Text fontSize="sm">{user?.name}</Text>
-                  <Text fontSize="xs" color="gray.600" className="capitalize">
+                  <Text fontSize="xs" color="gray.600" className="uppercase">
                     {user?.role}
                   </Text>
                 </VStack>
                 <Box display={{ base: "none", md: "flex" }}>
-                  <FiChevronDown />
+                  <ChevronDown />
                 </Box>
               </HStack>
             </MenuButton>
             <MenuList
               bg={useColorModeValue("white", "gray.900")}
               borderColor={useColorModeValue("gray.200", "gray.700")}
+              className="p-2"
             >
               <ChangeAvatarModal user={user} />
               <MenuDivider />
-              <MenuItem onClick={handleLogout}>Sign out</MenuItem>
+              <MenuItem onClick={handleLogout} className="rounded-lg hover:bg-[#FF8A8A] hover:text-[#6D1F1F]">Sign out</MenuItem>
             </MenuList>
           </Menu>
         </Flex>

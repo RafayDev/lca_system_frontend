@@ -13,44 +13,45 @@ import Batches from "./Pages/Batch/Batch.js";
 import Students from "./Pages/Students/Student.js";
 import Roles from "./Pages/Roles/Roles.js";
 import Permissions from "./Pages/Permissions/Permissions.js";
+import { Boxes, BrainCircuit, GraduationCap, Layers, LayoutDashboard, ListChecks, School, UserRoundCog, Users, UsersRound } from "lucide-react";
 
 export const routes = [
-  { name: "Home", icon: FiHome, component: <Home />, path: "/dashboard" },
-  { name: "Users", icon: FaUsers, component: <User />, path: "/user" },
+  { name: "Home", icon: LayoutDashboard, component: <Home />, path: "/dashboard" },
+  { name: "Users", icon: UsersRound, component: <User />, path: "/user" },
   {
     name: "Students",
-    icon: FaUsers,
+    icon: GraduationCap,
     component: <Students />,
     path: "/student",
   },
   {
     name: "Teachers",
-    icon: LiaChalkboardTeacherSolid,
+    icon: School,
     component: <Teacher />,
     path: "/teacher",
   },
   {
     name: "Batches",
-    icon: SiGoogleclassroom,
+    icon: Boxes,
     component: <Batches />,
     path: "/batch",
   },
   {
     name: "Courses",
-    icon: SiBookstack,
+    icon: Layers,
     component: <Courses />,
     path: "/course",
   },
   {
     name: "Roles",
-    icon: FaList,
+    icon: UserRoundCog,
     component: <Roles />,
     path: "/role",
   },
   {
     name: "Permissions",
-    icon: FaListCheck,
+    icon: ListChecks,
     component: <Permissions />,
     path: "/permission",
-  },  
+  },
 ];

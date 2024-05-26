@@ -20,6 +20,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { Pen } from "lucide-react";
 
 function AddModel({ batch, getbatchs }) {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -90,24 +91,27 @@ function AddModel({ batch, getbatchs }) {
   return (
     <>
       <button
-        className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+        className="hover:bg-[#FFCB82] hover:text-[#85652D] font-medium p-[10px] rounded-xl transition-colors duration-300"
         onClick={onOpen}
       >
-        Edit
+        <Pen size={18} />
       </button>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Update batch</ModalHeader>
+          <ModalHeader className="text-xl font-semibold">
+            Update batch
+          </ModalHeader>
           <ModalCloseButton />
           <form onSubmit={formik.handleSubmit}>
             <ModalBody>
               <VStack spacing={4}>
                 <FormControl id="name">
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel fontSize={14}>Name</FormLabel>
                   <Input
                     type="text"
                     name="name"
+                    borderRadius={"0.5rem"}
                     value={formik.values.name}
                     onChange={formik.handleChange}
                   />
@@ -118,10 +122,11 @@ function AddModel({ batch, getbatchs }) {
                   ) : null}
                 </FormControl>
                 <FormControl id="description">
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel fontSize={14}>Description</FormLabel>
                   <Input
                     type="description"
                     name="description"
+                    borderRadius={"0.5rem"}
                     value={formik.values.description}
                     onChange={formik.handleChange}
                   />
@@ -132,11 +137,12 @@ function AddModel({ batch, getbatchs }) {
                   ) : null}
                 </FormControl>
                 <FormControl id="startdate">
-                  <FormLabel>Start Date</FormLabel>
+                  <FormLabel fontSize={14}>Start Date</FormLabel>
                   <Input
                     placeholder="Select Start Date"
                     size="md"
                     type="date"
+                    borderRadius={"0.5rem"}
                     value={formik.values.startdate}
                     onChange={(e) =>
                       formik.setFieldValue("startdate", e.target.value)
@@ -150,11 +156,12 @@ function AddModel({ batch, getbatchs }) {
                 </FormControl>
 
                 <FormControl id="enddate">
-                  <FormLabel>End Date</FormLabel>
+                  <FormLabel fontSize={14}>End Date</FormLabel>
                   <Input
                     placeholder="Select End Date"
                     size="md"
                     type="date"
+                    borderRadius={"0.5rem"}
                     value={formik.values.enddate}
                     onChange={(e) =>
                       formik.setFieldValue("enddate", e.target.value)
@@ -170,10 +177,25 @@ function AddModel({ batch, getbatchs }) {
             </ModalBody>
 
             <ModalFooter>
-              <Button variant="ghost" mr={3} onClick={onClose}>
+              <Button
+                variant="ghost"
+                mr={3}
+                borderRadius={"0.75rem"}
+                onClick={onClose}
+              >
                 Close
               </Button>
-              <Button colorScheme="cyan" color={"white"} type="submit">
+              <Button
+                borderRadius={"0.75rem"}
+                backgroundColor={"#82B4FF"}
+                color={"#2D4185"}
+                _hover={{
+                  backgroundColor: "#74A0E3",
+                  color: "#223163",
+                }}
+                fontWeight={"500"}
+                type="submit"
+              >
                 Update
               </Button>
             </ModalFooter>

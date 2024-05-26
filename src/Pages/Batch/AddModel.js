@@ -90,16 +90,17 @@ function AddModel({ isOpen, onClose, getBatchs }) {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Add Batch</ModalHeader>
+        <ModalHeader className="text-xl font-semibold">Add Batch</ModalHeader>
         <ModalCloseButton />
         <form onSubmit={formik.handleSubmit}>
           <ModalBody>
             <VStack spacing={4}>
               <FormControl id="name">
-                <FormLabel>Name</FormLabel>
+                <FormLabel fontSize={14}>Name</FormLabel>
                 <Input
                   type="text"
                   name="name"
+                  borderRadius={"0.5rem"}
                   value={formik.values.name}
                   onChange={formik.handleChange}
                 />
@@ -110,10 +111,11 @@ function AddModel({ isOpen, onClose, getBatchs }) {
                 ) : null}
               </FormControl>
               <FormControl id="description">
-                <FormLabel>Description</FormLabel>
+                <FormLabel fontSize={14}>Description</FormLabel>
                 <Input
                   type="description"
                   name="description"
+                  borderRadius={"0.5rem"}
                   value={formik.values.description}
                   onChange={formik.handleChange}
                 />
@@ -125,11 +127,12 @@ function AddModel({ isOpen, onClose, getBatchs }) {
               </FormControl>
 
               <FormControl id="startdate">
-                <FormLabel>Start Date</FormLabel>
+                <FormLabel fontSize={14}>Start Date</FormLabel>
                 <Input
                   placeholder="Select Start Date"
                   size="md"
                   type="date"
+                  borderRadius={"0.5rem"}
                   value={formik.values.startdate}
                   onChange={(e) =>
                     formik.setFieldValue("startdate", e.target.value)
@@ -143,11 +146,12 @@ function AddModel({ isOpen, onClose, getBatchs }) {
               </FormControl>
 
               <FormControl id="enddate">
-                <FormLabel>End Date</FormLabel>
+                <FormLabel fontSize={14}>End Date</FormLabel>
                 <Input
                   placeholder="Select End Date"
                   size="md"
                   type="date"
+                  borderRadius={"0.5rem"}
                   value={formik.values.enddate}
                   onChange={(e) =>
                     formik.setFieldValue("enddate", e.target.value)
@@ -163,10 +167,25 @@ function AddModel({ isOpen, onClose, getBatchs }) {
           </ModalBody>
 
           <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onClose}>
+            <Button
+              variant="ghost"
+              mr={3}
+              borderRadius={"0.75rem"}
+              onClick={onClose}
+            >
               Close
             </Button>
-            <Button colorScheme="yellow" color={"white"} type="submit">
+            <Button
+              borderRadius={"0.75rem"}
+              backgroundColor={"#FFCB82"}
+              color={"#85652D"}
+              _hover={{
+                backgroundColor: "#E3B574",
+                color: "#654E26",
+              }}
+              fontWeight={"500"}
+              type="submit"
+            >
               Add
             </Button>
           </ModalFooter>

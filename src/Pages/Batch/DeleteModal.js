@@ -12,7 +12,8 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import Cookies from "js-cookie";
-const DeleteModal = ({batchId, getbatchs}) => {
+import { Trash } from "lucide-react";
+const DeleteModal = ({ batchId, getbatchs }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
@@ -53,23 +54,45 @@ const DeleteModal = ({batchId, getbatchs}) => {
 
   return (
     <>
-      <button className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ml-2" onClick={onOpen}>
-        Delete
+      <button
+        className="hover:bg-[#FF8A8A] hover:text-[#6D1F1F] font-medium p-[10px] rounded-xl transition-colors duration-300"
+        onClick={onOpen}
+      >
+        <Trash size={18} />
       </button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Delete batch</ModalHeader>
+          <ModalHeader className="text-xl font-semibold">
+            Delete batch
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <p>Are you sure you want to delete this batch?</p>
           </ModalBody>
           <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onClose}>
+            <Button
+              variant="ghost"
+              mr={3}
+              borderRadius={"0.75rem"}
+              onClick={onClose}
+            >
               Close
             </Button>
-            <Button colorScheme="red" onClick={deleteBatch}>Delete</Button>
+            <Button
+              borderRadius={"0.75rem"}
+              backgroundColor={"#FF8A8A"}
+              color={"#6D1F1F"}
+              _hover={{
+                backgroundColor: "#E48080",
+                color: "#561616",
+              }}
+              fontWeight={"500"}
+              onClick={deleteBatch}
+            >
+              Delete
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

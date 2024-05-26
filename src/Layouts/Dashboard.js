@@ -33,7 +33,7 @@ function Dashboard() {
   }, [pathname]); // Empty dependency array ensures this effect runs only once, similar to componentDidMount
   console.log('pathnae',pathname)
   return (
-    <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
+    <Box minH="100vh" bg={useColorModeValue('#F9FBFC', 'gray.900')}>
       <Sidebar onClose={onClose} display={{ base: 'none', md: 'block' }} />
       <Drawer
         autoFocus={false}
@@ -48,7 +48,7 @@ function Dashboard() {
         </DrawerContent>
       </Drawer>
       <MobileNav onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} p="4">
+      <Box ml={{ base: 0, md: 60 }} p="6">
         <Outlet /> {/* This renders nested child routes */}
       </Box>
     </Box>

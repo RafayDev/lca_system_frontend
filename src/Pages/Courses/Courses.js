@@ -13,6 +13,7 @@ import {
 import AddModel from "./AddModel";
 import DeleteModal from "./DeleteModal";
 import UpdateModal from "./UpdateModal";
+import { Plus } from "lucide-react";
 
 function Course() {
   const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
@@ -24,8 +25,12 @@ function Course() {
 
   const hasPermission = (permissionsToCheck) => {
     const storedPermissions = sessionStorage.getItem("permissions");
-    const permissionsArray = storedPermissions ? storedPermissions.split(",") : [];
-    return permissionsToCheck.some(permission => permissionsArray.includes(permission));
+    const permissionsArray = storedPermissions
+      ? storedPermissions.split(",")
+      : [];
+    return permissionsToCheck.some((permission) =>
+      permissionsArray.includes(permission)
+    );
   };
   const getCourses = () => {
     const config = {
@@ -49,46 +54,57 @@ function Course() {
   }, []);
   return (
     <>
-      <h1 className="text-2xl font-bold">All Courses</h1>
-      <div className="flex flex-wrap justify-end">
-        {hasPermission(["Add_Course"]) && (
-          <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onClick={onAddOpen}>
-            Add Course
-          </button>
-        )}
+      <div className="flex justify-between items-center">
+        <h1 className="text-xl font-semibold ml-6">All Courses</h1>
+        <div className="flex flex-wrap justify-end">
+          {hasPermission(["Add_Course"]) && (
+            <button
+              className="bg-white hover:bg-[#FFCB82] hover:text-[#85652D] font-medium pl-[14px] pr-[18px] py-[10px] rounded-xl flex gap-1.5 transition-colors duration-300 border border-[#E0E8EC] hover:border-[#FFCB82]"
+              onClick={onAddOpen}
+            >
+              <Plus size={24} />
+              Add Course
+            </button>
+          )}
+        </div>
       </div>
-      <div className="w-full p-4 bg-white mt-5">
+      <div className="w-full bg-white mt-3 rounded-xl border border-[#E0E8EC]">
         <TableContainer>
           <Table variant="simple">
             <Thead>
               <Tr>
                 <Th>Name</Th>
                 <Th>Description</Th>
-                <Th>Action</Th>
+                <Th isNumeric>Action</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {
-                courses.map((course) => (
-                  <Tr key={course._id}>
-                    <Td>{course.name}</Td>
-                    <Td>{course.description}</Td>
-                    <Td>
-                      {hasPermission(["Update_Course"]) && (
-                        <UpdateModal course={course} getcourses={getCourses} />
-                      )}
-                      {hasPermission(["Delete_Course"]) && (
-                        <DeleteModal courseId={course._id} getcourses={getCourses} />
-                      )}
-                    </Td>
-                  </Tr>
-                ))
-              }
+              {courses.map((course) => (
+                <Tr key={course._id}>
+                  <Td>{course.name}</Td>
+                  <Td>{course.description}</Td>
+                  <Td className="space-x-3" isNumeric>
+                    {hasPermission(["Update_Course"]) && (
+                      <UpdateModal course={course} getcourses={getCourses} />
+                    )}
+                    {hasPermission(["Delete_Course"]) && (
+                      <DeleteModal
+                        courseId={course._id}
+                        getcourses={getCourses}
+                      />
+                    )}
+                  </Td>
+                </Tr>
+              ))}
             </Tbody>
           </Table>
         </TableContainer>
       </div>
-      <AddModel isOpen={isAddOpen} onClose={onAddClose} getCourses={getCourses} />
+      <AddModel
+        isOpen={isAddOpen}
+        onClose={onAddClose}
+        getCourses={getCourses}
+      />
     </>
   );
 }

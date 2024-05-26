@@ -29,9 +29,9 @@ function ChangeAvatarModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [imageSource, setImageSource] = useState(user?.avatar ?? imageSrc);
   const [isLoaded, setIsLoaded] = useState(false);
-  
-  const BASE_URL = process.env.BASE_URL || 'http://localhost:5000';
-  const authToken = Cookies.get('authToken');
+
+  const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
+  const authToken = Cookies.get("authToken");
 
   const handleChangeSource = async (selectedFile) => {
     setImageSource(selectedFile);
@@ -42,22 +42,23 @@ function ChangeAvatarModal() {
     const formData = new FormData();
     formData.append("id", user._id);
     formData.append("avatar", imageSource);
-    await axios.post(`${BASE_URL}/users/avatar`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${authToken}`,
-      },
-    })
-    .then((response) => {
-      setImageSource(response.data.avatar);
-      dispatch(fetchUserById({ userId: user._id, authToken }));
-      setIsLoaded(false);
-      onClose();
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  }
+    await axios
+      .post(`${BASE_URL}/users/avatar`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${authToken}`,
+        },
+      })
+      .then((response) => {
+        setImageSource(response.data.avatar);
+        dispatch(fetchUserById({ userId: user._id, authToken }));
+        setIsLoaded(false);
+        onClose();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   useEffect(() => {
     setImageSource(user?.avatar ?? imageSrc);
@@ -65,11 +66,13 @@ function ChangeAvatarModal() {
 
   return (
     <>
-      <MenuItem onClick={onOpen}>Change Avatar</MenuItem>
+      <MenuItem onClick={onOpen} className="rounded-lg">
+        Change Avatar
+      </MenuItem>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Change Avatar</ModalHeader>
+          <ModalHeader className="text-xl font-semibold">Change Avatar</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <VStack spacing={4}>
@@ -83,10 +86,23 @@ function ChangeAvatarModal() {
           </ModalBody>
 
           <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onClose}>
+            <Button variant="ghost" mr={3} borderRadius={"0.75rem"} onClick={onClose}>
               Close
             </Button>
-            <Button onClick={handleChangeAvatar} colorScheme="yellow" color={"white"} type="submit" loadingText="Saving" isLoading={isLoaded}>
+            <Button
+              onClick={handleChangeAvatar}
+              borderRadius={"0.75rem"}
+              backgroundColor={"#FFCB82"}
+              color={"#85652D"}
+              _hover={{
+                backgroundColor: "#E3B574",
+                color: "#654E26",
+              }}
+              fontWeight={"500"}
+              type="submit"
+              loadingText="Saving"
+              isLoading={isLoaded}
+            >
               Save
             </Button>
           </ModalFooter>

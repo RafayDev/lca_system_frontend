@@ -107,7 +107,9 @@ function AddModel({ student, getStudents }) {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader className="text-xl font-semibold">Update Student</ModalHeader>
+          <ModalHeader className="text-xl font-semibold">
+            Update Student
+          </ModalHeader>
           <ModalCloseButton />
           <form onSubmit={formik.handleSubmit}>
             <ModalBody>
@@ -167,7 +169,11 @@ function AddModel({ student, getStudents }) {
                     value={formik.values.batch}
                   >
                     {batches.map((batch) => (
-                      <option key={batch._id} value={batch._id} selected={batch._id === student.batch}>
+                      <option
+                        key={batch._id}
+                        value={batch._id}
+                        selected={batch._id === student.batch}
+                      >
                         {batch.name}
                       </option>
                     ))}
@@ -182,7 +188,12 @@ function AddModel({ student, getStudents }) {
             </ModalBody>
 
             <ModalFooter>
-              <Button variant="ghost" mr={3} borderRadius={"0.75rem"} onClick={onClose}>
+              <Button
+                variant="ghost"
+                mr={3}
+                borderRadius={"0.75rem"}
+                onClick={onClose}
+              >
                 Close
               </Button>
               <Button
@@ -193,7 +204,10 @@ function AddModel({ student, getStudents }) {
                   backgroundColor: "#74A0E3",
                   color: "#223163",
                 }}
-                fontWeight={"500"} type="submit">
+                fontWeight={"500"}
+                type="submit"
+                isDisabled={true}
+              >
                 Update
               </Button>
             </ModalFooter>

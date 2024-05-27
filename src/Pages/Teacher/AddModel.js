@@ -12,18 +12,20 @@ import {
   FormLabel,
   Input,
   VStack,
-  Box,
-  useToast,
+  Box
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import Cookies from "js-cookie";
+import { useSelector, useDispatch } from "react-redux";
+import { addTeacher, fetchTeachers } from "../../Features/teacherSlice";
 
-function AddTeacher({ isOpen, onClose, getTeachers }) {
-  const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
-  const toast = useToast();
+function AddTeacher({ isOpen, onClose }) {
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+
+  const { addStatus } = useSelector((state) => state.teachers);
+  const dispatch = useDispatch();
+
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -45,47 +47,12 @@ function AddTeacher({ isOpen, onClose, getTeachers }) {
       formData.append("image", values.image);
       formData.append("resume", values.resume);
 
-      try {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            "Content-Type": "multipart/form-data",
-          },
-        };
-        const response = await axios.post(
-          `${BASE_URL}/teachers/add`,
-          formData,
-          config
-        );
-        if (response.status === 200) {
-          toast({
-            title: "Teacher added successfully",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-          getTeachers();
+      dispatch(addTeacher({ formData, authToken }))
+        .unwrap()
+        .then(() => {
           onClose();
-        } else {
-          toast({
-            title: "Error",
-            description: "An error occurred while adding the teacher",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      } catch (error) {
-        if (error.response) {
-          toast({
-            title: "Error",
-            description: error.response.data.message,
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      }
+          dispatch(fetchTeachers({ authToken }));
+        });
     },
   });
 
@@ -188,6 +155,8 @@ function AddTeacher({ isOpen, onClose, getTeachers }) {
                 }}
                 fontWeight={"500"}
                 type="submit"
+                loadingText="Adding"
+                isLoading={addStatus === "loading"}
               >
                 Add Teacher
               </Button>

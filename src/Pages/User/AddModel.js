@@ -1,4 +1,4 @@
-import React,{useState}from "react";
+import React, { useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -13,18 +13,20 @@ import {
   Input,
   VStack,
   Box,
-  useToast,
   Select,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import Cookies from "js-cookie";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUsers, addUser } from "../../Features/userSlice";
 
-function AddModel({ isOpen, onClose,getUsers }) {
-  const BASE_URL = process.env.BASE_URL || "http://localhost:5000"; 
-  const toast = useToast();
+function AddModel({ isOpen, onClose }) {
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+
+  const { addStatus } = useSelector((state) => state.users);
+  const dispatch = useDispatch();
+
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -39,47 +41,16 @@ function AddModel({ isOpen, onClose,getUsers }) {
       role: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
-        // console.log(values)
-        try {
-          const config = {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          };
-          const response = await axios.post(`${BASE_URL}/users/add`, values, config);
-          if (response.status === 200) {
-            toast({
-              title: "User added successfully",
-              status: "success",
-              duration: 3000,
-              isClosable: true,
-            });
-            getUsers();
-            onClose();
-          } else {
-            // Handle other status codes if needed
-            toast({
-              title: "Error",
-              description: "An error occurred while adding the user",
-              status: "error",
-              duration: 3000,
-              isClosable: true,
-            });
-          }
-        } catch (error) {
-          // Handle network errors or server errors
-          if(error.response){
-            toast({
-              title: "Error",
-              description: error.response.data.message,
-              status: "error",
-              duration: 3000,
-              isClosable: true,
-            });
-          }
-        }
+      console.log(values);
+      dispatch(addUser({ formData: values, authToken }))
+        .unwrap()
+        .then(() => {
+          onClose();
+          dispatch(fetchUsers({ authToken }));
+        });
     },
   });
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -136,7 +107,12 @@ function AddModel({ isOpen, onClose,getUsers }) {
               </FormControl>
               <FormControl id="role">
                 <FormLabel fontSize={14}>Role</FormLabel>
-                <Select placeholder="Select Role" borderRadius={"0.5rem"} name="role" onChange={formik.handleChange}>
+                <Select
+                  placeholder="Select Role"
+                  borderRadius={"0.5rem"}
+                  name="role"
+                  onChange={formik.handleChange}
+                >
                   <option value="admin">Admin</option>
                   <option value="user">User </option>
                 </Select>
@@ -150,13 +126,27 @@ function AddModel({ isOpen, onClose,getUsers }) {
           </ModalBody>
 
           <ModalFooter>
-            <Button variant="ghost" mr={3} borderRadius={"0.75rem"} onClick={onClose}>
+            <Button
+              variant="ghost"
+              mr={3}
+              borderRadius={"0.75rem"}
+              onClick={onClose}
+            >
               Close
             </Button>
-            <Button borderRadius={"0.75rem"} backgroundColor={"#FFCB82"} color={"#85652D"} _hover={{
-              backgroundColor: "#E3B574",
-              color: "#654E26",
-            }} fontWeight={"500"} type="submit">
+            <Button
+              borderRadius={"0.75rem"}
+              backgroundColor={"#FFCB82"}
+              color={"#85652D"}
+              _hover={{
+                backgroundColor: "#E3B574",
+                color: "#654E26",
+              }}
+              fontWeight={"500"}
+              type="submit"
+              loadingText="Adding"
+              isLoading={addStatus === "loading"}
+            >
               Add
             </Button>
           </ModalFooter>

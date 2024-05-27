@@ -65,37 +65,49 @@ function Batch() {
           <Table variant="simple">
             <Thead>
               <Tr>
+                <Th>No</Th>
                 <Th>Name</Th>
                 <Th>Description</Th>
+                <Th>Batch Fee</Th>
+                <Th>Batch Type</Th>
                 <Th>Start Date</Th>
                 <Th>End Date</Th>
                 <Th isNumeric>Action</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {fetchStatus === "loading" && <TableRowLoading nOfColumns={4} actions={["w-10", "w-10", "w-20", "w-20"]} />}
-              {batches.map((batch) => (
-                <Tr key={batch._id}>
-                  <Td>{batch.name}</Td>
-                  <Td>{batch.description}</Td>
-                  <Td>{batch.startdate}</Td>
-                  <Td>{batch.enddate}</Td>
-                  <Td className="space-x-3 flex justify-end" isNumeric>
-                    {hasPermission(["Update_Batch"]) && (
-                      <UpdateModal batch={batch} />
-                    )}
-                    {hasPermission(["Delete_Batch"]) && (
-                      <DeleteModal batchId={batch._id} />
-                    )}
-                    {hasPermission(["Delete_Batch"]) && (
-                      <AssignCoursesModal batchId={batch._id} />
-                    )}
-                    {hasPermission(["Delete_Batch"]) && (
-                      <AssignTeachersModal batchId={batch._id} />
-                    )}
-                  </Td>
-                </Tr>
-              ))}
+              {fetchStatus === "loading" ? (
+                <TableRowLoading
+                  nOfColumns={7}
+                  actions={["w-10", "w-10", "w-20", "w-20"]}
+                />
+              ) : (
+                batches.map((batch) => (
+                  <Tr key={batch._id}>
+                    <Td>{batches.indexOf(batch) + 1}</Td>
+                    <Td>{batch.name}</Td>
+                    <Td>{batch.description}</Td>
+                    <Td>{batch.batch_fee ? batch.batch_fee + " Rs" : "N/A"}</Td>
+                    <Td>{batch.batch_type ? batch.batch_type : "N/A"}</Td>
+                    <Td>{batch.startdate}</Td>
+                    <Td>{batch.enddate}</Td>
+                    <Td className="space-x-3 flex justify-end" isNumeric>
+                      {hasPermission(["Update_Batch"]) && (
+                        <UpdateModal batch={batch} />
+                      )}
+                      {hasPermission(["Delete_Batch"]) && (
+                        <DeleteModal batchId={batch._id} />
+                      )}
+                      {hasPermission(["Delete_Batch"]) && (
+                        <AssignCoursesModal batchId={batch._id} />
+                      )}
+                      {hasPermission(["Delete_Batch"]) && (
+                        <AssignTeachersModal batchId={batch._id} />
+                      )}
+                    </Td>
+                  </Tr>
+                ))
+              )}
             </Tbody>
           </Table>
         </TableContainer>

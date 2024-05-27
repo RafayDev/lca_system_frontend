@@ -13,22 +13,25 @@ import {
   Input,
   VStack,
   Box,
-  useToast,
   Select,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import Cookies from "js-cookie";
 import { Pen } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUsers, updateUser } from "../../Features/userSlice";
 
-function AddModel({ user, getUsers }) {
+function AddModel({ user }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
-  const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
-  const toast = useToast();
+  
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+  
+  const { updateStatus } = useSelector((state) => state.users);
+  const dispatch = useDispatch();
+
   const formik = useFormik({
     initialValues: {
       name: user.name,
@@ -43,49 +46,12 @@ function AddModel({ user, getUsers }) {
       role: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
-      // console.log(values)
-      try {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        };
-        const response = await axios.post(
-          `${BASE_URL}/users/update/${user._id}`,
-          values,
-          config
-        );
-        if (response.status === 200) {
-          toast({
-            title: "User added successfully",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-          getUsers();
+      dispatch(updateUser({ userId: user._id, values, authToken }))
+        .unwrap()
+        .then(() => {
           onClose();
-        } else {
-          // Handle other status codes if needed
-          toast({
-            title: "Error",
-            description: "An error occurred while adding the user",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      } catch (error) {
-        // Handle network errors or server errors
-        if (error.response) {
-          toast({
-            title: "Error",
-            description: error.response.data.message,
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      }
+          dispatch(fetchUsers({ authToken }));
+        });
     },
   });
   return (
@@ -191,6 +157,8 @@ function AddModel({ user, getUsers }) {
                 }}
                 fontWeight={"500"}
                 type="submit"
+                loadingText="Updating"
+                isLoading={updateStatus === "loading"}
               >
                 Update
               </Button>

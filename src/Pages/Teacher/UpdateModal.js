@@ -21,14 +21,19 @@ import * as Yup from "yup";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { Pen } from "lucide-react";
+import { useSelector, useDispatch } from "react-redux";
+import { updateTeacher, fetchTeachers } from "../../Features/teacherSlice";
 
 function AddModel({ teacher, getTeachers }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
-  const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
-  const toast = useToast();
+
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+
+  const { updateStatus } = useSelector((state) => state.teachers);
+  const dispatch = useDispatch();
+
   const formik = useFormik({
     initialValues: {
       name: teacher.name,
@@ -43,50 +48,12 @@ function AddModel({ teacher, getTeachers }) {
       // role: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
-      // console.log(values)
-      try {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            "Content-Type": "multipart/form-data",
-          },
-        };
-        const response = await axios.post(
-          `${BASE_URL}/teachers/update/${teacher._id}`,
-          values,
-          config
-        );
-        if (response.status === 200) {
-          toast({
-            title: "Teacher added successfully",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-          getTeachers();
-          setIsOpen(false);
-        } else {
-          // Handle other status codes if needed
-          toast({
-            title: "Error",
-            description: "An error occurred while adding the teacher",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      } catch (error) {
-        // Handle network errors or server errors
-        if (error.response) {
-          toast({
-            title: "Error",
-            description: error.response.data.message,
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      }
+      dispatch(updateTeacher({ teacherId: teacher._id, values, authToken }))
+        .unwrap()
+        .then(() => {
+          onClose();
+          dispatch(fetchTeachers({ authToken }));
+        });
     },
   });
   return (
@@ -196,6 +163,8 @@ function AddModel({ teacher, getTeachers }) {
                 }}
                 fontWeight={"500"}
                 type="submit"
+                loadingText="Updating"
+                isLoading={updateStatus === "loading"}
               >
                 Update
               </Button>

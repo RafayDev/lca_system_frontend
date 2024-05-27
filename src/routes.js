@@ -16,7 +16,7 @@ import Permissions from "./Pages/Permissions/Permissions.js";
 import { Boxes, BrainCircuit, GraduationCap, Layers, LayoutDashboard, ListChecks, School, UserRoundCog, Users, UsersRound } from "lucide-react";
 
 export const routes = [
-  { name: "Home", icon: LayoutDashboard, component: <Home />, path: "/dashboard" },
+  { name: "Dashboard", icon: LayoutDashboard, component: <Home />, path: "/dashboard" },
   { name: "Users", icon: UsersRound, component: <User />, path: "/user" },
   {
     name: "Students",

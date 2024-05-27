@@ -13,22 +13,23 @@ import {
   Input,
   VStack,
   Box,
-  useToast,
-  Select,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import Cookies from "js-cookie";
 import { Pen } from "lucide-react";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchBatches, updateBatch } from "../../Features/batchSlice";
 
-function AddModel({ batch, getbatchs }) {
+function AddModel({ batch }) {
   const [isOpen, setIsOpen] = React.useState(false);
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+  const { upadateStatus } = useSelector((state) => state.batches);
+  const dispatch = useDispatch();
+
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
-  const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
-  const toast = useToast();
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+
   const formik = useFormik({
     initialValues: {
       name: batch.name,
@@ -43,49 +44,12 @@ function AddModel({ batch, getbatchs }) {
       enddate: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
-      // console.log(values)
-      try {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        };
-        const response = await axios.post(
-          `${BASE_URL}/batches/update/${batch._id}`,
-          values,
-          config
-        );
-        if (response.status === 200) {
-          toast({
-            title: "batch added successfully",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-          getbatchs();
+      dispatch(updateBatch({ authToken, values, id: batch._id }))
+        .unwrap()
+        .then(() => {
           onClose();
-        } else {
-          // Handle other status codes if needed
-          toast({
-            title: "Error",
-            description: "An error occurred while adding the batch",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      } catch (error) {
-        // Handle network errors or server errors
-        if (error.response) {
-          toast({
-            title: "Error",
-            description: error.response.data.message,
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      }
+          dispatch(fetchBatches({ authToken }));
+        });
     },
   });
   return (
@@ -195,6 +159,8 @@ function AddModel({ batch, getbatchs }) {
                 }}
                 fontWeight={"500"}
                 type="submit"
+                loadingText="Updating"
+                isLoading={upadateStatus === "loading"}
               >
                 Update
               </Button>

@@ -8,98 +8,52 @@ import {
   ModalBody,
   ModalCloseButton,
   Button,
-  useToast,
+  Spinner
 } from "@chakra-ui/react";
-import axios from "axios";
 import Cookies from "js-cookie";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import Batch from "./Batch";
 import { Check } from "lucide-react";
-const AssignTeachers = ({ batchId }) => {
+import { useDispatch, useSelector } from "react-redux";
+import { fetchTeachers, selectAllTeachers } from "../../Features/teacherSlice";
+import { assignTeachersToBatch, fetchBatchTeachers, selectBatchTeachers } from "../../Features/batchSlice";
+
+const AssignTeachersModal = ({ batchId }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
-  const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
+  
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
-  const toast = useToast();
-  const [teachers, setTeachers] = useState([]);
-  const [assignedTeachers, setAssignedTeachers] = useState([]);
+  
+  const { assignTeachersStatus } = useSelector((state) => state.batches);
+  const { status } = useSelector((state) => state.teachers);
+  const batchTeachers = useSelector(selectBatchTeachers);
+  const teachers = useSelector(selectAllTeachers);
+  const dispatch = useDispatch();
 
-  const getTeachers = () => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    };
-    axios
-      .get(`${BASE_URL}/teachers`, config)
-      .then((response) => {
-        console.log(response.data);
-        setTeachers(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
   const formik = useFormik({
     initialValues: {
-      teachers: assignedTeachers,
+      teachers: batchTeachers,
     },
     validationSchema: Yup.object({
       teachers: Yup.array().required("Required"),
     }),
     onSubmit: async (values) => {
-      console.log(values);
-      try {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        };
-        const body = {
-          batchId: batchId,
-          teacherIds: values.teachers,
-        };
-        const response = await axios.post(
-          `${BASE_URL}/batches/assignTeachers`,
-          body,
-          config
-        );
-        if (response.status === 200) {
-          toast({
-            title: "Teachers assigned successfully",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      } catch (error) {
-        console.log(error);
-      }
+      dispatch(assignTeachersToBatch({ authToken, batchId, teacherIds: values.teachers }))
+        .unwrap()
+        .then(() => {
+          onClose();
+        });
     },
   });
-  const getAssignedTeachers = () => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    };
-    axios
-      .get(`${BASE_URL}/batches/teachers/${batchId}`, config)
-      .then((response) => {
-        console.log("assigned teachers", response.data);
-        const assignedTeacherIds = response.data.map((teacher) => teacher._id);
-        setAssignedTeachers(assignedTeacherIds); // Update assignedCourses state
-        formik.setFieldValue("teachers", assignedTeacherIds);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
   useEffect(() => {
-    getTeachers();
-    getAssignedTeachers();
+    dispatch(fetchTeachers({ authToken }));
+    dispatch(fetchBatchTeachers({ authToken, batchId }))
+      .unwrap()
+      .then((data) => {
+        const teacherIds = data.map((teacher) => teacher._id);
+        formik.setFieldValue("teachers", teacherIds);
+      });
   }, []);
   return (
     <>
@@ -122,6 +76,7 @@ const AssignTeachers = ({ batchId }) => {
             <ModalBody>
               {/* courses name list with checkbox */}
               <div>
+                {status === "loading" && <Spinner />}
                 {teachers.map((teacher) => (
                   <div
                     key={teacher._id}
@@ -162,6 +117,8 @@ const AssignTeachers = ({ batchId }) => {
                 }}
                 fontWeight={"500"}
                 type="submit"
+                loadingText="Assigning"
+                isLoading={assignTeachersStatus === "loading"}
               >
                 Assign
               </Button>
@@ -173,4 +130,4 @@ const AssignTeachers = ({ batchId }) => {
   );
 };
 
-export default AssignTeachers;
+export default AssignTeachersModal;

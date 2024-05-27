@@ -8,47 +8,27 @@ import {
   ModalBody,
   ModalCloseButton,
   Button,
-  useToast,
 } from "@chakra-ui/react";
-import axios from "axios";
 import Cookies from "js-cookie";
 import { Trash } from "lucide-react";
-const DeleteModal = ({ batchId, getbatchs }) => {
+import { useDispatch, useSelector } from "react-redux";
+import { fetchBatches, deleteBatch } from "../../Features/batchSlice";
+
+const DeleteModal = ({ batchId }) => {
   const [isOpen, setIsOpen] = React.useState(false);
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+  const { deleteStatus } = useSelector((state) => state.batches);
+  const dispatch = useDispatch();
+
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
-  const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
-  const toast = useToast();
 
-  const deleteBatch = () => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    };
-    axios
-      .delete(`${BASE_URL}/batches/delete/${batchId}`, config)
-      .then((response) => {
-        // console.log(response.data);
-        getbatchs();
+  const handleDeleteBatch = () => {
+    dispatch(deleteBatch({ authToken, id: batchId }))
+      .unwrap()
+      .then(() => {
         onClose();
-        toast({
-          title: "batch deleted successfully",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .catch((error) => {
-        // console.log(error);
-        toast({
-          title: "Error",
-          description: "An error occurred while deleting the batch",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
+        dispatch(fetchBatches({ authToken }));
       });
   };
 
@@ -89,7 +69,9 @@ const DeleteModal = ({ batchId, getbatchs }) => {
                 color: "#561616",
               }}
               fontWeight={"500"}
-              onClick={deleteBatch}
+              onClick={handleDeleteBatch}
+              loadingText="Deleting"
+              isLoading={deleteStatus === "loading"}
             >
               Delete
             </Button>

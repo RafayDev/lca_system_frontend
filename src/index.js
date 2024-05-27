@@ -7,6 +7,9 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { store } from "./store";
 import { Provider } from "react-redux";
 import theme from "./chakraTheme";
+import { createStandaloneToast } from '@chakra-ui/react'
+
+const { ToastContainer } = createStandaloneToast()
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -14,6 +17,7 @@ root.render(
     <Provider store={store}>
       <ChakraProvider theme={theme}>
         <App />
+        <ToastContainer />
       </ChakraProvider>
     </Provider>
   </React.StrictMode>

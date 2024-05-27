@@ -42,7 +42,6 @@ const courseSlice = createSlice({
 });
 
 export const selectAllCourses = (state) => state.courses.courses;
-export const selectCourseById = (state, courseId) => state.courses.courses.find((course) => course.id === courseId);
 
 export { fetchCourses };
 

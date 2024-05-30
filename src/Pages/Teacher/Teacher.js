@@ -82,13 +82,15 @@ function Teacher() {
                 teachers.map((teacher) => (
                   <Tr key={teacher._id}>
                     <Td>{teachers.indexOf(teacher) + 1}</Td>
-                    <Td className="flex items-center gap-3">
-                      <img
-                        src={teacher.image || defaultAvatar}
-                        alt={teacher.name}
-                        className="w-10 h-10 rounded-full"
-                      />
-                      <span>{teacher.name}</span>
+                    <Td>
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={teacher.image || defaultAvatar}
+                          alt={teacher.name}
+                          className="w-10 h-10 rounded-full"
+                        />
+                        <span>{teacher.name}</span>
+                      </div>
                     </Td>
                     <Td>{teacher.email}</Td>
                     <Td>{teacher.phone}</Td>

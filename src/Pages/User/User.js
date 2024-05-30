@@ -81,13 +81,15 @@ function User() {
                 users.map((user) => (
                   <Tr key={user._id}>
                     <Td>{users.indexOf(user) + 1}</Td>
-                    <Td className="flex items-center gap-3">
-                      <img
-                        src={user.avatar || defaultAvatar}
-                        alt={user.name}
-                        className="h-10 w-10 rounded-full"
-                      />
-                      <span>{user.name}</span>
+                    <Td>
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={user.avatar || defaultAvatar}
+                          alt={user.name}
+                          className="h-10 w-10 rounded-full"
+                        />
+                        <span>{user.name}</span>
+                      </div>
                     </Td>
                     <Td>{user.email}</Td>
                     <Td>

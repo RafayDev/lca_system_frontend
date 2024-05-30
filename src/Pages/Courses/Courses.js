@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Cookies from "js-cookie";
 import {
   Table,
@@ -14,14 +13,20 @@ import AddModel from "./AddModel";
 import DeleteModal from "./DeleteModal";
 import UpdateModal from "./UpdateModal";
 import { Plus } from "lucide-react";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchCourses, selectAllCourses } from "../../Features/courseSlice";
+import TableRowLoading from "../../Components/TableRowLoading";
 
 function Course() {
-  const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
   const [isAddOpen, setIsAddOpen] = useState(false);
   const onAddOpen = () => setIsAddOpen(true);
   const onAddClose = () => setIsAddOpen(false);
-  const [courses, setCourses] = useState([]);
+
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+
+  const courses = useSelector(selectAllCourses);
+  const { status } = useSelector((state) => state.courses);
+  const dispatch = useDispatch();
 
   const hasPermission = (permissionsToCheck) => {
     const storedPermissions = sessionStorage.getItem("permissions");
@@ -32,25 +37,9 @@ function Course() {
       permissionsArray.includes(permission)
     );
   };
-  const getCourses = () => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    };
-    axios
-      .get(`${BASE_URL}/courses`, config)
-      .then((response) => {
-        console.log(response.data);
-        setCourses(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
 
   useEffect(() => {
-    getCourses();
+    dispatch(fetchCourses({ authToken }));
   }, []);
   return (
     <>
@@ -73,29 +62,37 @@ function Course() {
           <Table variant="simple">
             <Thead>
               <Tr>
+                <Th>No</Th>
                 <Th>Name</Th>
                 <Th>Description</Th>
                 <Th isNumeric>Action</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {courses.map((course) => (
-                <Tr key={course._id}>
-                  <Td>{course.name}</Td>
-                  <Td>{course.description}</Td>
-                  <Td className="space-x-3" isNumeric>
-                    {hasPermission(["Update_Course"]) && (
-                      <UpdateModal course={course} getcourses={getCourses} />
-                    )}
-                    {hasPermission(["Delete_Course"]) && (
-                      <DeleteModal
-                        courseId={course._id}
-                        getcourses={getCourses}
-                      />
-                    )}
-                  </Td>
-                </Tr>
-              ))}
+              {status === "loading" ? (
+                <TableRowLoading
+                  nOfColumns={7}
+                  actions={["w-10", "w-10", "w-20", "w-20"]}
+                />
+              ) : (
+                courses.map((course) => (
+                  <Tr key={course._id}>
+                    <Td>{courses.indexOf(course) + 1}</Td>
+                    <Td>{course.name}</Td>
+                    <Td>{course.description}</Td>
+                    <Td className="space-x-3" isNumeric>
+                      {hasPermission(["Update_Course"]) && (
+                        <UpdateModal course={course} />
+                      )}
+                      {hasPermission(["Delete_Course"]) && (
+                        <DeleteModal
+                          courseId={course._id}
+                        />
+                      )}
+                    </Td>
+                  </Tr>
+                ))
+              )}
             </Tbody>
           </Table>
         </TableContainer>
@@ -103,7 +100,6 @@ function Course() {
       <AddModel
         isOpen={isAddOpen}
         onClose={onAddClose}
-        getCourses={getCourses}
       />
     </>
   );

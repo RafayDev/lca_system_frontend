@@ -12,23 +12,25 @@ import {
   FormLabel,
   Input,
   VStack,
-  Box,
-  useToast,
-  Select,
+  Boxv
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import Cookies from "js-cookie";
 import { Pen } from "lucide-react";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchCourses, updateCourse } from "../../Features/courseSlice";
 
-function AddModel({ course, getCourses }) {
+function AddModel({ course }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
-  const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
-  const toast = useToast();
+  
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+  
+  const { updateStatus } = useSelector((state) => state.courses);
+  const dispatch = useDispatch();
+  
   const formik = useFormik({
     initialValues: {
       name: course.name,
@@ -41,49 +43,12 @@ function AddModel({ course, getCourses }) {
       description: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
-      // console.log(values)
-      try {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        };
-        const response = await axios.post(
-          `${BASE_URL}/courses/update/${course._id}`,
-          values,
-          config
-        );
-        if (response.status === 200) {
-          toast({
-            title: "Course added successfully",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-          getCourses();
+      dispatch(updateCourse({ authToken, course: values, id: course._id }))
+        .unwrap()
+        .then(() => {
           onClose();
-        } else {
-          // Handle other status codes if needed
-          toast({
-            title: "Error",
-            description: "An error occurred while adding the course",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      } catch (error) {
-        // Handle network errors or server errors
-        if (error.response) {
-          toast({
-            title: "Error",
-            description: error.response.data.message,
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      }
+          dispatch(fetchCourses({ authToken }));
+        });
     },
   });
   return (
@@ -156,6 +121,8 @@ function AddModel({ course, getCourses }) {
                 }}
                 fontWeight={"500"}
                 type="submit"
+                loadingText="Updating"
+                isLoading={updateStatus === "loading"}
               >
                 Update
               </Button>

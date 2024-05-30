@@ -13,42 +13,25 @@ import {
 import axios from "axios";
 import Cookies from "js-cookie";
 import { Trash } from "lucide-react";
-const DeleteModal = ({ courseId, getcourses }) => {
+import { useDispatch, useSelector } from "react-redux";
+import { deleteCourse, fetchCourses } from "../../Features/courseSlice";
+
+const DeleteModal = ({ courseId }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
-  const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
-  const toast = useToast();
 
-  const deleteCourse = () => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    };
-    axios
-      .delete(`${BASE_URL}/courses/delete/${courseId}`, config)
-      .then((response) => {
-        // console.log(response.data);
-        getcourses();
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+
+  const { deleteStatus } = useSelector((state) => state.courses);
+  const dispatch = useDispatch();
+
+  const handleDeleteCourse = () => {
+    dispatch(deleteCourse({ authToken, courseId }))
+      .unwrap()
+      .then(() => {
         onClose();
-        toast({
-          title: "course deleted successfully",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .catch((error) => {
-        // console.log(error);
-        toast({
-          title: "Error",
-          description: "An error occurred while deleting the course",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
+        dispatch(fetchCourses({ authToken }));
       });
   };
 
@@ -89,7 +72,9 @@ const DeleteModal = ({ courseId, getcourses }) => {
                 color: "#561616",
               }}
               fontWeight={"500"}
-              onClick={deleteCourse}
+              onClick={handleDeleteCourse}
+              loadingText="Deleting"
+              isLoading={deleteStatus === "loading"}
             >
               Delete
             </Button>

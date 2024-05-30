@@ -13,28 +13,29 @@ import {
   Input,
   VStack,
   Box,
-  useToast,
   Select,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import Cookies from "js-cookie";
 import { useSelector } from "react-redux";
 import { selectAllBatches } from "../../Features/batchSlice.js";
 import { Pen } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { updateStudent, fetchStudents } from "../../Features/studentSlice";
 
-function AddModel({ student, getStudents }) {
+function AddModel({ student }) {
   const batches = useSelector(selectAllBatches);
-
-  console.log(student);
 
   const [isOpen, setIsOpen] = React.useState(false);
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
-  const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
-  const toast = useToast();
+  
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+
+  const { updateStatus } = useSelector((state) => state.students);
+  const dispatch = useDispatch();
+  
   const formik = useFormik({
     initialValues: {
       name: student.name,
@@ -50,50 +51,12 @@ function AddModel({ student, getStudents }) {
       // role: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
-      // console.log(values)
-      try {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            "Content-Type": "multipart/form-data",
-          },
-        };
-        const response = await axios.post(
-          `${BASE_URL}/students/update/${student._id}`,
-          values,
-          config
-        );
-        if (response.status === 200) {
-          toast({
-            title: "Student added successfully",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-          getStudents();
-          setIsOpen(false);
-        } else {
-          // Handle other status codes if needed
-          toast({
-            title: "Error",
-            description: "An error occurred while adding the student",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      } catch (error) {
-        // Handle network errors or server errors
-        if (error.response) {
-          toast({
-            title: "Error",
-            description: error.response.data.message,
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      }
+      dispatch(updateStudent({ authToken, student: values }))
+        .unwrap()
+        .then(() => {
+          dispatch(fetchStudents({ authToken }));
+          onClose();
+        });
     },
   });
   return (
@@ -207,6 +170,8 @@ function AddModel({ student, getStudents }) {
                 fontWeight={"500"}
                 type="submit"
                 isDisabled={true}
+                loadingText="Updating"
+                isLoading={updateStatus === "loading"}
               >
                 Update
               </Button>

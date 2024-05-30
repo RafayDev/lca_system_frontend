@@ -13,19 +13,21 @@ import {
 import AddModel from "./AddModel";
 import DeleteModal from "./DeleteModal";
 import UpdateModal from "./UpdateModal";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchBatches } from "../../Features/batchSlice";
 import QrCodeModal from "../../Components/Modals/Student/QrCodeModal";
 import { Plus } from "lucide-react";
+import { fetchStudents, selectAllStudents } from "../../Features/studentSlice";
+import TableRowLoading from "../../Components/TableRowLoading";
 
 function Student() {
-  const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
   const [isAddOpen, setIsAddOpen] = useState(false);
   const onAddOpen = () => setIsAddOpen(true);
   const onAddClose = () => setIsAddOpen(false);
-  const [students, setStudents] = useState([]);
 
+  const { fetchStatus } = useSelector((state) => state.students);
+  const students = useSelector(selectAllStudents);
   const dispatch = useDispatch();
 
   const hasPermission = (permissionsToCheck) => {
@@ -37,25 +39,9 @@ function Student() {
       permissionsArray.includes(permission)
     );
   };
-  const getStudents = () => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    };
-    axios
-      .get(`${BASE_URL}/students`, config)
-      .then((response) => {
-        console.log(response.data);
-        setStudents(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
 
   useEffect(() => {
-    getStudents();
+    dispatch(fetchStudents({ authToken }));
     dispatch(fetchBatches({ authToken }));
   }, []);
   return (
@@ -79,6 +65,7 @@ function Student() {
           <Table variant="simple">
             <Thead>
               <Tr>
+                <Th>No</Th>
                 <Th>QR</Th>
                 <Th>Name</Th>
                 <Th>Email</Th>
@@ -87,30 +74,36 @@ function Student() {
               </Tr>
             </Thead>
             <Tbody>
-              {students.map((student) => (
-                <Tr key={student._id}>
-                  <Td>
-                    <QrCodeModal student={student} />
-                  </Td>
-                  <Td>{student.name}</Td>
-                  <Td>{student.email}</Td>
-                  <Td>{student.phone}</Td>
-                  <Td className="space-x-3" isNumeric>
-                    {hasPermission(["Update_Student"]) && (
-                      <UpdateModal
-                        student={student}
-                        getstudents={getStudents}
-                      />
-                    )}
-                    {hasPermission(["Delete_Student"]) && (
-                      <DeleteModal
-                        studentId={student._id}
-                        getstudents={getStudents}
-                      />
-                    )}
-                  </Td>
-                </Tr>
-              ))}
+              {fetchStatus === "loading" ? (
+                <TableRowLoading
+                  nOfColumns={5}
+                  actions={["w-10", "w-10"]}
+                />
+              ) : (
+                students.map((student) => (
+                  <Tr key={student._id}>
+                    <Td>{students.indexOf(student) + 1}</Td>
+                    <Td>
+                      <QrCodeModal student={student} />
+                    </Td>
+                    <Td>{student.name}</Td>
+                    <Td>{student.email}</Td>
+                    <Td>{student.phone}</Td>
+                    <Td className="space-x-3" isNumeric>
+                      {hasPermission(["Update_Student"]) && (
+                        <UpdateModal
+                          student={student}
+                        />
+                      )}
+                      {hasPermission(["Delete_Student"]) && (
+                        <DeleteModal
+                          studentId={student._id}
+                        />
+                      )}
+                    </Td>
+                  </Tr>
+                ))
+              )}
             </Tbody>
           </Table>
         </TableContainer>
@@ -118,7 +111,6 @@ function Student() {
       <AddModel
         isOpen={isAddOpen}
         onClose={onAddClose}
-        getStudents={getStudents}
       />
     </>
   );

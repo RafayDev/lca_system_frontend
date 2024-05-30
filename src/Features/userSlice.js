@@ -28,7 +28,6 @@ const fetchUsers = createAsyncThunk('users/fetchUsers', async (payload) => {
 
 const addUser = createAsyncThunk('users/addUser', async (payload) => {
     const { formData, authToken } = payload;
-    console.log(formData, authToken);
     const response = await axios.post(`${BASE_URL}/users/add`, formData, {
         headers: {
             Authorization: `Bearer ${authToken}`,

@@ -41,7 +41,6 @@ function AddModel({ isOpen, onClose }) {
       role: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
-      console.log(values);
       dispatch(addUser({ formData: values, authToken }))
         .unwrap()
         .then(() => {

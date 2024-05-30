@@ -7,6 +7,7 @@ import courseReducer from './Features/courseSlice';
 import teacherReducer from './Features/teacherSlice';
 import roleReducer from './Features/roleSlice';
 import permissionReducer from './Features/permissionSlice';
+import studentReducer from './Features/studentSlice';
 
 export const store = configureStore({
   reducer: {
@@ -17,5 +18,6 @@ export const store = configureStore({
     teachers: teacherReducer,
     roles: roleReducer,
     permissions: permissionReducer,
+    students: studentReducer,
   },
 });

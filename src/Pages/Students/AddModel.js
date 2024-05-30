@@ -13,85 +13,45 @@ import {
   Input,
   VStack,
   Box,
-  useToast,
   Select,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import Cookies from "js-cookie";
 import { useSelector } from "react-redux";
 import { selectAllBatches } from "../../Features/batchSlice";
+import { useDispatch } from "react-redux";
+import { addStudent, fetchStudents } from "../../Features/studentSlice";
 
-function AddStudnet({ isOpen, onClose, getStudnets }) {
-  const batches = useSelector(selectAllBatches);
-  
-  const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
-  const toast = useToast();
+function AddStudnet({ isOpen, onClose }) {
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+
+  const { addStatus } = useSelector((state) => state.students);
+  const batches = useSelector(selectAllBatches);
+  const dispatch = useDispatch();
+
   const formik = useFormik({
     initialValues: {
       name: "",
       email: "",
-      phone: ""
+      phone: "",
+      paid_fee: "",
+      batch: "",
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Required"),
       email: Yup.string().email("Invalid email address").required("Required"),
       phone: Yup.string().required("Required"),
       paid_fee: Yup.number().required("Required"),
+      batch: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
-      const formData = new FormData();
-      formData.append("name", values.name);
-      formData.append("email", values.email);
-      formData.append("phone", values.phone);
-      formData.append("total_fee", values.total_fee);
-      formData.append("pending_fee", values.pending_fee);
-      formData.append("paid_fee", values.paid_fee);
-      formData.append("batch", values.batch);
-
-      try {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            "Content-Type": "multipart/form-data",
-          },
-        };
-        const response = await axios.post(
-          `${BASE_URL}/students/add`,
-          formData,
-          config
-        );
-        if (response.status === 200) {
-          toast({
-            title: "Studnet added successfully",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-          getStudnets();
+      dispatch(addStudent({ authToken, student: values }))
+        .unwrap()
+        .then(() => {
+          dispatch(fetchStudents({ authToken }));
           onClose();
-        } else {
-          toast({
-            title: "Error",
-            description: "An error occurred while adding the student",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      } catch (error) {
-        if (error.response) {
-          toast({
-            title: "Error",
-            description: error.response.data.message,
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      }
+        });
     },
   });
 
@@ -101,7 +61,9 @@ function AddStudnet({ isOpen, onClose, getStudnets }) {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader className="text-xl font-semibold">Add Studnet</ModalHeader>
+          <ModalHeader className="text-xl font-semibold">
+            Add Studnet
+          </ModalHeader>
           <ModalCloseButton />
           <form onSubmit={formik.handleSubmit}>
             <ModalBody>
@@ -166,33 +128,52 @@ function AddStudnet({ isOpen, onClose, getStudnets }) {
                     </Box>
                   ) : null}
                 </FormControl>
-              <FormControl id="batch">
-                <FormLabel fontSize={14}>Batch</FormLabel>
-                <Select placeholder="Select Batch" name="batch" borderRadius={"0.5rem"} onChange={formik.handleChange} value={formik.values.batch}>
-                  {batches.map((batch) => (
-                    <option key={batch._id} value={batch._id}>
-                      {batch.name}
-                    </option>
-                  ))}
-                </Select>
-                {formik.touched.batch && formik.errors.batch ? (
-                  <Box color="red" fontSize="sm">
-                    {formik.errors.batch}
-                  </Box>
-                ) : null}
-              </FormControl>
-                
+                <FormControl id="batch">
+                  <FormLabel fontSize={14}>Batch</FormLabel>
+                  <Select
+                    placeholder="Select Batch"
+                    name="batch"
+                    borderRadius={"0.5rem"}
+                    onChange={formik.handleChange}
+                    value={formik.values.batch}
+                  >
+                    {batches.map((batch) => (
+                      <option key={batch._id} value={batch._id}>
+                        {batch.name}
+                      </option>
+                    ))}
+                  </Select>
+                  {formik.touched.batch && formik.errors.batch ? (
+                    <Box color="red" fontSize="sm">
+                      {formik.errors.batch}
+                    </Box>
+                  ) : null}
+                </FormControl>
               </VStack>
             </ModalBody>
 
             <ModalFooter>
-              <Button variant="ghost" mr={3} borderRadius={"0.75rem"} onClick={onClose}>
+              <Button
+                variant="ghost"
+                mr={3}
+                borderRadius={"0.75rem"}
+                onClick={onClose}
+              >
                 Close
               </Button>
-              <Button borderRadius={"0.75rem"} backgroundColor={"#FFCB82"} color={"#85652D"} _hover={{
-              backgroundColor: "#E3B574",
-              color: "#654E26",
-            }} fontWeight={"500"} type="submit">
+              <Button
+                borderRadius={"0.75rem"}
+                backgroundColor={"#FFCB82"}
+                color={"#85652D"}
+                _hover={{
+                  backgroundColor: "#E3B574",
+                  color: "#654E26",
+                }}
+                fontWeight={"500"}
+                type="submit"
+                loadingText="Adding"
+                isLoading={addStatus === "loading"}
+              >
                 Add Studnet
               </Button>
             </ModalFooter>

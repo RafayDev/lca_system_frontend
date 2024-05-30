@@ -52,6 +52,12 @@ function Home() {
       helpText: "Some Text ...",
       icon: <GraduationCap size={32} color="#d69e2e" />,
     },
+    {
+      title: "Saminar Count",
+      value: 0,
+      helpText: "Some Text ...",
+      icon: <GraduationCap size={32} color="#d69e2e" />,
+    },
   ];
 
   return (

@@ -8,7 +8,7 @@ import {
   ModalBody,
   ModalCloseButton,
   Button,
-  Spinner
+  Spinner,
 } from "@chakra-ui/react";
 import Cookies from "js-cookie";
 import { useFormik } from "formik";
@@ -16,17 +16,21 @@ import * as Yup from "yup";
 import { Check } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTeachers, selectAllTeachers } from "../../Features/teacherSlice";
-import { assignTeachersToBatch, fetchBatchTeachers, selectBatchTeachers } from "../../Features/batchSlice";
+import {
+  assignTeachersToBatch,
+  fetchBatchTeachers,
+  fetchBatches,
+  selectBatchTeachers,
+} from "../../Features/batchSlice";
 
 const AssignTeachersModal = ({ batchId }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
-  
+
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
-  
-  const { assignTeachersStatus } = useSelector((state) => state.batches);
-  const { status } = useSelector((state) => state.teachers);
+
+  const { assignTeachersStatus, fetchBatchTeachersStatus } = useSelector((state) => state.batches);
   const batchTeachers = useSelector(selectBatchTeachers);
   const teachers = useSelector(selectAllTeachers);
   const dispatch = useDispatch();
@@ -39,27 +43,39 @@ const AssignTeachersModal = ({ batchId }) => {
       teachers: Yup.array().required("Required"),
     }),
     onSubmit: async (values) => {
-      dispatch(assignTeachersToBatch({ authToken, batchId, teacherIds: values.teachers }))
+      dispatch(
+        assignTeachersToBatch({
+          authToken,
+          batchId,
+          teacherIds: values.teachers,
+        })
+      )
         .unwrap()
         .then(() => {
           onClose();
+          dispatch(fetchBatches({ authToken }));
         });
     },
   });
-  useEffect(() => {
-    dispatch(fetchTeachers({ authToken }));
+
+  const handleOpenModal = () => {
     dispatch(fetchBatchTeachers({ authToken, batchId }))
       .unwrap()
       .then((data) => {
         const teacherIds = data.map((teacher) => teacher._id);
         formik.setFieldValue("teachers", teacherIds);
       });
+    onOpen();
+  };
+
+  useEffect(() => {
+    dispatch(fetchTeachers({ authToken }));
   }, []);
   return (
     <>
       <button
         className="hover:bg-[#7AEF85] hover:text-[#257947] font-medium p-[10px] rounded-xl transition-colors duration-300 flex flex-nowrap items-center gap-1.5 pr-3"
-        onClick={onOpen}
+        onClick={handleOpenModal}
       >
         <Check size={18} />
         <span>Teachers</span>
@@ -76,26 +92,32 @@ const AssignTeachersModal = ({ batchId }) => {
             <ModalBody>
               {/* courses name list with checkbox */}
               <div>
-                {status === "loading" && <Spinner />}
-                {teachers.map((teacher) => (
-                  <div
-                    key={teacher._id}
-                    className="flex items-center justify-between"
-                  >
-                    <label htmlFor={teacher._id} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id={teacher._id}
-                        name="teachers"
-                        value={teacher._id}
-                        onChange={formik.handleChange}
-                        className="mr-2"
-                        checked={formik.values.teachers.includes(teacher._id)}
-                      />
-                      {teacher.name}
-                    </label>
-                  </div>
-                ))}
+                {fetchBatchTeachersStatus === "loading" ? (
+                  <Spinner />
+                ) : (
+                  teachers.map((teacher) => (
+                    <div
+                      key={teacher._id}
+                      className="flex items-center justify-between"
+                    >
+                      <label
+                        htmlFor={teacher._id}
+                        className="flex items-center"
+                      >
+                        <input
+                          type="checkbox"
+                          id={teacher._id}
+                          name="teachers"
+                          value={teacher._id}
+                          onChange={formik.handleChange}
+                          className="mr-2"
+                          checked={formik.values.teachers.includes(teacher._id)}
+                        />
+                        {teacher.name}
+                      </label>
+                    </div>
+                  ))
+                )}
               </div>
             </ModalBody>
             <ModalFooter>

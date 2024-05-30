@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Cookies from "js-cookie";
 import {
   Table,
@@ -15,14 +14,20 @@ import DeleteModal from "./DeleteModal";
 import UpdateModal from "./UpdateModal";
 import AssignPermissions from "./AssignPermissions";
 import { Plus } from "lucide-react";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchRoles, selectAllRoles } from "../../Features/roleSlice";
+import TableRowLoading from "../../Components/TableRowLoading";
 
 function Roles() {
-  const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
   const [isAddOpen, setIsAddOpen] = useState(false);
   const onAddOpen = () => setIsAddOpen(true);
   const onAddClose = () => setIsAddOpen(false);
-  const [roles, setRoles] = useState([]);
+
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+
+  const { fetchStatus } = useSelector((state) => state.roles);
+  const roles = useSelector(selectAllRoles);
+  const dispatch = useDispatch();
 
   const hasPermission = (permissionsToCheck) => {
     const storedPermissions = sessionStorage.getItem("permissions");
@@ -33,26 +38,11 @@ function Roles() {
       permissionsArray.includes(permission)
     );
   };
-  const getRoles = () => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    };
-    axios
-      .get(`${BASE_URL}/roles`, config)
-      .then((response) => {
-        console.log(response.data);
-        setRoles(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
 
   useEffect(() => {
-    getRoles();
+    dispatch(fetchRoles({ authToken }));
   }, []);
+
   return (
     <>
       <div className="flex justify-between items-center">
@@ -74,34 +64,43 @@ function Roles() {
           <Table variant="simple">
             <Thead>
               <Tr>
+                <Th>No</Th>
                 <Th>Name</Th>
                 <Th>Description</Th>
                 <Th isNumeric>Action</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {roles.map((role) => (
-                <Tr key={role._id}>
-                  <Td>{role.name}</Td>
-                  <Td>{role.description}</Td>
-                  <Td className="space-x-3 flex justify-end" isNumeric>
-                    {hasPermission(["Update_Role"]) && (
-                      <UpdateModal role={role} getroles={getRoles} />
-                    )}
-                    {hasPermission(["Delete_Role"]) && (
-                      <DeleteModal roleId={role._id} getroles={getRoles} />
-                    )}
-                    {hasPermission(["Assign_Permissions"]) && (
-                      <AssignPermissions roleId={role._id} />
-                    )}
-                  </Td>
-                </Tr>
-              ))}
+              {fetchStatus == "loading" ? (
+                <TableRowLoading
+                  nOfColumns={3}
+                  actions={["w-10", "w-10", "w-20"]}
+                />
+              ) : (
+                roles.map((role) => (
+                  <Tr key={role._id}>
+                    <Td>{roles.indexOf(role) + 1}</Td>
+                    <Td>{role.name}</Td>
+                    <Td>{role.description}</Td>
+                    <Td className="space-x-3 flex justify-end" isNumeric>
+                      {hasPermission(["Update_Role"]) && (
+                        <UpdateModal role={role} />
+                      )}
+                      {hasPermission(["Delete_Role"]) && (
+                        <DeleteModal roleId={role._id} />
+                      )}
+                      {hasPermission(["Assign_Permissions"]) && (
+                        <AssignPermissions roleId={role._id} />
+                      )}
+                    </Td>
+                  </Tr>
+                ))
+              )}
             </Tbody>
           </Table>
         </TableContainer>
       </div>
-      <AddModel isOpen={isAddOpen} onClose={onAddClose} getRoles={getRoles} />
+      <AddModel isOpen={isAddOpen} onClose={onAddClose} />
     </>
   );
 }

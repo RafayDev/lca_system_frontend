@@ -25,7 +25,7 @@ function Course() {
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
 
   const courses = useSelector(selectAllCourses);
-  const { status } = useSelector((state) => state.courses);
+  const { fetchStatus } = useSelector((state) => state.courses);
   const dispatch = useDispatch();
 
   const hasPermission = (permissionsToCheck) => {
@@ -69,10 +69,10 @@ function Course() {
               </Tr>
             </Thead>
             <Tbody>
-              {status === "loading" ? (
+              {fetchStatus === "loading" ? (
                 <TableRowLoading
-                  nOfColumns={7}
-                  actions={["w-10", "w-10", "w-20", "w-20"]}
+                  nOfColumns={3}
+                  actions={["w-10", "w-10"]}
                 />
               ) : (
                 courses.map((course) => (

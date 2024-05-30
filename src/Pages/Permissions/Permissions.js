@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Cookies from "js-cookie";
 import {
   Table,
@@ -14,14 +13,20 @@ import AddModel from "./AddModel";
 import DeleteModal from "./DeleteModal";
 import UpdateModal from "./UpdateModal";
 import { Plus } from "lucide-react";
+import { useSelector, useDispatch } from "react-redux";
+import { selectAllPermissions, fetchPermissions } from "../../Features/permissionSlice";
+import TableRowLoading from "../../Components/TableRowLoading";
 
 function Permissions() {
-  const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
   const [isAddOpen, setIsAddOpen] = useState(false);
   const onAddOpen = () => setIsAddOpen(true);
   const onAddClose = () => setIsAddOpen(false);
-  const [permissions, setPermissions] = useState([]);
+
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+
+  const { fetchStatus } = useSelector((state) => state.permissions);
+  const permissions = useSelector(selectAllPermissions);
+  const dispatch = useDispatch();
 
   const hasPermission = (permissionsToCheck) => {
     const storedPermissions = sessionStorage.getItem("permissions");
@@ -32,25 +37,9 @@ function Permissions() {
       permissionsArray.includes(permission)
     );
   };
-  const getPermissions = () => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    };
-    axios
-      .get(`${BASE_URL}/permissions`, config)
-      .then((response) => {
-        console.log(response.data);
-        setPermissions(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
 
   useEffect(() => {
-    getPermissions();
+    dispatch(fetchPermissions({ authToken }));
   }, []);
   return (
     <>
@@ -73,41 +62,40 @@ function Permissions() {
           <Table variant="simple">
             <Thead>
               <Tr>
+                <Th>No</Th>
                 <Th>Name</Th>
                 <Th>Description</Th>
                 <Th isNumeric>Action</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {permissions.map((perm) => (
-                <Tr key={perm._id}>
-                  <Td>{perm.name}</Td>
-                  <Td>{perm.description}</Td>
-                  <Td className="space-x-3" isNumeric>
-                    {hasPermission(["Update_Permission"]) && (
-                      <UpdateModal
-                        perm={perm}
-                        getpermissions={getPermissions}
-                      />
-                    )}
-                    {hasPermission(["Delete_Permission"]) && (
-                      <DeleteModal
-                        permId={perm._id}
-                        getpermissions={getPermissions}
-                      />
-                    )}
-                  </Td>
-                </Tr>
-              ))}
+              {fetchStatus === "loading" ? (
+                <TableRowLoading
+                  nOfColumns={3}
+                  actions={["w-10", "w-10"]}
+                />
+              ) : (
+                permissions.map((perm) => (
+                  <Tr key={perm._id}>
+                    <Td>{permissions.indexOf(perm) + 1}</Td>
+                    <Td>{perm.name}</Td>
+                    <Td>{perm.description}</Td>
+                    <Td className="space-x-3" isNumeric>
+                      {hasPermission(["Update_Permission"]) && (
+                        <UpdateModal perm={perm} />
+                      )}
+                      {hasPermission(["Delete_Permission"]) && (
+                        <DeleteModal permId={perm._id} />
+                      )}
+                    </Td>
+                  </Tr>
+                ))
+              )}
             </Tbody>
           </Table>
         </TableContainer>
       </div>
-      <AddModel
-        isOpen={isAddOpen}
-        onClose={onAddClose}
-        getPermissions={getPermissions}
-      />
+      <AddModel isOpen={isAddOpen} onClose={onAddClose} />
     </>
   );
 }

@@ -12,19 +12,20 @@ import {
   FormLabel,
   Input,
   VStack,
-  Box,
-  useToast,
-  Select,
+  Box
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import Cookies from "js-cookie";
+import { addPermission, fetchPermissions } from "../../Features/permissionSlice";
+import { useDispatch, useSelector } from "react-redux";
 
-function AddModel({ isOpen, onClose, getPermissions }) {
-  const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
-  const toast = useToast();
+function AddModel({ isOpen, onClose }) {
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+
+  const { addStatus } = useSelector((state) => state.permissions);
+  const dispatch = useDispatch();
+
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -37,49 +38,12 @@ function AddModel({ isOpen, onClose, getPermissions }) {
       // role: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
-      // console.log(values)
-      try {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        };
-        const response = await axios.post(
-          `${BASE_URL}/permissions/add`,
-          values,
-          config
-        );
-        if (response.status === 200) {
-          toast({
-            title: "Permission added successfully",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-          getPermissions();
+      dispatch(addPermission({ authToken, permission: values }))
+        .unwrap()
+        .then(() => {
+          dispatch(fetchPermissions({ authToken }));
           onClose();
-        } else {
-          // Handle other status codes if needed
-          toast({
-            title: "Error",
-            description: "An error occurred while adding the permission",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      } catch (error) {
-        // Handle network errors or server errors
-        if (error.response) {
-          toast({
-            title: "Error",
-            description: error.response.data.message,
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      }
+        });
     },
   });
   return (
@@ -145,6 +109,8 @@ function AddModel({ isOpen, onClose, getPermissions }) {
               }}
               fontWeight={"500"}
               type="submit"
+              loadingText="Adding"
+              isLoading={addStatus === "loading"}
             >
               Add
             </Button>

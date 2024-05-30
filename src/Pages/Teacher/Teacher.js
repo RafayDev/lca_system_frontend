@@ -77,7 +77,7 @@ function Teacher() {
             </Thead>
             <Tbody>
               {fetchStatus === "loading" ? (
-                <TableRowLoading nOfColumns={5} actions={["w-20", "w-20"]} />
+                <TableRowLoading nOfColumns={5} actions={["w-10", "w-10"]} />
               ) : (
                 teachers.map((teacher) => (
                   <Tr key={teacher._id}>

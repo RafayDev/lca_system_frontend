@@ -8,14 +8,19 @@ import {
   ModalBody,
   ModalCloseButton,
   Button,
-  Spinner
+  Spinner,
 } from "@chakra-ui/react";
 import Cookies from "js-cookie";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Check } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
-import { assignCoursesToBatch, fetchBatchCourses, selectBatchCourses } from "../../Features/batchSlice";
+import {
+  assignCoursesToBatch,
+  fetchBatchCourses,
+  fetchBatches,
+  selectBatchCourses,
+} from "../../Features/batchSlice";
 import { fetchCourses, selectAllCourses } from "../../Features/courseSlice";
 
 const AssignCoursesModal = ({ batchId }) => {
@@ -25,8 +30,7 @@ const AssignCoursesModal = ({ batchId }) => {
 
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
 
-  const { assignCoursesStatus } = useSelector((state) => state.batches);
-  const { status } = useSelector((state) => state.courses);
+  const { assignCoursesStatus, fetchBatchCoursesStatus } = useSelector((state) => state.batches);
   const batchCourses = useSelector(selectBatchCourses);
   const courses = useSelector(selectAllCourses);
   const dispatch = useDispatch();
@@ -39,29 +43,36 @@ const AssignCoursesModal = ({ batchId }) => {
       courses: Yup.array().required("Required"),
     }),
     onSubmit: async (values) => {
-      dispatch(assignCoursesToBatch({ authToken, batchId, courseIds: values.courses }))
+      dispatch(
+        assignCoursesToBatch({ authToken, batchId, courseIds: values.courses })
+      )
         .unwrap()
         .then(() => {
           onClose();
+          dispatch(fetchBatches({ authToken }));
         });
     },
   });
 
-  useEffect(() => {
-    dispatch(fetchCourses({ authToken }));
+  const handleOpenModal = () => {
     dispatch(fetchBatchCourses({ authToken, batchId }))
       .unwrap()
       .then((data) => {
         const courseIds = data.map((course) => course._id);
         formik.setFieldValue("courses", courseIds);
       });
+    onOpen();
+  };
+
+  useEffect(() => {
+    dispatch(fetchCourses({ authToken }));
   }, []);
 
   return (
     <>
       <button
         className="hover:bg-[#7AEF85] hover:text-[#257947] font-medium p-[10px] rounded-xl transition-colors duration-300 flex flex-nowrap items-center gap-1.5 pr-3"
-        onClick={onOpen}
+        onClick={handleOpenModal}
       >
         <Check size={18} />
         <span>Courses</span>
@@ -78,26 +89,29 @@ const AssignCoursesModal = ({ batchId }) => {
             <ModalBody>
               {/* courses name list with checkbox */}
               <div>
-                {status === "loading" && <Spinner />}
-                {courses.map((course) => (
-                  <div
-                    key={course._id}
-                    className="flex items-center justify-between"
-                  >
-                    <label htmlFor={course._id} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id={course._id}
-                        name="courses"
-                        value={course._id}
-                        onChange={formik.handleChange}
-                        className="mr-2"
-                        checked={formik.values.courses.includes(course._id)}
-                      />
-                      {course.name}
-                    </label>
-                  </div>
-                ))}
+                {fetchBatchCoursesStatus === "loading" ? (
+                  <Spinner />
+                ) : (
+                  courses.map((course) => (
+                    <div
+                      key={course._id}
+                      className="flex items-center justify-between"
+                    >
+                      <label htmlFor={course._id} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id={course._id}
+                          name="courses"
+                          value={course._id}
+                          onChange={formik.handleChange}
+                          className="mr-2"
+                          checked={formik.values.courses.includes(course._id)}
+                        />
+                        {course.name}
+                      </label>
+                    </div>
+                  ))
+                )}
               </div>
             </ModalBody>
             <ModalFooter>

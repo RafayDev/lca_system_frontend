@@ -8,9 +8,8 @@ import {
   ModalBody,
   ModalCloseButton,
   Button,
-  useToast,
+  Spinner,
   Checkbox,
-  CheckboxGroup,
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
@@ -18,59 +17,44 @@ import Cookies from "js-cookie";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Check } from "lucide-react";
+import {
+  selectAllPermissions,
+  fetchPermissions,
+} from "../../Features/permissionSlice";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  selectAllAssignedPermissions,
+  fetchAssignedPermissions,
+  assignPermissions,
+  fetchRoles
+} from "../../Features/roleSlice";
 
 const AssignPermissions = ({ roleId }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
-  const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:5000";
+
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
-  const toast = useToast();
-  const [permissions, setPermissions] = useState([]);
-  const [assignedPermissions, setAssignedPermissions] = useState([]);
 
-  const getPermissions = () => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    };
-    axios
-      .get(`${BASE_URL}/permissions`, config)
-      .then((response) => {
-        setPermissions(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  const permissions = useSelector(selectAllPermissions);
+  const assignedPermissions = useSelector(selectAllAssignedPermissions);
+  const { fetchAssignedPermissionsStatus, assignPermissionsStatus } =
+    useSelector((state) => state.roles);
+  const dispatch = useDispatch();
 
-  const getAssignedPermissions = () => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    };
-    axios
-      .get(`${BASE_URL}/roles/permissions/${roleId}`, config)
-      .then((response) => {
-        const assignedPermissionsIds = response.data.map(
-          (permission) => permission._id
-        );
-        setAssignedPermissions(assignedPermissionsIds);
-        formik.setFieldValue("permissions", assignedPermissionsIds);
-      })
-      .catch((error) => {
-        console.log(error);
+  const handleOpenModal = () => {
+    dispatch(fetchAssignedPermissions({ authToken, id: roleId }))
+      .unwrap()
+      .then((data) => {
+        const permissionIds = data.map((permission) => permission._id);
+        formik.setFieldValue("permissions", permissionIds);
       });
+    onOpen();
   };
 
   useEffect(() => {
-    if (authToken) {
-      getPermissions();
-      getAssignedPermissions();
-    }
-  }, [authToken]);
+    dispatch(fetchPermissions({ authToken }));
+  }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -81,42 +65,12 @@ const AssignPermissions = ({ roleId }) => {
       permissions: Yup.array().required("Required"),
     }),
     onSubmit: async (values) => {
-      try {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        };
-        const body = {
-          roleId: roleId,
-          permissionIds: values.permissions,
-        };
-        const response = await axios.post(
-          `${BASE_URL}/roles/assignPermissions`,
-          body,
-          config
-        );
-        if (response.status === 200) {
-          toast({
-            title: "Permissions assigned successfully",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
+      dispatch(assignPermissions({ authToken, roleId, permissions: values.permissions }))
+        .unwrap()
+        .then((data) => {
           onClose();
-        } else {
-          throw new Error("Failed to assign permissions");
-        }
-      } catch (error) {
-        console.error(error);
-        toast({
-          title: "Error",
-          description: "Failed to assign permissions",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
+          dispatch(fetchRoles({ authToken }));
         });
-      }
     },
   });
 
@@ -124,7 +78,7 @@ const AssignPermissions = ({ roleId }) => {
     <>
       <button
         className="hover:bg-[#7AEF85] hover:text-[#257947] font-medium p-[10px] rounded-xl transition-colors duration-300 flex flex-nowrap items-center gap-1.5 pr-3"
-        onClick={onOpen}
+        onClick={handleOpenModal}
       >
         <Check size={18} />
         <span>Permissions</span>
@@ -140,20 +94,24 @@ const AssignPermissions = ({ roleId }) => {
           <form onSubmit={formik.handleSubmit}>
             <ModalBody>
               <VStack align="start">
-                {permissions.map((permission) => (
-                  <Checkbox
-                    key={permission._id}
-                    id={permission._id}
-                    name="permissions"
-                    value={permission._id}
-                    onChange={formik.handleChange}
-                    isChecked={formik.values.permissions.includes(
-                      permission._id
-                    )}
-                  >
-                    {permission.name}
-                  </Checkbox>
-                ))}
+                {fetchAssignedPermissionsStatus === "loading" ? (
+                  <Spinner />
+                ) : (
+                  permissions.map((permission) => (
+                    <Checkbox
+                      key={permission._id}
+                      id={permission._id}
+                      name="permissions"
+                      value={permission._id}
+                      onChange={formik.handleChange}
+                      isChecked={formik.values.permissions.includes(
+                        permission._id
+                      )}
+                    >
+                      {permission.name}
+                    </Checkbox>
+                  ))
+                )}
               </VStack>
             </ModalBody>
             <ModalFooter>
@@ -175,6 +133,8 @@ const AssignPermissions = ({ roleId }) => {
                 }}
                 fontWeight={"500"}
                 type="submit"
+                loadingText="Assigning"
+                isLoading={assignPermissionsStatus === "loading"}
               >
                 Assign
               </Button>

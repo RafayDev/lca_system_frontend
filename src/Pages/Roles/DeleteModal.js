@@ -7,48 +7,29 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  Button,
-  useToast,
+  Button
 } from "@chakra-ui/react";
-import axios from "axios";
 import Cookies from "js-cookie";
 import { Trash } from "lucide-react";
-const DeleteModal = ({ roleId, getroles }) => {
+import { deleteRole, fetchRoles } from "../../Features/roleSlice";
+import { useDispatch, useSelector } from "react-redux";
+
+const DeleteModal = ({ roleId }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
-  const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
-  const toast = useToast();
 
-  const deleteRole = () => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    };
-    axios
-      .delete(`${BASE_URL}/roles/delete/${roleId}`, config)
-      .then((response) => {
-        // console.log(response.data);
-        getroles();
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+  
+  const { deleteStatus } = useSelector((state) => state.roles);
+  const dispatch = useDispatch();
+
+  const handleDeleteRole = () => {
+    dispatch(deleteRole({ authToken, id: roleId }))
+      .unwrap()
+      .then((data) => {
         onClose();
-        toast({
-          title: "Role deleted successfully",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .catch((error) => {
-        // console.log(error);
-        toast({
-          title: "Error",
-          description: "An error occurred while deleting the role",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
+        dispatch(fetchRoles({ authToken }));
       });
   };
 
@@ -89,7 +70,9 @@ const DeleteModal = ({ roleId, getroles }) => {
                 color: "#561616",
               }}
               fontWeight={"500"}
-              onClick={deleteRole}
+              onClick={handleDeleteRole}
+              loadingText="Deleting"
+              isLoading={deleteStatus === "loading"}
             >
               Delete
             </Button>

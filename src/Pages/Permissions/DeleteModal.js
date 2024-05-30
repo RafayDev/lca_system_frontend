@@ -13,42 +13,25 @@ import {
 import axios from "axios";
 import Cookies from "js-cookie";
 import { Trash } from "lucide-react";
-const DeleteModal = ({ permId, getpermissions }) => {
+import { deletePermission, fetchPermissions } from "../../Features/permissionSlice";
+import { useDispatch, useSelector } from "react-redux";
+
+const DeleteModal = ({ permId }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
-  const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
-  const toast = useToast();
 
-  const deletePermission = () => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    };
-    axios
-      .delete(`${BASE_URL}/permissions/delete/${permId}`, config)
-      .then((response) => {
-        // console.log(response.data);
-        getpermissions();
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+
+  const { deleteStatus } = useSelector((state) => state.permissions);
+  const dispatch = useDispatch();
+
+  const handleDeletePermission = () => {
+    dispatch(deletePermission({ authToken, id: permId }))
+      .unwrap()
+      .then(() => {
+        dispatch(fetchPermissions({ authToken }));
         onClose();
-        toast({
-          title: "Permission deleted successfully",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .catch((error) => {
-        // console.log(error);
-        toast({
-          title: "Error",
-          description: "An error occurred while deleting the permission",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
       });
   };
 
@@ -89,7 +72,9 @@ const DeleteModal = ({ permId, getpermissions }) => {
                 color: "#561616",
               }}
               fontWeight={"500"}
-              onClick={deletePermission}
+              onClick={handleDeletePermission}
+              loadingText="Deleting"
+              isLoading={deleteStatus === "loading"}
             >
               Delete
             </Button>

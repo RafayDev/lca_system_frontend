@@ -29,8 +29,6 @@ function Seminar() {
   const { seminars } = useSelector((state) => state.seminars);
   const dispatch = useDispatch();
 
-  console.log(seminars);
-
   const hasPermission = (permissionsToCheck) => {
     const storedPermissions = sessionStorage.getItem("permissions");
     const permissionsArray = storedPermissions

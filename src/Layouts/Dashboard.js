@@ -31,7 +31,7 @@ function Dashboard() {
       navigate('/dashboard')
     }
   }, [pathname]); // Empty dependency array ensures this effect runs only once, similar to componentDidMount
-  console.log('pathnae',pathname)
+
   return (
     <Box minH="100vh" bg={useColorModeValue('#F9FBFC', 'gray.900')}>
       <Sidebar onClose={onClose} display={{ base: 'none', md: 'block' }} />

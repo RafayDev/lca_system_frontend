@@ -66,7 +66,7 @@ function Home() {
       <h1 className="text-xl font-semibold ml-6 mb-5">Welcome to LCA System</h1>
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
         {data.map((item, index) => (
-          <div className="w-full">
+          <div className="w-full" key={index}>
             <div
               key={index}
               className="bg-white rounded-xl border border-[#E0E8EC] p-6 flex justify-between items-start"

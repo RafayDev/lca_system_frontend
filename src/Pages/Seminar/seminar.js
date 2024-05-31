@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchSeminars, selectAllSeminars } from "../../Features/seminarSlice";
 import TableRowLoading from "../../Components/TableRowLoading";
 import moment from "moment";
+import AttendeesModal from "./AttendeesModal";
 
 function Seminar() {
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -93,6 +94,7 @@ function Seminar() {
                     <Td>{moment(seminar.date).format("DD MMM YYYY")}</Td>
 
                     <Td className="space-x-3" isNumeric>
+                      <AttendeesModal seminar={seminar} />
                       {hasPermission(["Update_Seminar"]) && (
                         <UpdateModal
                           seminar={seminar}

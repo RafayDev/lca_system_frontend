@@ -10,6 +10,7 @@ import permissionReducer from './Features/permissionSlice';
 import studentReducer from './Features/studentSlice';
 import timetableReducer from './Features/timetableSlice';
 import seminarReducer from './Features/seminarSlice';
+import seminarAttendeeReducer from './Features/seminarAttendeeSlice';
 
 export const store = configureStore({
   reducer: {
@@ -23,5 +24,6 @@ export const store = configureStore({
     students: studentReducer,
     timetable: timetableReducer,
     seminars: seminarReducer,
+    seminarAttendees: seminarAttendeeReducer,
   },
 });

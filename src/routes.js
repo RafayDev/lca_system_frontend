@@ -14,7 +14,7 @@ import Students from "./Pages/Students/Student.js";
 import Roles from "./Pages/Roles/Roles.js";
 import Permissions from "./Pages/Permissions/Permissions.js";
 import Timetable from "./Pages/Timetable/Timetable.js";
-import { Boxes, BrainCircuit, GraduationCap, Layers, LayoutDashboard, ListChecks, School, UserRoundCog, Users, UsersRound } from "lucide-react";
+import { Boxes, BrainCircuit, CalendarRange, GraduationCap, Layers, LayoutDashboard, ListChecks, School, UserRoundCog, Users, UsersRound } from "lucide-react";
 
 export const routes = [
   { name: "Dashboard", icon: LayoutDashboard, component: <Home />, path: "/dashboard" },
@@ -45,7 +45,7 @@ export const routes = [
   },
   {
     name: "Timetable",
-    icon: LiaChalkboardTeacherSolid,
+    icon: CalendarRange,
     component: <Timetable />,
     path: "/timetable",
   },

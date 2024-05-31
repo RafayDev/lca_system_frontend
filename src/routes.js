@@ -13,6 +13,7 @@ import Batches from "./Pages/Batch/Batch.js";
 import Students from "./Pages/Students/Student.js";
 import Roles from "./Pages/Roles/Roles.js";
 import Permissions from "./Pages/Permissions/Permissions.js";
+import Timetable from "./Pages/Timetable/Timetable.js";
 import { Boxes, BrainCircuit, GraduationCap, Layers, LayoutDashboard, ListChecks, School, UserRoundCog, Users, UsersRound } from "lucide-react";
 
 export const routes = [
@@ -41,6 +42,12 @@ export const routes = [
     icon: Layers,
     component: <Courses />,
     path: "/course",
+  },
+  {
+    name: "Timetable",
+    icon: LiaChalkboardTeacherSolid,
+    component: <Timetable />,
+    path: "/timetable",
   },
   {
     name: "Roles",

@@ -1,6 +1,7 @@
 import { Stat, StatHelpText, StatLabel, StatNumber } from "@chakra-ui/react";
 import { GraduationCap } from "lucide-react";
 import React from "react";
+import TimetableCalendar from "../Components/TimetableCalendar";
 
 function Home() {
   const data = [

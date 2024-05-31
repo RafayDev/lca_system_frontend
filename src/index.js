@@ -8,6 +8,7 @@ import { store } from "./store";
 import { Provider } from "react-redux";
 import theme from "./chakraTheme";
 import { createStandaloneToast } from '@chakra-ui/react'
+import "react-big-calendar/lib/css/react-big-calendar.css";
 
 const { ToastContainer } = createStandaloneToast()
 

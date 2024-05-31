@@ -12,7 +12,7 @@ import {
   FormLabel,
   Input,
   VStack,
-  Boxv
+  Boxv,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -25,22 +25,24 @@ function AddModel({ seminar }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
-  
+
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
-  
+
   const { updateStatus } = useSelector((state) => state.seminars);
   const dispatch = useDispatch();
-  
+
   const formik = useFormik({
     initialValues: {
       name: seminar.name,
       description: seminar.description,
+      time: seminar.time,
+      date: seminar.date,
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Required"),
-      // email: Yup.string().email("Invalid email address").required("Required"),
-      //   password: Yup.string().required("Required"),
       description: Yup.string().required("Required"),
+      time: Yup.string().required("Required"),
+      date: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
       dispatch(updateSeminar({ authToken, seminar: values, id: seminar._id }))
@@ -96,6 +98,36 @@ function AddModel({ seminar }) {
                   {formik.touched.description && formik.errors.description ? (
                     <Box color="red" fontSize="sm">
                       {formik.errors.description}
+                    </Box>
+                  ) : null}
+                </FormControl>
+                <FormControl id="time">
+                  <FormLabel fontSize={14}>Time</FormLabel>
+                  <Input
+                    type="time"
+                    name="time"
+                    borderRadius={"0.5rem"}
+                    value={formik.values.time}
+                    onChange={formik.handleChange}
+                  />
+                  {formik.touched.time && formik.errors.time ? (
+                    <Box color="red" fontSize="sm">
+                      {formik.errors.time}
+                    </Box>
+                  ) : null}
+                </FormControl>
+                <FormControl id="date">
+                  <FormLabel fontSize={14}>Date</FormLabel>
+                  <Input
+                    type="date"
+                    name="date"
+                    borderRadius={"0.5rem"}
+                    value={formik.values.date}
+                    onChange={formik.handleChange}
+                  />
+                  {formik.touched.date && formik.errors.date ? (
+                    <Box color="red" fontSize="sm">
+                      {formik.errors.date}
                     </Box>
                   ) : null}
                 </FormControl>

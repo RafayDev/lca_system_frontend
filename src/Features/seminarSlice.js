@@ -126,7 +126,7 @@ const seminarSlice = createSlice({
             .addCase(deleteSeminar.pending, (state) => {
                 state.deleteStatus = 'loading';
             })
-            .addCase(deleteseminar.fulfilled, (state, action) => {
+            .addCase(deleteSeminar.fulfilled, (state, action) => {
                 state.deleteStatus = 'success';
                 toast({
                     title: "Seminar deleted.",

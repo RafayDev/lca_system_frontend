@@ -30,12 +30,14 @@ function AddModel({ isOpen, onClose }) {
     initialValues: {
       name: "",
       description: "",
+      time: "",
+      date: "",
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Required"),
       description: Yup.string().required("Required"),
-      // password: Yup.string().required("Required"),
-      // role: Yup.string().required("Required"),
+      time: Yup.string().required("Required"),
+      date: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
       dispatch(addSeminar({ authToken, seminar: values }))
@@ -82,6 +84,36 @@ function AddModel({ isOpen, onClose }) {
                 {formik.touched.description && formik.errors.description ? (
                   <Box color="red" fontSize="sm">
                     {formik.errors.description}
+                  </Box>
+                ) : null}
+              </FormControl>
+              <FormControl id="time">
+                <FormLabel fontSize={14}>Time</FormLabel>
+                <Input
+                  type="time"
+                  name="time"
+                  borderRadius={"0.5rem"}
+                  value={formik.values.time}
+                  onChange={formik.handleChange}
+                />
+                {formik.touched.time && formik.errors.time ? (
+                  <Box color="red" fontSize="sm">
+                    {formik.errors.time}
+                  </Box>
+                ) : null}
+              </FormControl>
+              <FormControl id="date">
+                <FormLabel fontSize={14}>Date</FormLabel>
+                <Input
+                  type="date"
+                  name="date"
+                  borderRadius={"0.5rem"}
+                  value={formik.values.date}
+                  onChange={formik.handleChange}
+                />
+                {formik.touched.date && formik.errors.date ? (
+                  <Box color="red" fontSize="sm">
+                    {formik.errors.date}
                   </Box>
                 ) : null}
               </FormControl>

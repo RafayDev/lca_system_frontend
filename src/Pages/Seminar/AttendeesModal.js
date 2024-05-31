@@ -63,7 +63,7 @@ const AttendeesModal = ({ seminar }) => {
           attendee.phone,
           attendee.city,
           attendee.qualification,
-          attendee.attend_type,
+          attendee.attend_type.map((type, index) => (("" + type)?.toString()).replace(/,/g, "") + (index < attendee.attend_type.length - 1 ? ", " : ""))
         ]),
       },
     });
@@ -75,7 +75,7 @@ const AttendeesModal = ({ seminar }) => {
   return (
     <>
       <button
-        className="hover:bg-[#FF8A8A] hover:text-[#6D1F1F] font-medium p-[10px] rounded-xl transition-colors duration-300"
+        className="hover:bg-[#7AEF85] hover:text-[#257947] font-medium p-[10px] rounded-xl transition-colors duration-300"
         onClick={handleModalOpen}
       >
         <Eye size={18} />
@@ -144,7 +144,13 @@ const AttendeesModal = ({ seminar }) => {
                             <Td>{attendee.phone}</Td>
                             <Td>{attendee.city}</Td>
                             <Td>{attendee.qualification}</Td>
-                            <Td>{attendee.attend_type}</Td>
+                            <Td>
+                              <span className="">
+                                {attendee.attend_type.map(
+                                  (type, index) => (("" + type)?.toString()).replace(/,/g, "") + (index < attendee.attend_type.length - 1 ? ", " : "")
+                                )}
+                              </span>
+                            </Td>
                           </Tr>
                         ))}
                       </Tbody>
@@ -165,11 +171,11 @@ const AttendeesModal = ({ seminar }) => {
             </Button>
             <Button
               borderRadius={"0.75rem"}
-              backgroundColor={"#FF8A8A"}
-              color={"#6D1F1F"}
+              backgroundColor={"#7AEF85"}
+              color={"#257947"}
               _hover={{
-                backgroundColor: "#E48080",
-                color: "#561616",
+                backgroundColor: "#65C76E",
+                color: "#184E2E",
               }}
               fontWeight={"500"}
               onClick={handleDownloadExcel}

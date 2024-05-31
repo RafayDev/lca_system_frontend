@@ -12,6 +12,7 @@ import {
   Card,
   Divider,
   Heading,
+  Spinner,
   TabPanel,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -65,6 +66,10 @@ export default function TimetableCalendar() {
   const [day, setDay] = useState("");
 
   const [eventDetails, setEventDetails] = useState({});
+
+  const { fetchStatus, addStatus, deleteStatus } = useSelector(
+    (state) => state.timetable
+  );
 
   const timeTableEvents = useSelector(selectTimeTableEvents);
   const teachers = useSelector(selectAllTeachers);
@@ -120,7 +125,7 @@ export default function TimetableCalendar() {
         .unwrap()
         .then((data) => {
           onAddModalClose();
-          dispatch(fetchTimeTableEvents({ authToken }));
+          window.location.reload();
         });
     },
   });
@@ -178,37 +183,43 @@ export default function TimetableCalendar() {
 
   return (
     <>
-      <Calendar
-        defaultDate={defaultDate}
-        defaultView={Views.MONTH}
-        events={events}
-        onSelectEvent={handleSelectEvent}
-        onSelectSlot={handleSelectSlot}
-        selectable
-        scrollToTime={scrollToTime}
-        components={{
-          day: {
-            event: (props) => {
-              return (
-                <Fragment>
-                  <div>
-                    <span className="font-bold">Course: </span>
-                    {props.event.title}
-                  </div>
-                  <div>
-                    <span className="font-bold">Teacher: </span>
-                    {props.event.teacherName}
-                  </div>
-                  <div>
-                    <span className="font-bold">Batch: </span>
-                    {props.event.batchName}
-                  </div>
-                </Fragment>
-              );
+      {fetchStatus === "loading" ? (
+        <div className="w-full h-full flex justify-center items-center">
+          <Spinner />
+        </div>
+      ) : (
+        <Calendar
+          defaultDate={defaultDate}
+          defaultView={Views.MONTH}
+          events={events}
+          onSelectEvent={handleSelectEvent}
+          onSelectSlot={handleSelectSlot}
+          selectable
+          scrollToTime={scrollToTime}
+          components={{
+            day: {
+              event: (props) => {
+                return (
+                  <Fragment>
+                    <div>
+                      <span className="font-bold">Course: </span>
+                      {props.event.title}
+                    </div>
+                    <div>
+                      <span className="font-bold">Teacher: </span>
+                      {props.event.teacherName}
+                    </div>
+                    <div>
+                      <span className="font-bold">Batch: </span>
+                      {props.event.batchName}
+                    </div>
+                  </Fragment>
+                );
+              },
             },
-          },
-        }}
-      />
+          }}
+        />
+      )}
 
       {/* Add New Timetable Event Modal */}
       <Modal isOpen={isAddModalOpen} onClose={onAddModalClose}>
@@ -351,6 +362,8 @@ export default function TimetableCalendar() {
                 }}
                 fontWeight={"500"}
                 type="submit"
+                loadingText="Saving"
+                isLoading={addStatus === "loading"}
               >
                 Save
               </Button>
@@ -458,6 +471,8 @@ export default function TimetableCalendar() {
                     }}
                     fontWeight={"500"}
                     onClick={handleDeleteEvent}
+                    loadingText="Deleting"
+                    isLoading={deleteStatus === "loading"}
                   >
                     Delete
                   </Button>

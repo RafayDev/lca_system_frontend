@@ -27,6 +27,7 @@ function TimeTableEventEditForm({
   onClose,
 }) {
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+  const { updateStatus } = useSelector((state) => state.timetable);
   const dispatch = useDispatch();
   const formik = useFormik({
     initialValues: {
@@ -195,6 +196,8 @@ function TimeTableEventEditForm({
             }}
             fontWeight={"500"}
             type="submit"
+            loadingText="Saving"
+            isLoading={updateStatus === "loading"}
           >
             Save
           </Button>

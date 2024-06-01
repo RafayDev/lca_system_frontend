@@ -70,6 +70,8 @@ function Student() {
                 <Th>Name</Th>
                 <Th>Email</Th>
                 <Th>Phone</Th>
+                <Th>Paid Fee</Th>
+                <Th>Batch</Th>
                 <Th isNumeric>Actions</Th>
               </Tr>
             </Thead>
@@ -89,6 +91,8 @@ function Student() {
                     <Td>{student.name}</Td>
                     <Td>{student.email}</Td>
                     <Td>{student.phone}</Td>
+                    <Td>{student.paidFee || "N/A"}</Td>
+                    <Td>{student.batch.name || "N/A"}</Td>
                     <Td className="space-x-3" isNumeric>
                       {hasPermission(["Update_Student"]) && (
                         <UpdateModal

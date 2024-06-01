@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 
+import statisticsReducer from './Features/statisticsSlice';
 import authReducer from './Features/authSlice';
 import userReducer from './Features/userSlice';
 import batchReducer from './Features/batchSlice';
@@ -14,6 +15,7 @@ import seminarAttendeeReducer from './Features/seminarAttendeeSlice';
 
 export const store = configureStore({
   reducer: {
+    statistics: statisticsReducer,
     auth: authReducer,
     users: userReducer,
     batches: batchReducer,

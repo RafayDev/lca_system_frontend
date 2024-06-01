@@ -12,6 +12,7 @@ import studentReducer from './Features/studentSlice';
 import timetableReducer from './Features/timetableSlice';
 import seminarReducer from './Features/seminarSlice';
 import seminarAttendeeReducer from './Features/seminarAttendeeSlice';
+import enrollmentReducer from './Features/enrollmentSlice';
 
 export const store = configureStore({
   reducer: {
@@ -27,5 +28,6 @@ export const store = configureStore({
     timetable: timetableReducer,
     seminars: seminarReducer,
     seminarAttendees: seminarAttendeeReducer,
+    enrollments: enrollmentReducer,
   },
 });

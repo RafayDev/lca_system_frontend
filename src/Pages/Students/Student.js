@@ -19,6 +19,7 @@ import QrCodeModal from "../../Components/Modals/Student/QrCodeModal";
 import { Plus } from "lucide-react";
 import { fetchStudents, selectAllStudents } from "../../Features/studentSlice";
 import TableRowLoading from "../../Components/TableRowLoading";
+import EnrollmentModal from "./EnrollmentModal";
 
 function Student() {
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
@@ -77,10 +78,7 @@ function Student() {
             </Thead>
             <Tbody>
               {fetchStatus === "loading" ? (
-                <TableRowLoading
-                  nOfColumns={5}
-                  actions={["w-10", "w-10"]}
-                />
+                <TableRowLoading nOfColumns={7} actions={["w-10", "w-10"]} />
               ) : (
                 students.map((student) => (
                   <Tr key={student._id}>
@@ -94,16 +92,15 @@ function Student() {
                     <Td>{student.paidFee || "N/A"}</Td>
                     <Td>{student.batch.name || "N/A"}</Td>
                     <Td className="space-x-3" isNumeric>
-                      {hasPermission(["Update_Student"]) && (
-                        <UpdateModal
-                          student={student}
-                        />
-                      )}
-                      {hasPermission(["Delete_Student"]) && (
-                        <DeleteModal
-                          studentId={student._id}
-                        />
-                      )}
+                      <div className="flex flex-nowrap justify-end items-center gap-2">
+                        {hasPermission(["Update_Student"]) && (
+                          <UpdateModal student={student} />
+                        )}
+                        {hasPermission(["Delete_Student"]) && (
+                          <DeleteModal studentId={student._id} />
+                        )}
+                        <EnrollmentModal studentId={student._id} />
+                      </div>
                     </Td>
                   </Tr>
                 ))
@@ -112,10 +109,7 @@ function Student() {
           </Table>
         </TableContainer>
       </div>
-      <AddModel
-        isOpen={isAddOpen}
-        onClose={onAddClose}
-      />
+      <AddModel isOpen={isAddOpen} onClose={onAddClose} />
     </>
   );
 }

@@ -86,7 +86,7 @@ function Seminar() {
                       </p>
                     </Td>
                     <Td>
-                      <p className="line-clamp-2 w-[500px] text-wrap">
+                      <p className="line-clamp-2 w-[300px] text-wrap">
                       {seminar.description}
                       </p>
                     </Td>

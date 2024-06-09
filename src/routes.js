@@ -14,8 +14,9 @@ import Students from "./Pages/Students/Student.js";
 import Roles from "./Pages/Roles/Roles.js";
 import Permissions from "./Pages/Permissions/Permissions.js";
 import Seminars from "./Pages/Seminar/seminar.js";
-import { Boxes, BrainCircuit, CalendarRange, GraduationCap, Layers, LayoutDashboard, ListChecks, Presentation, School, UserRoundCog, Users, UsersRound } from "lucide-react";
+import { Boxes, BrainCircuit, CalendarRange, GraduationCap, Layers, LayoutDashboard, ListChecks, Presentation, School, UserRoundCheck, UserRoundCog, Users, UsersRound } from "lucide-react";
 import Timetable from "./Pages/Timetable/Timetable.js";
+import Attendance from "./Pages/Attendance/Attendance.js";
 
 export const routes = [
   { name: "Dashboard", icon: LayoutDashboard, component: <Home />, path: "/dashboard" },
@@ -51,6 +52,18 @@ export const routes = [
     path: "/timetable",
   },
   {
+    name: "Attendance",
+    icon: UserRoundCheck,
+    component: <Attendance />,
+    path: "/attendance",
+  },
+  {
+    name: "Seminars",
+    icon: Presentation,
+    component: <Seminars />,
+    path: "/seminar",
+  },
+  {
     name: "Roles",
     icon: UserRoundCog,
     component: <Roles />,
@@ -61,12 +74,5 @@ export const routes = [
     icon: ListChecks,
     component: <Permissions />,
     path: "/permission",
-  },
-  
-  {
-    name: "Seminars",
-    icon: Presentation,
-    component: <Seminars />,
-    path: "/seminar",
   },
 ];

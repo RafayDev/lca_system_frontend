@@ -89,7 +89,7 @@ function Student() {
                     <Td>{student.name}</Td>
                     <Td>{student.email}</Td>
                     <Td>{student.phone}</Td>
-                    <Td>{student.paidFee || "N/A"}</Td>
+                    <Td>{student.paid_fee || "N/A"}</Td>
                     <Td>{student.batch.name || "N/A"}</Td>
                     <Td className="space-x-3" isNumeric>
                       <div className="flex flex-nowrap justify-end items-center gap-2">

@@ -67,6 +67,9 @@ export default function TimetableCalendar() {
 
   const [eventDetails, setEventDetails] = useState({});
 
+  const [selectedBatch, setSelectedBatch] = useState("");
+  console.log("selectedBatch", selectedBatch);
+
   const { fetchStatus, addStatus, deleteStatus } = useSelector(
     (state) => state.timetable
   );
@@ -160,12 +163,17 @@ export default function TimetableCalendar() {
       });
   };
 
+  const batchChangeHandler = (e) => {
+    formik.handleChange(e);
+    setSelectedBatch(batches.find((batch) => batch._id === e.target.value));
+  };
+
   useEffect(() => {
     dispatch(fetchTimeTableEvents({ authToken }))
       .unwrap()
       .then((data) => {
-        dispatch(fetchTeachers({ authToken }));
-        dispatch(fetchCourses({ authToken }));
+        // dispatch(fetchTeachers({ authToken }));
+        // dispatch(fetchCourses({ authToken }));
         dispatch(fetchBatches({ authToken }));
         const formattedDateTime = data.map((event) => formateDateTime(event));
         const formattedData = data.map((event, index) => ({
@@ -277,48 +285,6 @@ export default function TimetableCalendar() {
                     </Box>
                   ) : null}
                 </FormControl>
-                <FormControl id="teacher">
-                  <FormLabel fontSize={14}>Teacher</FormLabel>
-                  <Select
-                    placeholder="Select Teacher"
-                    name="teacher"
-                    borderRadius={"0.5rem"}
-                    value={formik.values.teacher}
-                    onChange={formik.handleChange}
-                  >
-                    {teachers.map((teacher) => (
-                      <option key={teacher._id} value={teacher._id}>
-                        {teacher.name}
-                      </option>
-                    ))}
-                  </Select>
-                  {formik.touched.teacher && formik.errors.teacher ? (
-                    <Box color="red" fontSize="sm">
-                      {formik.errors.teacher}
-                    </Box>
-                  ) : null}
-                </FormControl>
-                <FormControl id="course">
-                  <FormLabel fontSize={14}>Course</FormLabel>
-                  <Select
-                    placeholder="Select Course"
-                    name="course"
-                    borderRadius={"0.5rem"}
-                    value={formik.values.course}
-                    onChange={formik.handleChange}
-                  >
-                    {courses.map((course) => (
-                      <option key={course._id} value={course._id}>
-                        {course.name}
-                      </option>
-                    ))}
-                  </Select>
-                  {formik.touched.course && formik.errors.course ? (
-                    <Box color="red" fontSize="sm">
-                      {formik.errors.course}
-                    </Box>
-                  ) : null}
-                </FormControl>
                 <FormControl id="batch">
                   <FormLabel fontSize={14}>Batch</FormLabel>
                   <Select
@@ -326,7 +292,7 @@ export default function TimetableCalendar() {
                     name="batch"
                     borderRadius={"0.5rem"}
                     value={formik.values.batch}
-                    onChange={formik.handleChange}
+                    onChange={batchChangeHandler}
                   >
                     {batches.map((batch) => (
                       <option key={batch._id} value={batch._id}>
@@ -340,6 +306,52 @@ export default function TimetableCalendar() {
                     </Box>
                   ) : null}
                 </FormControl>
+                {selectedBatch && (
+                  <>
+                    <FormControl id="course">
+                      <FormLabel fontSize={14}>Course</FormLabel>
+                      <Select
+                        placeholder="Select Course"
+                        name="course"
+                        borderRadius={"0.5rem"}
+                        value={formik.values.course}
+                        onChange={formik.handleChange}
+                      >
+                        {selectedBatch.courses?.map((course) => (
+                          <option key={course._id} value={course._id}>
+                            {course.name}
+                          </option>
+                        ))}
+                      </Select>
+                      {formik.touched.course && formik.errors.course ? (
+                        <Box color="red" fontSize="sm">
+                          {formik.errors.course}
+                        </Box>
+                      ) : null}
+                    </FormControl>
+                    <FormControl id="teacher">
+                      <FormLabel fontSize={14}>Teacher</FormLabel>
+                      <Select
+                        placeholder="Select Teacher"
+                        name="teacher"
+                        borderRadius={"0.5rem"}
+                        value={formik.values.teacher}
+                        onChange={formik.handleChange}
+                      >
+                        {selectedBatch.teachers?.map((teacher) => (
+                          <option key={teacher._id} value={teacher._id}>
+                            {teacher.name}
+                          </option>
+                        ))}
+                      </Select>
+                      {formik.touched.teacher && formik.errors.teacher ? (
+                        <Box color="red" fontSize="sm">
+                          {formik.errors.teacher}
+                        </Box>
+                      ) : null}
+                    </FormControl>
+                  </>
+                )}
               </VStack>
             </ModalBody>
 

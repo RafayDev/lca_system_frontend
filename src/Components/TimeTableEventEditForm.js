@@ -29,6 +29,14 @@ function TimeTableEventEditForm({
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
   const { updateStatus } = useSelector((state) => state.timetable);
   const dispatch = useDispatch();
+
+  const [selectedBatch, setSelectedBatch] = useState(batches.find((batch) => batch._id === event.batch._id));
+
+  const batchChangeHandler = (e) => {
+    formik.handleChange(e);
+    setSelectedBatch(batches.find((batch) => batch._id === e.target.value));
+  };
+
   const formik = useFormik({
     initialValues: {
       day: event.day,
@@ -111,24 +119,24 @@ function TimeTableEventEditForm({
                 </Box>
               ) : null}
             </FormControl>
-            <FormControl id="teacher">
-              <FormLabel fontSize={14}>Teacher</FormLabel>
+            <FormControl id="batch">
+              <FormLabel fontSize={14}>Batch</FormLabel>
               <Select
-                placeholder="Select Teacher"
-                name="teacher"
+                placeholder="Select Batch"
+                name="batch"
                 borderRadius={"0.5rem"}
-                value={formik.values.teacher}
-                onChange={formik.handleChange}
+                value={formik.values.batch}
+                onChange={batchChangeHandler}
               >
-                {teachers.map((teacher) => (
-                  <option key={teacher._id} value={teacher._id}>
-                    {teacher.name}
+                {batches.map((batch) => (
+                  <option key={batch._id} value={batch._id}>
+                    {batch.name}
                   </option>
                 ))}
               </Select>
-              {formik.touched.teacher && formik.errors.teacher ? (
+              {formik.touched.batch && formik.errors.batch ? (
                 <Box color="red" fontSize="sm">
-                  {formik.errors.teacher}
+                  {formik.errors.batch}
                 </Box>
               ) : null}
             </FormControl>
@@ -141,7 +149,7 @@ function TimeTableEventEditForm({
                 value={formik.values.course}
                 onChange={formik.handleChange}
               >
-                {courses.map((course) => (
+                {selectedBatch.courses?.map((course) => (
                   <option key={course._id} value={course._id}>
                     {course.name}
                   </option>
@@ -153,24 +161,24 @@ function TimeTableEventEditForm({
                 </Box>
               ) : null}
             </FormControl>
-            <FormControl id="batch">
-              <FormLabel fontSize={14}>Batch</FormLabel>
+            <FormControl id="teacher">
+              <FormLabel fontSize={14}>Teacher</FormLabel>
               <Select
-                placeholder="Select Batch"
-                name="batch"
+                placeholder="Select Teacher"
+                name="teacher"
                 borderRadius={"0.5rem"}
-                value={formik.values.batch}
+                value={formik.values.teacher}
                 onChange={formik.handleChange}
               >
-                {batches.map((batch) => (
-                  <option key={batch._id} value={batch._id}>
-                    {batch.name}
+                {selectedBatch.teachers?.map((teacher) => (
+                  <option key={teacher._id} value={teacher._id}>
+                    {teacher.name}
                   </option>
                 ))}
               </Select>
-              {formik.touched.batch && formik.errors.batch ? (
+              {formik.touched.teacher && formik.errors.teacher ? (
                 <Box color="red" fontSize="sm">
-                  {formik.errors.batch}
+                  {formik.errors.teacher}
                 </Box>
               ) : null}
             </FormControl>

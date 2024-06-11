@@ -11,14 +11,31 @@ import {
   Spinner,
   Checkbox,
   VStack,
+  Input,
+  HStack,
+} from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
 } from "@chakra-ui/react";
 import Cookies from "js-cookie";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Check } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchCourses } from "../../Features/courseSlice";
-import { fetchStudentEnrollments, createEnrollment } from "../../Features/enrollmentSlice";
+import {
+  fetchStudentEnrollments,
+  createEnrollment,
+} from "../../Features/enrollmentSlice";
+import {
+  fetchBatches,
+  selectCurrentActiveBatch,
+} from "../../Features/batchSlice";
+import { fetchStudents } from "../../Features/studentSlice";
 
 const EnrollmentModal = ({ studentId }) => {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -27,42 +44,97 @@ const EnrollmentModal = ({ studentId }) => {
 
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
 
-  const courses = useSelector((state) => state.courses.courses);
-  const studentEnrollments = useSelector((state) => state.enrollments.studentEnrollments);
-  const { fetchStudentEnrollmentsStatus, createEnrollmentStatus } = useSelector((state) => state.enrollments);
+  const batches = useSelector((state) => state.batches.batches);
+  const activeBatch = useSelector(selectCurrentActiveBatch);
+  const studentEnrollments = useSelector(
+    (state) => state.enrollments.studentEnrollments
+  );
+  const { fetchStudentEnrollmentsStatus, createEnrollmentStatus } = useSelector(
+    (state) => state.enrollments
+  );
   const dispatch = useDispatch();
 
   const handleOpenModal = () => {
     dispatch(fetchStudentEnrollments({ authToken, studentId }))
       .unwrap()
       .then((data) => {
-        const enrolledCourseIds = data?.courses || [];
-        formik.setFieldValue("courses", enrolledCourseIds);
+        batches.forEach((batch) => {
+          formik.setFieldValue(
+            `batch-${batch._id}-courses`,
+            data.find((enrollment) => enrollment.batch === batch._id)?.courses || []
+          );
+          batch.courses.forEach((course) => {
+            formik.setFieldValue(
+              `fee-${batch._id}-${course._id}`,
+              data.find((enrollment) => enrollment.batch === batch._id)?.fees[
+                batch.courses.indexOf(course)
+              ] || course.fee || 0
+            );
+          });
+        });
       });
     onOpen();
   };
 
   useEffect(() => {
-    dispatch(fetchCourses({ authToken }));
+    dispatch(fetchBatches({ authToken }));
   }, []);
 
+  const prepareInitialValues = () => {
+    const initialValues = batches.reduce((acc, batch) => {
+      acc[`batch-${batch._id}-courses`] = [];
+      batch.courses.reduce((acc, course) => {
+        acc[`fee-${batch._id}-${course._id}`] = 0;
+        return acc;
+      }, acc);
+      return acc;
+    }, {});
+    return initialValues;
+  };
+
   const formik = useFormik({
-    initialValues: {
-      courses: studentEnrollments?.courses || [],
-    },
+    initialValues: prepareInitialValues(),
     enableReinitialize: true,
-    validationSchema: Yup.object({
-      courses: Yup.array().required("Required"),
-    }),
+    validationSchema: Yup.object().shape({}),
     onSubmit: async (values) => {
-      dispatch(createEnrollment({ authToken, studentId, courseIds: values.courses }))
-        .unwrap()
-        .then((data) => {
-          onClose();
-          dispatch(fetchStudentEnrollments({ authToken, studentId }));
+      let enrollments = [];
+      batches.map((batch) => {
+        enrollments.push({
+          batch: batch._id,
+          courses: values[`batch-${batch._id}-courses`] || [],
+          fees: batch.courses.map((course) => {
+            return values[`fee-${batch._id}-${course._id}`] || 0;
+          }),
         });
+      });
+      dispatch(
+        createEnrollment({
+          authToken,
+          studentId,
+          enrollments,
+        })
+      ).then(() => {
+        dispatch(fetchStudents({ authToken }));
+        onClose();
+      });
     },
   });
+
+  const handleCheckboxChange = (e, batchId, courseId) => {
+    const valueArray = formik.values[`batch-${batchId}-courses`] || [];
+    if (e.target.checked) {
+      formik.setFieldValue(`batch-${batchId}-courses`, [...valueArray, courseId]);
+    } else {
+      formik.setFieldValue(
+        `batch-${batchId}-courses`,
+        valueArray.filter((id) => id !== courseId)
+      );
+    }
+  };
+
+  const handleInputChange = (e, batchId, courseId) => {
+    formik.setFieldValue(`fee-${batchId}-${courseId}`, e.target.value);
+  };
 
   return (
     <>
@@ -74,35 +146,105 @@ const EnrollmentModal = ({ studentId }) => {
         <span>Enrollments</span>
       </button>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} size="2xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader className="text-xl font-semibold">
-            Student Course Enrollment Management
+            Course Enrollment
           </ModalHeader>
           <ModalCloseButton />
           <form onSubmit={formik.handleSubmit}>
             <ModalBody>
-              <VStack align="start">
-                {fetchStudentEnrollmentsStatus === "loading" ? (
-                  <Spinner />
-                ) : (
-                  courses.map((course) => (
-                    <Checkbox
-                      key={course._id}
-                      id={course._id}
-                      name="courses"
-                      value={course._id}
-                      onChange={formik.handleChange}
-                      isChecked={formik.values.courses?.includes(
-                        course._id
-                      )}
-                    >
-                      {course.name}
-                    </Checkbox>
-                  ))
-                )}
-              </VStack>
+              {fetchStudentEnrollmentsStatus === "loading" ? (
+                <Spinner />
+              ) : (
+                <Accordion allowMultiple>
+                  {batches.map((batch) => (
+                    <AccordionItem key={batch._id}>
+                      <h2>
+                        <AccordionButton
+                          style={{
+                            backgroundColor:
+                              activeBatch._id === batch._id ? "#FFCB8280" : "",
+                          }}
+                        >
+                          <Box as="span" flex="1" textAlign="left">
+                            {batch.name}
+                          </Box>
+                          <AccordionIcon />
+                        </AccordionButton>
+                      </h2>
+                      <AccordionPanel py={4}>
+                        <VStack spacing={2} align="stretch">
+                          {batch?.courses.length === 0 && (
+                            <Box py={2} px={3} borderWidth="1px" rounded="md">
+                              No courses available
+                            </Box>
+                          )}
+                          {batch?.courses.map((course) => (
+                            <HStack
+                              key={batch._id + "," + course._id}
+                              spacing={2}
+                            >
+                              <Checkbox
+                                colorScheme="green"
+                                py={2}
+                                px={3}
+                                borderWidth="1px"
+                                className="flex-1"
+                                rounded="md"
+                                id={
+                                  "batch-" +
+                                  batch._id +
+                                  "-courses-" +
+                                  course._id
+                                }
+                                name={"batch-" + batch._id + "-courses"}
+                                value={course._id}
+                                onChange={(e) =>
+                                  handleCheckboxChange(e, batch._id, course._id)
+                                }
+                                borderColor={
+                                  formik.values[
+                                    "batch-" + batch._id + "-courses"
+                                  ]?.includes(course._id)
+                                    ? "#7AEF85"
+                                    : "#E0E8EC"
+                                }
+                                isChecked={formik.values[
+                                  "batch-" + batch._id + "-courses"
+                                ]?.includes(course._id)}
+                              >
+                                {course.name}
+                              </Checkbox>
+                              <Input
+                                isDisabled={
+                                  !formik.values[
+                                    "batch-" + batch._id + "-courses"
+                                  ]?.includes(course._id)
+                                }
+                                type="number"
+                                min="0"
+                                borderRadius={"0.5rem"}
+                                placeholder="Fee"
+                                className="max-w-24 w-full"
+                                id={"fee-" + batch._id + "-" + course._id}
+                                name={"fee-" + batch._id + "-" + course._id}
+                                value={
+                                  formik.values["fee-" + batch._id + "-" + course._id]
+                                }
+                                onChange={(e) =>
+                                  handleInputChange(e, batch._id, course._id)
+                                }
+                              />
+                            </HStack>
+                          ))}
+                        </VStack>
+                      </AccordionPanel>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              )}
             </ModalBody>
             <ModalFooter>
               <Button

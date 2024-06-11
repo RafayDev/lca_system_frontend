@@ -14,7 +14,7 @@ import AddModel from "./AddModel";
 import DeleteModal from "./DeleteModal";
 import UpdateModal from "./UpdateModal";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchBatches } from "../../Features/batchSlice";
+import { fetchBatches, selectCurrentActiveBatch } from "../../Features/batchSlice";
 import QrCodeModal from "../../Components/Modals/Student/QrCodeModal";
 import { Plus } from "lucide-react";
 import { fetchStudents, selectAllStudents } from "../../Features/studentSlice";
@@ -29,6 +29,7 @@ function Student() {
 
   const { fetchStatus } = useSelector((state) => state.students);
   const students = useSelector(selectAllStudents);
+  const activeBatch = useSelector(selectCurrentActiveBatch);
   const dispatch = useDispatch();
 
   const hasPermission = (permissionsToCheck) => {
@@ -72,13 +73,12 @@ function Student() {
                 <Th>Email</Th>
                 <Th>Phone</Th>
                 <Th>Paid Fee</Th>
-                <Th>Batch</Th>
                 <Th isNumeric>Actions</Th>
               </Tr>
             </Thead>
             <Tbody>
               {fetchStatus === "loading" ? (
-                <TableRowLoading nOfColumns={7} actions={["w-10", "w-10"]} />
+                <TableRowLoading nOfColumns={6} actions={["w-10", "w-10", "w-20"]} />
               ) : (
                 students.map((student) => (
                   <Tr key={student._id}>
@@ -90,7 +90,6 @@ function Student() {
                     <Td>{student.email}</Td>
                     <Td>{student.phone}</Td>
                     <Td>{student.paid_fee || "N/A"}</Td>
-                    <Td>{student.batch.name || "N/A"}</Td>
                     <Td className="space-x-3" isNumeric>
                       <div className="flex flex-nowrap justify-end items-center gap-2">
                         {hasPermission(["Update_Student"]) && (

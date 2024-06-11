@@ -30,12 +30,12 @@ function AddModel({ isOpen, onClose }) {
     initialValues: {
       name: "",
       description: "",
+      fee: "",
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Required"),
       description: Yup.string().required("Required"),
-      // password: Yup.string().required("Required"),
-      // role: Yup.string().required("Required"),
+      fee: Yup.number().required("Required"),
     }),
     onSubmit: async (values) => {
       dispatch(addCourse({ authToken, course: values }))
@@ -82,6 +82,22 @@ function AddModel({ isOpen, onClose }) {
                 {formik.touched.description && formik.errors.description ? (
                   <Box color="red" fontSize="sm">
                     {formik.errors.description}
+                  </Box>
+                ) : null}
+              </FormControl>
+              <FormControl id="fee">
+                <FormLabel fontSize={14}>Fee</FormLabel>
+                <Input
+                  type="number"
+                  min="0"
+                  name="fee"
+                  borderRadius={"0.5rem"}
+                  value={formik.values.fee}
+                  onChange={formik.handleChange}
+                />
+                {formik.touched.fee && formik.errors.fee ? (
+                  <Box color="red" fontSize="sm">
+                    {formik.errors.fee}
                   </Box>
                 ) : null}
               </FormControl>

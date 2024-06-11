@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { createStandaloneToast } from "@chakra-ui/react";
 import { config } from "../utlls/config.js";
+import moment from "moment";
 
 const { toast } = createStandaloneToast();
 
@@ -313,6 +314,12 @@ const batchSlice = createSlice({
 export const selectAllBatches = (state) => state.batches.batches;
 export const selectBatchCourses = (state) => state.batches.batchCourses;
 export const selectBatchTeachers = (state) => state.batches.batchTeachers;
+
+export const selectCurrentActiveBatch = (state) => {
+  const batches = state.batches.batches;
+  const currentDate = moment();
+  return batches.find((batch) => currentDate.isBetween(moment(batch.startdate), moment(batch.enddate)));
+};
 
 export {
   fetchBatches,

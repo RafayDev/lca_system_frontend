@@ -14,7 +14,7 @@ import DeleteModal from "./DeleteModal";
 import UpdateModal from "./UpdateModal";
 import { Plus } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchBatches, selectAllBatches } from "../../Features/batchSlice";
+import { fetchBatches, selectAllBatches, selectCurrentActiveBatch } from "../../Features/batchSlice";
 import TableRowLoading from "../../Components/TableRowLoading";
 import AssignCoursesModal from "./AssignCoursesModal";
 import AssignTeachersModal from "./AssignTeachersModal";
@@ -28,6 +28,7 @@ function Batch() {
 
   const { fetchStatus } = useSelector((state) => state.batches);
   const batches = useSelector(selectAllBatches);
+  const activeBatch = useSelector(selectCurrentActiveBatch);
   const dispatch = useDispatch();
 
   const hasPermission = (permissionsToCheck) => {
@@ -83,7 +84,7 @@ function Batch() {
                 />
               ) : (
                 batches.map((batch) => (
-                  <Tr key={batch._id}>
+                  <Tr key={batch._id} className={activeBatch._id === batch._id ? "bg-[#FFCB82]/20" : ""}>
                     <Td>{batches.indexOf(batch) + 1}</Td>
                     <Td>{batch.name}</Td>
                     <Td>{batch.description}</Td>

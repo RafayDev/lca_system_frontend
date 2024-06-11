@@ -32,7 +32,7 @@ const fetchEnrollments = createAsyncThunk(
 const createEnrollment = createAsyncThunk(
     'enrollments/createEnrollment',
     async (payload) => {
-        const { authToken, studentId, batchId, courseIds } = payload;
+        const { authToken, studentId, enrollments } = payload;
         const response = await fetch(`${BASE_URL}/enrollments/add`, {
             method: 'POST',
             headers: {
@@ -41,8 +41,7 @@ const createEnrollment = createAsyncThunk(
             },
             body: JSON.stringify({
                 student_id: studentId,
-                batch_id: batchId,
-                course_ids: courseIds,
+                enrollments,
             }),
         });
         const data = await response.json();

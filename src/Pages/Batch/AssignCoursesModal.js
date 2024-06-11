@@ -30,7 +30,9 @@ const AssignCoursesModal = ({ batchId }) => {
 
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
 
-  const { assignCoursesStatus, fetchBatchCoursesStatus } = useSelector((state) => state.batches);
+  const { assignCoursesStatus, fetchBatchCoursesStatus } = useSelector(
+    (state) => state.batches
+  );
   const batchCourses = useSelector(selectBatchCourses);
   const courses = useSelector(selectAllCourses);
   const dispatch = useDispatch();
@@ -87,7 +89,6 @@ const AssignCoursesModal = ({ batchId }) => {
           <ModalCloseButton />
           <form onSubmit={formik.handleSubmit}>
             <ModalBody>
-              {/* courses name list with checkbox */}
               <div>
                 {fetchBatchCoursesStatus === "loading" ? (
                   <Spinner />

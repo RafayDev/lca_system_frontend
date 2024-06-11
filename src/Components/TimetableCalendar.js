@@ -68,7 +68,6 @@ export default function TimetableCalendar() {
   const [eventDetails, setEventDetails] = useState({});
 
   const [selectedBatch, setSelectedBatch] = useState("");
-  console.log("selectedBatch", selectedBatch);
 
   const { fetchStatus, addStatus, deleteStatus } = useSelector(
     (state) => state.timetable

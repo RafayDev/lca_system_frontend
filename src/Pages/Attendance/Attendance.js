@@ -29,14 +29,10 @@ function Attendance() {
   const [formBatch, setFormBatch] = useState("");
   const [formDate, setFormDate] = useState("");
 
-  console.log(formCourse, formBatch, formDate);
-
   const attendances = useSelector(selectAttendances);
   const batches = useSelector(selectAllBatches);
   const { status } = useSelector((state) => state.attendance);
   const dispatch = useDispatch();
-
-  console.log(batches);
 
   useEffect(() => {
     dispatch(fetchBatches({ authToken }));

@@ -65,13 +65,14 @@ function Course() {
                 <Th>No</Th>
                 <Th>Name</Th>
                 <Th>Description</Th>
+                <Th>Course Fee</Th>
                 <Th isNumeric>Action</Th>
               </Tr>
             </Thead>
             <Tbody>
               {fetchStatus === "loading" ? (
                 <TableRowLoading
-                  nOfColumns={3}
+                  nOfColumns={4}
                   actions={["w-10", "w-10"]}
                 />
               ) : (
@@ -80,6 +81,7 @@ function Course() {
                     <Td>{courses.indexOf(course) + 1}</Td>
                     <Td>{course.name}</Td>
                     <Td>{course.description}</Td>
+                    <Td>{course.fee || "N/A"}</Td>
                     <Td className="space-x-3" isNumeric>
                       {hasPermission(["Update_Course"]) && (
                         <UpdateModal course={course} />

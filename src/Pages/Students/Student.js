@@ -72,13 +72,15 @@ function Student() {
                 <Th>Name</Th>
                 <Th>Email</Th>
                 <Th>Phone</Th>
+                <Th>Total Fee</Th>
                 <Th>Paid Fee</Th>
+                <Th>Remaining Fee</Th>
                 <Th isNumeric>Actions</Th>
               </Tr>
             </Thead>
             <Tbody>
               {fetchStatus === "loading" ? (
-                <TableRowLoading nOfColumns={6} actions={["w-10", "w-10", "w-20"]} />
+                <TableRowLoading nOfColumns={8} actions={["w-10", "w-10", "w-20"]} />
               ) : (
                 students.map((student) => (
                   <Tr key={student._id}>
@@ -89,7 +91,9 @@ function Student() {
                     <Td>{student.name}</Td>
                     <Td>{student.email}</Td>
                     <Td>{student.phone}</Td>
-                    <Td>{student.paid_fee || "N/A"}</Td>
+                    <Td>{student.total_fee}</Td>
+                    <Td>{student.paid_fee}</Td>
+                    <Td>{student.pending_fee}</Td>
                     <Td className="space-x-3" isNumeric>
                       <div className="flex flex-nowrap justify-end items-center gap-2">
                         {hasPermission(["Update_Student"]) && (

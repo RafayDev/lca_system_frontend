@@ -35,15 +35,11 @@ function AddStudnet({ isOpen, onClose }) {
       name: "",
       email: "",
       phone: "",
-      paid_fee: "",
-      batch: "",
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Required"),
       email: Yup.string().email("Invalid email address").required("Required"),
       phone: Yup.string().required("Required"),
-      paid_fee: Yup.number().required("Required"),
-      batch: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
       dispatch(addStudent({ authToken, student: values }))
@@ -110,42 +106,6 @@ function AddStudnet({ isOpen, onClose }) {
                   {formik.touched.phone && formik.errors.phone ? (
                     <Box color="red" fontSize="sm">
                       {formik.errors.phone}
-                    </Box>
-                  ) : null}
-                </FormControl>
-                <FormControl id="paid_fee">
-                  <FormLabel fontSize={14}>Paid Fee</FormLabel>
-                  <Input
-                    type="number"
-                    name="paid_fee"
-                    borderRadius={"0.5rem"}
-                    value={formik.values.paid_fee}
-                    onChange={formik.handleChange}
-                  />
-                  {formik.touched.paid_fee && formik.errors.paid_fee ? (
-                    <Box color="red" fontSize="sm">
-                      {formik.errors.paid_fee}
-                    </Box>
-                  ) : null}
-                </FormControl>
-                <FormControl id="batch">
-                  <FormLabel fontSize={14}>Batch</FormLabel>
-                  <Select
-                    placeholder="Select Batch"
-                    name="batch"
-                    borderRadius={"0.5rem"}
-                    onChange={formik.handleChange}
-                    value={formik.values.batch}
-                  >
-                    {batches.map((batch) => (
-                      <option key={batch._id} value={batch._id}>
-                        {batch.name}
-                      </option>
-                    ))}
-                  </Select>
-                  {formik.touched.batch && formik.errors.batch ? (
-                    <Box color="red" fontSize="sm">
-                      {formik.errors.batch}
                     </Box>
                   ) : null}
                 </FormControl>

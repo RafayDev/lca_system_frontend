@@ -61,14 +61,17 @@ const EnrollmentModal = ({ studentId }) => {
         batches.forEach((batch) => {
           formik.setFieldValue(
             `batch-${batch._id}-courses`,
-            data.find((enrollment) => enrollment.batch === batch._id)?.courses || []
+            data.find((enrollment) => enrollment.batch === batch._id)
+              ?.courses || []
           );
           batch.courses.forEach((course) => {
             formik.setFieldValue(
               `fee-${batch._id}-${course._id}`,
               data.find((enrollment) => enrollment.batch === batch._id)?.fees[
                 batch.courses.indexOf(course)
-              ] || course.fee || 0
+              ] ||
+                course.fee ||
+                0
             );
           });
         });
@@ -123,7 +126,10 @@ const EnrollmentModal = ({ studentId }) => {
   const handleCheckboxChange = (e, batchId, courseId) => {
     const valueArray = formik.values[`batch-${batchId}-courses`] || [];
     if (e.target.checked) {
-      formik.setFieldValue(`batch-${batchId}-courses`, [...valueArray, courseId]);
+      formik.setFieldValue(`batch-${batchId}-courses`, [
+        ...valueArray,
+        courseId,
+      ]);
     } else {
       formik.setFieldValue(
         `batch-${batchId}-courses`,
@@ -146,7 +152,12 @@ const EnrollmentModal = ({ studentId }) => {
         <span>Enrollments</span>
       </button>
 
-      <Modal isOpen={isOpen} onClose={onClose} size="2xl">
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        size="2xl"
+        scrollBehavior="inside"
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader className="text-xl font-semibold">
@@ -158,92 +169,108 @@ const EnrollmentModal = ({ studentId }) => {
               {fetchStudentEnrollmentsStatus === "loading" ? (
                 <Spinner />
               ) : (
-                <Accordion allowMultiple>
-                  {batches.map((batch) => (
-                    <AccordionItem key={batch._id}>
-                      <h2>
-                        <AccordionButton
-                          style={{
-                            backgroundColor:
-                              activeBatch._id === batch._id ? "#FFCB8280" : "",
-                          }}
-                        >
-                          <Box as="span" flex="1" textAlign="left">
-                            {batch.name}
-                          </Box>
-                          <AccordionIcon />
-                        </AccordionButton>
-                      </h2>
-                      <AccordionPanel py={4}>
-                        <VStack spacing={2} align="stretch">
-                          {batch?.courses.length === 0 && (
-                            <Box py={2} px={3} borderWidth="1px" rounded="md">
-                              No courses available
+                <VStack
+                  spacing={4}
+                  align="stretch"
+                  w="full"
+                  maxH="60vh"
+                  overflowY="auto"
+                >
+                  <Accordion allowToggle w="full">
+                    {batches.map((batch) => (
+                      <AccordionItem key={batch._id}>
+                        <h2>
+                          <AccordionButton
+                            style={{
+                              backgroundColor:
+                                activeBatch._id === batch._id
+                                  ? "#FFCB8280"
+                                  : "",
+                            }}
+                          >
+                            <Box as="span" flex="1" textAlign="left">
+                              {batch.name}
                             </Box>
-                          )}
-                          {batch?.courses.map((course) => (
-                            <HStack
-                              key={batch._id + "," + course._id}
-                              spacing={2}
-                            >
-                              <Checkbox
-                                colorScheme="green"
-                                py={2}
-                                px={3}
-                                borderWidth="1px"
-                                className="flex-1"
-                                rounded="md"
-                                id={
-                                  "batch-" +
-                                  batch._id +
-                                  "-courses-" +
-                                  course._id
-                                }
-                                name={"batch-" + batch._id + "-courses"}
-                                value={course._id}
-                                onChange={(e) =>
-                                  handleCheckboxChange(e, batch._id, course._id)
-                                }
-                                borderColor={
-                                  formik.values[
-                                    "batch-" + batch._id + "-courses"
-                                  ]?.includes(course._id)
-                                    ? "#7AEF85"
-                                    : "#E0E8EC"
-                                }
-                                isChecked={formik.values[
-                                  "batch-" + batch._id + "-courses"
-                                ]?.includes(course._id)}
+                            <AccordionIcon />
+                          </AccordionButton>
+                        </h2>
+                        <AccordionPanel py={4}>
+                          <VStack spacing={2} align="stretch">
+                            {batch?.courses.length === 0 && (
+                              <Box py={2} px={3} borderWidth="1px" rounded="md">
+                                No courses available
+                              </Box>
+                            )}
+                            {batch?.courses.map((course) => (
+                              <HStack
+                                key={batch._id + "," + course._id}
+                                spacing={2}
                               >
-                                {course.name}
-                              </Checkbox>
-                              <Input
-                                isDisabled={
-                                  !formik.values[
+                                <Checkbox
+                                  colorScheme="green"
+                                  py={2}
+                                  px={3}
+                                  borderWidth="1px"
+                                  className="flex-1"
+                                  rounded="md"
+                                  borderColor={
+                                    formik.values[
+                                      "batch-" + batch._id + "-courses"
+                                    ]?.includes(course._id)
+                                      ? "#7AEF85"
+                                      : "#E0E8EC"
+                                  }
+                                  id={
+                                    "batch-" +
+                                    batch._id +
+                                    "-courses-" +
+                                    course._id
+                                  }
+                                  name={"batch-" + batch._id + "-courses"}
+                                  value={course._id}
+                                  onChange={(e) =>
+                                    handleCheckboxChange(
+                                      e,
+                                      batch._id,
+                                      course._id
+                                    )
+                                  }
+                                  isChecked={formik.values[
                                     "batch-" + batch._id + "-courses"
-                                  ]?.includes(course._id)
-                                }
-                                type="number"
-                                min="0"
-                                borderRadius={"0.5rem"}
-                                placeholder="Fee"
-                                className="max-w-24 w-full"
-                                id={"fee-" + batch._id + "-" + course._id}
-                                name={"fee-" + batch._id + "-" + course._id}
-                                value={
-                                  formik.values["fee-" + batch._id + "-" + course._id]
-                                }
-                                onChange={(e) =>
-                                  handleInputChange(e, batch._id, course._id)
-                                }
-                              />
-                            </HStack>
-                          ))}
-                        </VStack>
-                      </AccordionPanel>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
+                                  ]?.includes(course._id)}
+                                >
+                                  {course.name}
+                                </Checkbox>
+                                <Input
+                                  isDisabled={
+                                    !formik.values[
+                                      "batch-" + batch._id + "-courses"
+                                    ]?.includes(course._id)
+                                  }
+                                  type="number"
+                                  min="0"
+                                  borderRadius={"0.5rem"}
+                                  placeholder="Fee"
+                                  className="max-w-24 w-full"
+                                  id={"fee-" + batch._id + "-" + course._id}
+                                  name={"fee-" + batch._id + "-" + course._id}
+                                  value={
+                                    formik.values[
+                                      "fee-" + batch._id + "-" + course._id
+                                    ]
+                                  }
+                                  onChange={(e) =>
+                                    handleInputChange(e, batch._id, course._id)
+                                  }
+                                />
+                              </HStack>
+                            ))}
+                          </VStack>
+                        </AccordionPanel>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </VStack>
               )}
             </ModalBody>
             <ModalFooter>

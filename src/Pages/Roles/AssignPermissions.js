@@ -26,7 +26,7 @@ import {
   selectAllAssignedPermissions,
   fetchAssignedPermissions,
   assignPermissions,
-  fetchRoles
+  fetchRoles,
 } from "../../Features/roleSlice";
 
 const AssignPermissions = ({ roleId }) => {
@@ -65,7 +65,13 @@ const AssignPermissions = ({ roleId }) => {
       permissions: Yup.array().required("Required"),
     }),
     onSubmit: async (values) => {
-      dispatch(assignPermissions({ authToken, roleId, permissions: values.permissions }))
+      dispatch(
+        assignPermissions({
+          authToken,
+          roleId,
+          permissions: values.permissions,
+        })
+      )
         .unwrap()
         .then((data) => {
           onClose();
@@ -84,7 +90,7 @@ const AssignPermissions = ({ roleId }) => {
         <span>Permissions</span>
       </button>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader className="text-xl font-semibold">
@@ -93,13 +99,19 @@ const AssignPermissions = ({ roleId }) => {
           <ModalCloseButton />
           <form onSubmit={formik.handleSubmit}>
             <ModalBody>
-              <VStack align="start">
-                {fetchAssignedPermissionsStatus === "loading" ? (
-                  <Spinner />
-                ) : (
-                  permissions.map((permission) => (
+              {fetchAssignedPermissionsStatus === "loading" ? (
+                <Spinner />
+              ) : (
+                <VStack spacing={2} align="stretch" w="full" maxH="60vh" overflowY="auto">
+                  {permissions.map((permission) => (
                     <Checkbox
                       key={permission._id}
+                      colorScheme="green"
+                      py={2}
+                      px={3}
+                      borderWidth="1px"
+                      className="flex-1"
+                      rounded="md"
                       id={permission._id}
                       name="permissions"
                       value={permission._id}
@@ -110,9 +122,9 @@ const AssignPermissions = ({ roleId }) => {
                     >
                       {permission.name}
                     </Checkbox>
-                  ))
-                )}
-              </VStack>
+                  ))}
+                </VStack>
+              )}
             </ModalBody>
             <ModalFooter>
               <Button

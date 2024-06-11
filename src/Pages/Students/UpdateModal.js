@@ -22,7 +22,7 @@ import { useSelector } from "react-redux";
 import { selectAllBatches } from "../../Features/batchSlice.js";
 import { Pen } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { updateStudent, fetchStudents } from "../../Features/studentSlice";
+import { updateStudent, fetchStudents, basicUpdate } from "../../Features/studentSlice";
 
 function AddModel({ student }) {
   const batches = useSelector(selectAllBatches);
@@ -39,19 +39,16 @@ function AddModel({ student }) {
   const formik = useFormik({
     initialValues: {
       name: student.name,
-      email: student.email,
       phone: student.phone,
-      batch: student.batch,
+      paid_fee: student.paid_fee,
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Required"),
-      email: Yup.string().email("Invalid email address").required("Required"),
       phone: Yup.string().required("Required"),
-      batch: Yup.string().required("Required"),
-      // role: Yup.string().required("Required"),
+      paid_fee: Yup.number().required("Required"),
     }),
     onSubmit: async (values) => {
-      dispatch(updateStudent({ authToken, student: values }))
+      dispatch(basicUpdate({ authToken, studentId: student._id, student: values }))
         .unwrap()
         .then(() => {
           dispatch(fetchStudents({ authToken }));
@@ -92,21 +89,6 @@ function AddModel({ student }) {
                     </Box>
                   ) : null}
                 </FormControl>
-                <FormControl id="email">
-                  <FormLabel fontSize={14}>Email</FormLabel>
-                  <Input
-                    type="email"
-                    name="email"
-                    borderRadius={"0.5rem"}
-                    value={formik.values.email}
-                    onChange={formik.handleChange}
-                  />
-                  {formik.touched.email && formik.errors.email ? (
-                    <Box color="red" fontSize="sm">
-                      {formik.errors.email}
-                    </Box>
-                  ) : null}
-                </FormControl>
                 <FormControl id="phone">
                   <FormLabel fontSize={14}>Phone</FormLabel>
                   <Input
@@ -122,28 +104,19 @@ function AddModel({ student }) {
                     </Box>
                   ) : null}
                 </FormControl>
-                <FormControl id="batch">
-                  <FormLabel fontSize={14}>Batch</FormLabel>
-                  <Select
-                    placeholder="Select Batch"
-                    name="batch"
+                <FormControl id="paid_fee">
+                  <FormLabel fontSize={14}>Paid Fee</FormLabel>
+                  <Input
+                    type="number"
+                    min="0"
+                    name="paid_fee"
                     borderRadius={"0.5rem"}
+                    value={formik.values.paid_fee}
                     onChange={formik.handleChange}
-                    value={formik.values.batch}
-                  >
-                    {batches.map((batch) => (
-                      <option
-                        key={batch._id}
-                        value={batch._id}
-                        selected={batch._id === student.batch}
-                      >
-                        {batch.name}
-                      </option>
-                    ))}
-                  </Select>
-                  {formik.touched.batch && formik.errors.batch ? (
+                  />
+                  {formik.touched.password && formik.errors.paid_fee ? (
                     <Box color="red" fontSize="sm">
-                      {formik.errors.batch}
+                      {formik.errors.paid_fee}
                     </Box>
                   ) : null}
                 </FormControl>
@@ -169,7 +142,6 @@ function AddModel({ student }) {
                 }}
                 fontWeight={"500"}
                 type="submit"
-                isDisabled={true}
                 loadingText="Updating"
                 isLoading={updateStatus === "loading"}
               >

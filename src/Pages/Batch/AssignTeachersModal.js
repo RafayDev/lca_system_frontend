@@ -9,6 +9,8 @@ import {
   ModalCloseButton,
   Button,
   Spinner,
+  Checkbox,
+  VStack,
 } from "@chakra-ui/react";
 import Cookies from "js-cookie";
 import { useFormik } from "formik";
@@ -30,7 +32,9 @@ const AssignTeachersModal = ({ batchId }) => {
 
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
 
-  const { assignTeachersStatus, fetchBatchTeachersStatus } = useSelector((state) => state.batches);
+  const { assignTeachersStatus, fetchBatchTeachersStatus } = useSelector(
+    (state) => state.batches
+  );
   const batchTeachers = useSelector(selectBatchTeachers);
   const teachers = useSelector(selectAllTeachers);
   const dispatch = useDispatch();
@@ -81,7 +85,7 @@ const AssignTeachersModal = ({ batchId }) => {
         <span>Teachers</span>
       </button>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader className="text-xl font-semibold">
@@ -95,28 +99,32 @@ const AssignTeachersModal = ({ batchId }) => {
                 {fetchBatchTeachersStatus === "loading" ? (
                   <Spinner />
                 ) : (
-                  teachers.map((teacher) => (
-                    <div
-                      key={teacher._id}
-                      className="flex items-center justify-between"
-                    >
-                      <label
-                        htmlFor={teacher._id}
-                        className="flex items-center"
+                  <VStack spacing={2} align="stretch" w="full" maxH="60vh" overflowY="auto">
+                    {teachers.map((teacher) => (
+                      <Checkbox
+                        key={teacher._id}
+                        colorScheme="green"
+                        py={2}
+                        px={3}
+                        borderWidth="1px"
+                        className="flex-1"
+                        rounded="md"
+                        type="checkbox"
+                        id={teacher._id}
+                        name="teachers"
+                        value={teacher._id}
+                        onChange={formik.handleChange}
+                        isChecked={formik.values.teachers.includes(teacher._id)}
+                        borderColor={
+                          formik.values.teachers.includes(teacher._id)
+                            ? "#7AEF85"
+                            : "#CBD5E0"
+                        }
                       >
-                        <input
-                          type="checkbox"
-                          id={teacher._id}
-                          name="teachers"
-                          value={teacher._id}
-                          onChange={formik.handleChange}
-                          className="mr-2"
-                          checked={formik.values.teachers.includes(teacher._id)}
-                        />
                         {teacher.name}
-                      </label>
-                    </div>
-                  ))
+                      </Checkbox>
+                    ))}
+                  </VStack>
                 )}
               </div>
             </ModalBody>

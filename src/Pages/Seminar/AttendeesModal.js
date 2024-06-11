@@ -120,7 +120,7 @@ const AttendeesModal = ({ seminar }) => {
                 <Spinner />
               </div>
             ) : (
-              <div className="w-full bg-white rounded-xl border border-[#E0E8EC]">
+              <div className="w-full bg-white rounded-xl border border-[#E0E8EC] overflow-auto max-h-[50vh]">
                 {seminarAttendees.length === 0 ? (
                   <div className="p-4 text-center">No attendees found</div>
                 ) : (

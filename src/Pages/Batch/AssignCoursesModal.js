@@ -9,6 +9,8 @@ import {
   ModalCloseButton,
   Button,
   Spinner,
+  Checkbox,
+  VStack,
 } from "@chakra-ui/react";
 import Cookies from "js-cookie";
 import { useFormik } from "formik";
@@ -80,7 +82,7 @@ const AssignCoursesModal = ({ batchId }) => {
         <span>Courses</span>
       </button>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader className="text-xl font-semibold">
@@ -93,25 +95,32 @@ const AssignCoursesModal = ({ batchId }) => {
                 {fetchBatchCoursesStatus === "loading" ? (
                   <Spinner />
                 ) : (
-                  courses.map((course) => (
-                    <div
-                      key={course._id}
-                      className="flex items-center justify-between"
-                    >
-                      <label htmlFor={course._id} className="flex items-center">
-                        <input
-                          type="checkbox"
-                          id={course._id}
-                          name="courses"
-                          value={course._id}
-                          onChange={formik.handleChange}
-                          className="mr-2"
-                          checked={formik.values.courses.includes(course._id)}
-                        />
+                  <VStack spacing={2} align="stretch" w="full" maxH="60vh" overflowY="auto">
+                    {courses.map((course) => (
+                      <Checkbox
+                        key={course._id}
+                        colorScheme="green"
+                        py={2}
+                        px={3}
+                        borderWidth="1px"
+                        className="flex-1"
+                        rounded="md"
+                        type="checkbox"
+                        id={course._id}
+                        name="courses"
+                        value={course._id}
+                        onChange={formik.handleChange}
+                        isChecked={formik.values.courses.includes(course._id)}
+                        borderColor={
+                          formik.values.courses.includes(course._id)
+                            ? "#7AEF85"
+                            : "#E0E8EC"
+                        }
+                      >
                         {course.name}
-                      </label>
-                    </div>
-                  ))
+                      </Checkbox>
+                    ))}
+                  </VStack>
                 )}
               </div>
             </ModalBody>

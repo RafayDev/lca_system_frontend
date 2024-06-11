@@ -55,6 +55,20 @@ const updateStudent = createAsyncThunk('students/updateStudent', async (payload)
     return data;
 });
 
+const basicUpdate = createAsyncThunk('students/basicUpdate', async (payload) => {
+    const { authToken, studentId, student } = payload;
+    const response = await fetch(`${BASE_URL}/students/basic-update/${studentId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify(student),
+    });
+    const data = await response.json();
+    return data;
+});
+
 const deleteStudent = createAsyncThunk('students/deleteStudent', async (payload) => {
     const { authToken, studentId } = payload;
     const response = await fetch(`${BASE_URL}/students/delete/${studentId}`, {
@@ -123,6 +137,24 @@ const studentSlice = createSlice({
                 state.error = action.error.message;
             })
 
+            // Basic update student
+            .addCase(basicUpdate.pending, (state) => {
+                state.updateStatus = 'loading';
+            })
+            .addCase(basicUpdate.fulfilled, (state, action) => {
+                state.updateStatus = 'success';
+                toast({
+                    title: "Student updated successfully!",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                });
+            })
+            .addCase(basicUpdate.rejected, (state, action) => {
+                state.updateStatus = 'failure';
+                state.error = action.error.message;
+            })
+
             // Delete student
             .addCase(deleteStudent.pending, (state) => {
                 state.deleteStatus = 'loading';
@@ -145,6 +177,6 @@ const studentSlice = createSlice({
 
 export const selectAllStudents = (state) => state.students.students;
 
-export { fetchStudents, addStudent, updateStudent, deleteStudent };
+export { fetchStudents, addStudent, updateStudent, basicUpdate, deleteStudent };
 
 export default studentSlice.reducer;

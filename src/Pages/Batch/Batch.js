@@ -69,7 +69,6 @@ function Batch() {
                 <Th>No</Th>
                 <Th>Name</Th>
                 <Th>Description</Th>
-                <Th>Batch Fee</Th>
                 <Th>Batch Type</Th>
                 <Th>Start Date</Th>
                 <Th>End Date</Th>
@@ -88,7 +87,6 @@ function Batch() {
                     <Td>{batches.indexOf(batch) + 1}</Td>
                     <Td>{batch.name}</Td>
                     <Td>{batch.description}</Td>
-                    <Td>{batch.batch_fee ? batch.batch_fee + " Rs" : "N/A"}</Td>
                     <Td>{batch.batch_type ? batch.batch_type : "N/A"}</Td>
                     <Td>{batch.startdate}</Td>
                     <Td>{batch.enddate}</Td>

@@ -30,7 +30,6 @@ function AddModel({ isOpen, onClose }) {
     initialValues: {
       name: "",
       description: "",
-      batch_fee: null,
       batch_type: "",
       startdate: "",
       enddate: "",
@@ -38,7 +37,6 @@ function AddModel({ isOpen, onClose }) {
     validationSchema: Yup.object({
       name: Yup.string().required("Required"),
       description: Yup.string().required("Required"),
-      batch_fee: Yup.number().min(0).required("Required"),
       startdate: Yup.string().required("Required"),
       enddate: Yup.string().required("Required"),
     }),
@@ -89,22 +87,6 @@ function AddModel({ isOpen, onClose }) {
                 {formik.touched.description && formik.errors.description ? (
                   <Box color="red" fontSize="sm">
                     {formik.errors.description}
-                  </Box>
-                ) : null}
-              </FormControl>
-
-              <FormControl id="batch_fee">
-                <FormLabel fontSize={14}>Batch Fee</FormLabel>
-                <Input
-                  type="number"
-                  name="batch_fee"
-                  borderRadius={"0.5rem"}
-                  value={formik.values.batch_fee}
-                  onChange={formik.handleChange}
-                />
-                {formik.touched.batch_fee && formik.errors.batch_fee ? (
-                  <Box color="red" fontSize="sm">
-                    {formik.errors.batch_fee}
                   </Box>
                 ) : null}
               </FormControl>

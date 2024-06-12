@@ -82,6 +82,7 @@ function Student() {
                 <Th>Total Fee</Th>
                 <Th>Paid Fee</Th>
                 <Th>Remaining Fee</Th>
+                <Th>Current Batch</Th>
                 <Th isNumeric>Actions</Th>
               </Tr>
             </Thead>
@@ -104,6 +105,7 @@ function Student() {
                     <Td>{student.total_fee}</Td>
                     <Td>{student.paid_fee}</Td>
                     <Td>{student.pending_fee}</Td>
+                    <Td>{student.batch ? student.batch.name : "No Batch"}</Td>
                     <Td className="space-x-3" isNumeric>
                       <div className="flex flex-nowrap justify-end items-center gap-2">
                         {hasPermission(["Update_Student"]) && (

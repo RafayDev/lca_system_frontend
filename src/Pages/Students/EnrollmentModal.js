@@ -106,7 +106,11 @@ const EnrollmentModal = ({ studentId }) => {
           batch: batch._id,
           courses: values[`batch-${batch._id}-courses`] || [],
           fees: batch.courses.map((course) => {
-            return values[`fee-${batch._id}-${course._id}`] || 0;
+            return formik.values["batch-" + batch._id + "-courses"]?.includes(
+              course._id
+            )
+              ? formik.values[`fee-${batch._id}-${course._id}`]
+              : 0;
           }),
         });
       });
@@ -130,11 +134,13 @@ const EnrollmentModal = ({ studentId }) => {
         ...valueArray,
         courseId,
       ]);
+      formik.setFieldValue(`fee-${batchId}-${courseId}`, 15000);
     } else {
       formik.setFieldValue(
         `batch-${batchId}-courses`,
         valueArray.filter((id) => id !== courseId)
       );
+      formik.setFieldValue(`fee-${batchId}-${courseId}`, 0);
     }
   };
 
@@ -256,8 +262,11 @@ const EnrollmentModal = ({ studentId }) => {
                                   name={"fee-" + batch._id + "-" + course._id}
                                   value={
                                     formik.values[
+                                      "batch-" + batch._id + "-courses"
+                                    ]?.includes(course._id) ?
+                                    formik.values[
                                       "fee-" + batch._id + "-" + course._id
-                                    ]
+                                    ] : 0
                                   }
                                   onChange={(e) =>
                                     handleInputChange(e, batch._id, course._id)

@@ -72,9 +72,9 @@ function Teacher() {
             <Thead>
               <Tr>
                 <Th>No</Th>
-                <Th>Image/Name</Th>
-                <Th>Email</Th>
-                <Th>Phone</Th>
+                <Th data-searchable>Image/Name</Th>
+                <Th data-searchable>Email</Th>
+                <Th data-searchable>Phone</Th>
                 <Th>Resume</Th>
                 <Th isNumeric>Actions</Th>
               </Tr>

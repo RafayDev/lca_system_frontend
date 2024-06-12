@@ -82,7 +82,7 @@ function Attendance() {
               <Tr>
                 <Th>No</Th>
                 <Th>Date</Th>
-                <Th>Student Name</Th>
+                <Th data-searchable>Student Name</Th>
                 <Th>Batch</Th>
                 <Th>Course</Th>
                 <Th>Sttendance Status</Th>

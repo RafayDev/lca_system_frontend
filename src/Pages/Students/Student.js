@@ -76,9 +76,9 @@ function Student() {
               <Tr>
                 <Th>No</Th>
                 <Th>QR</Th>
-                <Th>Name</Th>
-                <Th>Email</Th>
-                <Th>Phone</Th>
+                <Th data-searchable>Name</Th>
+                <Th data-searchable>Email</Th>
+                <Th data-searchable>Phone</Th>
                 <Th>Total Fee</Th>
                 <Th>Paid Fee</Th>
                 <Th>Remaining Fee</Th>

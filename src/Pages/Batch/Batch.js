@@ -71,9 +71,9 @@ function Batch() {
             <Thead>
               <Tr>
                 <Th>No</Th>
-                <Th>Name</Th>
-                <Th>Description</Th>
-                <Th>Batch Type</Th>
+                <Th data-searchable>Name</Th>
+                <Th data-searchable>Description</Th>
+                <Th data-searchable>Batch Type</Th>
                 <Th>Start Date</Th>
                 <Th>End Date</Th>
                 <Th isNumeric>Action</Th>

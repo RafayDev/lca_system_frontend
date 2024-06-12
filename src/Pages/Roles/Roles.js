@@ -69,8 +69,8 @@ function Roles() {
             <Thead>
               <Tr>
                 <Th>No</Th>
-                <Th>Name</Th>
-                <Th>Description</Th>
+                <Th data-searchable>Name</Th>
+                <Th data-searchable>Description</Th>
                 <Th isNumeric>Action</Th>
               </Tr>
             </Thead>

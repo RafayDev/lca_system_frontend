@@ -72,8 +72,8 @@ function User() {
             <Thead>
               <Tr>
                 <Th>No</Th>
-                <Th>Avatar/Name</Th>
-                <Th>Email</Th>
+                <Th data-searchable>Avatar/Name</Th>
+                <Th data-searchable>Email</Th>
                 <Th>User Role</Th>
                 <Th isNumeric>Actions</Th>
               </Tr>

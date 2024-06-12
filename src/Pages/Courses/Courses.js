@@ -67,8 +67,8 @@ function Course() {
             <Thead>
               <Tr>
                 <Th>No</Th>
-                <Th>Name</Th>
-                <Th>Description</Th>
+                <Th data-searchable>Name</Th>
+                <Th data-searchable>Description</Th>
                 <Th>Course Fee</Th>
                 <Th isNumeric>Action</Th>
               </Tr>

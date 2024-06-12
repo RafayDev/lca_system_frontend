@@ -14,8 +14,8 @@ const initialState = {
 const fetchAttendances = createAsyncThunk(
   "attendances/fetchAll",
   async (payload) => {
-    const { authToken, course_id, batch_id, date } = payload;
-    const response = await fetch(`${BASE_URL}/attendence`, {
+    const { authToken, course_id, batch_id, date, query } = payload;
+    const response = await fetch(`${BASE_URL}/attendence?query=${query ? query : ""}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

@@ -26,8 +26,8 @@ const initialState = {
 const fetchBatches = createAsyncThunk(
   "batches/fetchBatches",
   async (payload) => {
-    const { authToken } = payload;
-    const response = await fetch(`${BASE_URL}/batches`, {
+    const { authToken, query } = payload;
+    const response = await fetch(`${BASE_URL}/batches?query=${query ? query : ""}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${authToken}`,

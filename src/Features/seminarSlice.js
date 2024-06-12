@@ -17,8 +17,8 @@ const initialState = {
 };
 
 const fetchSeminars = createAsyncThunk('seminars/fetchSeminars', async (payload) => {
-    const { authToken } = payload;
-    const response = await fetch(`${BASE_URL}/seminars`, {
+    const { authToken,query } = payload;
+    const response = await fetch(`${BASE_URL}/seminars?query=${query ? query : ""}`, {
         headers: {
             Authorization: `Bearer ${authToken}`,
         }

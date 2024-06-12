@@ -18,8 +18,8 @@ const initialState = {
 };
 
 const fetchUsers = createAsyncThunk('users/fetchUsers', async (payload) => {
-    const { authToken } = payload;
-    const response = await axios.get(`${BASE_URL}/users`, {
+    const { authToken, query } = payload;
+    const response = await axios.get(`${BASE_URL}/users?query=${query ? query : ""}`, {
         headers: {
             Authorization: `Bearer ${authToken}`,
         }

@@ -17,6 +17,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchTeachers } from "../../Features/teacherSlice";
 import { selectAllTeachers } from "../../Features/teacherSlice";
 import TableRowLoading from "../../Components/TableRowLoading";
+import TableSearch from "../../Components/TableSearch";
 
 const defaultAvatar =
   "https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9";
@@ -49,8 +50,11 @@ function Teacher() {
   return (
     <>
       <div className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold ml-6">All Teachers</h1>
-        <div className="flex flex-wrap justify-end">
+        <h1 className="text-xl font-semibold ml-6 text-nowrap">All Teachers</h1>
+        <div className="w-full flex justify-end gap-3">
+          <div>
+            <TableSearch method={fetchTeachers} />
+          </div>
           {hasPermission(["Add_Teacher"]) && (
             <button
               className="bg-white hover:bg-[#FFCB82] hover:text-[#85652D] font-medium pl-[14px] pr-[18px] py-[10px] rounded-xl flex gap-1.5 transition-colors duration-300 border border-[#E0E8EC] hover:border-[#FFCB82]"

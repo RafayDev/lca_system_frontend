@@ -14,12 +14,16 @@ import AddModel from "./AddModel";
 import DeleteModal from "./DeleteModal";
 import UpdateModal from "./UpdateModal";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchBatches, selectCurrentActiveBatch } from "../../Features/batchSlice";
+import {
+  fetchBatches,
+  selectCurrentActiveBatch,
+} from "../../Features/batchSlice";
 import QrCodeModal from "../../Components/Modals/Student/QrCodeModal";
 import { Plus } from "lucide-react";
 import { fetchStudents, selectAllStudents } from "../../Features/studentSlice";
 import TableRowLoading from "../../Components/TableRowLoading";
 import EnrollmentModal from "./EnrollmentModal";
+import TableSearch from "../../Components/TableSearch";
 
 function Student() {
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
@@ -49,8 +53,11 @@ function Student() {
   return (
     <>
       <div className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold ml-6">All Students</h1>
-        <div className="flex flex-wrap justify-end">
+        <h1 className="text-xl font-semibold ml-6 text-nowrap">All Students</h1>
+        <div className="w-full flex justify-end gap-3">
+          <div>
+            <TableSearch method={fetchStudents} />
+          </div>
           {hasPermission(["Add_Student"]) && (
             <button
               className="bg-white hover:bg-[#FFCB82] hover:text-[#85652D] font-medium pl-[14px] pr-[18px] py-[10px] rounded-xl flex gap-1.5 transition-colors duration-300 border border-[#E0E8EC] hover:border-[#FFCB82]"
@@ -80,7 +87,10 @@ function Student() {
             </Thead>
             <Tbody>
               {fetchStatus === "loading" ? (
-                <TableRowLoading nOfColumns={8} actions={["w-10", "w-10", "w-20"]} />
+                <TableRowLoading
+                  nOfColumns={8}
+                  actions={["w-10", "w-10", "w-20"]}
+                />
               ) : (
                 students.map((student) => (
                   <Tr key={student._id}>

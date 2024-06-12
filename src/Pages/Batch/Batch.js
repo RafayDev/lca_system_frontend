@@ -18,6 +18,7 @@ import { fetchBatches, selectAllBatches, selectCurrentActiveBatch } from "../../
 import TableRowLoading from "../../Components/TableRowLoading";
 import AssignCoursesModal from "./AssignCoursesModal";
 import AssignTeachersModal from "./AssignTeachersModal";
+import TableSearch from "../../Components/TableSearch";
 
 function Batch() {
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
@@ -48,8 +49,11 @@ function Batch() {
   return (
     <>
       <div className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold ml-6">All Batchs</h1>
-        <div className="flex flex-wrap justify-end">
+        <h1 className="text-xl font-semibold ml-6 text-nowrap">All Batchs</h1>
+        <div className="w-full flex justify-end gap-3">
+          <div>
+            <TableSearch method={fetchBatches} />
+          </div>
           {hasPermission(["Add_Batch"]) && (
             <button
               className="bg-white hover:bg-[#FFCB82] hover:text-[#85652D] font-medium pl-[14px] pr-[18px] py-[10px] rounded-xl flex gap-1.5 transition-colors duration-300 border border-[#E0E8EC] hover:border-[#FFCB82]"
@@ -83,7 +87,7 @@ function Batch() {
                 />
               ) : (
                 batches.map((batch) => (
-                  <Tr key={batch._id} className={activeBatch._id === batch._id ? "bg-[#FFCB82]/20" : ""}>
+                  <Tr key={batch._id} className={activeBatch?._id === batch._id ? "bg-[#FFCB82]/20" : ""}>
                     <Td>{batches.indexOf(batch) + 1}</Td>
                     <Td>{batch.name}</Td>
                     <Td>{batch.description}</Td>

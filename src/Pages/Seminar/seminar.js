@@ -18,6 +18,7 @@ import { fetchSeminars, selectAllSeminars } from "../../Features/seminarSlice";
 import TableRowLoading from "../../Components/TableRowLoading";
 import moment from "moment";
 import AttendeesModal from "./AttendeesModal";
+import TableSearch from "../../Components/TableSearch";
 
 function Seminar() {
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -47,8 +48,11 @@ function Seminar() {
   return (
     <>
       <div className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold ml-6">All Seminars</h1>
-        <div className="flex flex-wrap justify-end">
+        <h1 className="text-xl font-semibold ml-6 text-nowrap">All Seminars</h1>
+        <div className="w-full flex justify-end gap-3">
+          <div>
+            <TableSearch method={fetchSeminars} />
+          </div>
           {hasPermission(["Add_Seminar"]) && (
             <button
               className="bg-white hover:bg-[#FFCB82] hover:text-[#85652D] font-medium pl-[14px] pr-[18px] py-[10px] rounded-xl flex gap-1.5 transition-colors duration-300 border border-[#E0E8EC] hover:border-[#FFCB82]"

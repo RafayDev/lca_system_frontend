@@ -20,6 +20,7 @@ import { Box } from "lucide-react";
 import { fetchAttendances } from "../../Features/attendanceSlice";
 import { fetchBatches, selectAllBatches } from "../../Features/batchSlice";
 import { fetchCourses, selectAllCourses } from "../../Features/courseSlice";
+import TableSearch from "../../Components/TableSearch";
 
 function Attendance() {
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
@@ -42,8 +43,11 @@ function Attendance() {
   return (
     <>
       <div className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold ml-6">Attendance</h1>
-        <div className="flex flex-wrap justify-end">
+        <h1 className="text-xl font-semibold ml-6 text-nowrap">Attendance</h1>
+        <div className="w-full flex justify-end gap-3">
+          <div>
+            <TableSearch method={fetchAttendances} />
+          </div>
           <HStack spacing={4}>
             <FormControl>
               <Select placeholder="Select Batch" w={48} onChange={(e) => {setFormBatch(e.target.value); setSelectedBatch(batches.find((batch) => batch._id === e.target.value)); dispatch(fetchAttendances({ authToken, course_id: "", batch_id: e.target.value, date: formDate }));}}>

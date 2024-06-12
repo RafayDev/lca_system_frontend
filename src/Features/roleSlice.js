@@ -20,8 +20,8 @@ const initialState = {
 };
 
 const fetchRoles = createAsyncThunk('roles/fetchRoles', async (payload) => {
-    const { authToken } = payload;
-    const response = await fetch(`${BASE_URL}/roles`, {
+    const { authToken, query } = payload;
+    const response = await fetch(`${BASE_URL}/roles?query=${query ? query : ""}`, {
         headers: {
             Authorization: `Bearer ${authToken}`,
         }

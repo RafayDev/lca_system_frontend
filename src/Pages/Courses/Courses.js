@@ -16,6 +16,7 @@ import { Plus } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchCourses, selectAllCourses } from "../../Features/courseSlice";
 import TableRowLoading from "../../Components/TableRowLoading";
+import TableSearch from "../../Components/TableSearch";
 
 function Course() {
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -44,8 +45,11 @@ function Course() {
   return (
     <>
       <div className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold ml-6">All Courses</h1>
-        <div className="flex flex-wrap justify-end">
+        <h1 className="text-xl font-semibold ml-6 text-nowrap">All Courses</h1>
+        <div className="w-full flex justify-end gap-3">
+          <div>
+            <TableSearch method={fetchCourses} />
+          </div>
           {hasPermission(["Add_Course"]) && (
             <button
               className="bg-white hover:bg-[#FFCB82] hover:text-[#85652D] font-medium pl-[14px] pr-[18px] py-[10px] rounded-xl flex gap-1.5 transition-colors duration-300 border border-[#E0E8EC] hover:border-[#FFCB82]"

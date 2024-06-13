@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import {
+  IconButton,
   Input,
   InputGroup,
   InputLeftElement,
   InputRightElement,
   Stack,
 } from "@chakra-ui/react";
-import { Search } from "lucide-react";
+import { Cross, Search, X } from "lucide-react";
 import { useDispatch } from "react-redux";
 import Cookies from "js-cookie";
 
@@ -35,13 +36,30 @@ export default function TableSearch({ setQueryFilter, method }) {
         >
           <Search />
         </InputLeftElement>
-        <Input 
-            placeholder="Search..." 
-            borderRadius="xl" 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && handleSearch(e)}
-            />
+        <Input
+          placeholder="Search..."
+          borderRadius="xl"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyPress={(e) => e.key === "Enter" && handleSearch(e)}
+        />
+        <InputRightElement width="2.8rem">
+          {searchQuery && (
+            <IconButton
+              h="calc(100% - 0.9rem)"
+              size="md"
+              borderRadius={"lg"}
+              marginRight={"0.5rem"}
+              onClick={() => {
+                setSearchQuery("");
+                dispatch(setQueryFilter(""));
+                dispatch(method({ authToken }));
+              }}
+            >
+              <X />
+            </IconButton>
+          )}
+        </InputRightElement>
       </InputGroup>
     </>
   );

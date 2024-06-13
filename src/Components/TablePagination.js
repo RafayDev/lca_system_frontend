@@ -14,7 +14,9 @@ export default function TablePagination({
   setLimitFilter,
   setPageFilter,
   method,
+  payload = {},
 }) {
+  console.log(payload);
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
   const {
     totalDocs,
@@ -31,12 +33,12 @@ export default function TablePagination({
 
   const handlePage = (page) => {
     dispatch(setPageFilter(page));
-    dispatch(method({ authToken }));
+    dispatch(method({ authToken, ...payload }));
   };
 
   const handleLimit = (e) => {
     dispatch(setLimitFilter(e.target.value));
-    dispatch(method({ authToken }));
+    dispatch(method({ authToken, ...payload }));
   };
 
   const renderPageButtons = () => {
@@ -113,7 +115,7 @@ export default function TablePagination({
               page * limit > totalDocs ? totalDocs : page * limit
             } of ${totalDocs} records`}
           </p>
-          <Select value={limit} onChange={handleLimit} w="24">
+          <Select value={limit} onChange={handleLimit} w="24" borderRadius={"xl"} backgroundColor={"white"} cursor={"pointer"}>
             <option value={1}>1</option>
             <option value={5}>5</option>
             <option value={10}>10</option>
@@ -123,7 +125,7 @@ export default function TablePagination({
             <option value={50}>50</option>
           </Select>
         </div>
-        <ButtonGroup size="md" isAttached variant="outline" bg={"white"}>
+        <ButtonGroup size="md" isAttached variant="outline" backgroundColor={"white"}>
           <Button
             onClick={() => handlePage(1)}
             isDisabled={!hasPrevPage}

@@ -20,9 +20,13 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAttendeesBySeminar,
   selectSeminarAttendees,
+  setLimitFilter,
+  setPageFilter,
+  setQueryFilter,
 } from "../../Features/seminarAttendeeSlice";
 import moment from "moment";
 import { downloadExcel } from "react-export-table-to-excel";
+import TablePagination from "../../Components/TablePagination";
 
 const AttendeesModal = ({ seminar }) => {
   const fileHeaders = [
@@ -41,7 +45,9 @@ const AttendeesModal = ({ seminar }) => {
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
   const [loading, setLoading] = useState(false);
 
-  const { fetchStatus } = useSelector((state) => state.seminarAttendees);
+  const { fetchStatus, pagination } = useSelector(
+    (state) => state.seminarAttendees
+  );
   const seminarAttendees = useSelector(selectSeminarAttendees);
   const dispatch = useDispatch();
 
@@ -51,25 +57,44 @@ const AttendeesModal = ({ seminar }) => {
   };
 
   function handleDownloadExcel() {
+    const tempLimit = pagination.limit;
+    dispatch(setLimitFilter(pagination.totalDocs || 1000000));
+    dispatch(setPageFilter(1));
+    dispatch(setQueryFilter(""));
     setLoading(true);
-    downloadExcel({
-      fileName: "AttendeesSheet[" + seminar.name + "][" + seminar.date + "]",
-      sheet: seminar.name + " Attendees Sheet",
-      tablePayload: {
-        header: fileHeaders,
-        body: seminarAttendees.map((attendee) => [
-          seminarAttendees.indexOf(attendee) + 1,
-          attendee.name,
-          attendee.phone,
-          attendee.city,
-          attendee.qualification,
-          attendee.attend_type.map((type, index) => (("" + type)?.toString()).replace(/,/g, "") + (index < attendee.attend_type.length - 1 ? ", " : ""))
-        ]),
-      },
-    });
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
+    dispatch(fetchAttendeesBySeminar({ authToken, seminarId: seminar._id }))
+      .unwrap()
+      .then((data) => {
+        const attendees = data.docs;
+        console.log(attendees);
+        downloadExcel({
+          fileName:
+            "AttendeesSheet[" + seminar.name + "][" + seminar.date + "]",
+          sheet: seminar.name + " Attendees Sheet",
+          tablePayload: {
+            header: fileHeaders,
+            body: attendees.map((attendee) => [
+              attendees.indexOf(attendee) + 1,
+              attendee.name,
+              attendee.phone,
+              attendee.city,
+              attendee.qualification,
+              attendee.attend_type.map(
+                (type, index) =>
+                  ("" + type)?.toString().replace(/,/g, "") +
+                  (index < attendee.attend_type.length - 1 ? ", " : "")
+              ),
+            ]),
+          },
+        });
+        setTimeout(() => {
+          dispatch(setLimitFilter(tempLimit));
+          setTimeout(() => {
+            dispatch(fetchAttendeesBySeminar({ authToken, seminarId: seminar._id }));
+            setLoading(false);
+          }, 1000);
+        }, 1000);
+      });
   }
 
   return (
@@ -81,7 +106,7 @@ const AttendeesModal = ({ seminar }) => {
         <Eye size={18} />
       </button>
 
-      <Modal isOpen={isOpen} onClose={onClose} size="4xl">
+      <Modal isOpen={isOpen} onClose={onClose} size="6xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader className="text-xl font-semibold">
@@ -115,49 +140,64 @@ const AttendeesModal = ({ seminar }) => {
                 </Text>
               </div>
             </div>
-            {fetchStatus === "loading" ? (
+            {fetchStatus === "loading" || loading ? (
               <div className="flex justify-center items-center h-40 rounded-xl border border-[#E0E8EC]">
                 <Spinner />
               </div>
             ) : (
-              <div className="w-full bg-white rounded-xl border border-[#E0E8EC] overflow-auto max-h-[50vh]">
-                {seminarAttendees.length === 0 ? (
-                  <div className="p-4 text-center">No attendees found</div>
-                ) : (
-                  <TableContainer>
-                    <Table variant="simple">
-                      <Thead>
-                        <Tr>
-                          <Th>No</Th>
-                          <Th>Name</Th>
-                          <Th>Phone</Th>
-                          <Th>City</Th>
-                          <Th>Qualification</Th>
-                          <Th>Attend Type</Th>
-                        </Tr>
-                      </Thead>
-                      <Tbody>
-                        {seminarAttendees?.map((attendee) => (
-                          <Tr key={attendee._id}>
-                            <Td>{seminarAttendees.indexOf(attendee) + 1}</Td>
-                            <Td>{attendee.name}</Td>
-                            <Td>{attendee.phone}</Td>
-                            <Td>{attendee.city}</Td>
-                            <Td>{attendee.qualification}</Td>
-                            <Td>
-                              <span className="">
-                                {attendee.attend_type.map(
-                                  (type, index) => (("" + type)?.toString()).replace(/,/g, "") + (index < attendee.attend_type.length - 1 ? ", " : "")
-                                )}
-                              </span>
-                            </Td>
+              <>
+                <div className="w-full bg-white rounded-xl border border-[#E0E8EC] overflow-auto max-h-[50vh]">
+                  {seminarAttendees.length === 0 ? (
+                    <div className="p-4 text-center">No attendees found</div>
+                  ) : (
+                    <TableContainer>
+                      <Table variant="simple">
+                        <Thead>
+                          <Tr>
+                            <Th>No</Th>
+                            <Th>Name</Th>
+                            <Th>Phone</Th>
+                            <Th>City</Th>
+                            <Th>Qualification</Th>
+                            <Th>Attend Type</Th>
                           </Tr>
-                        ))}
-                      </Tbody>
-                    </Table>
-                  </TableContainer>
-                )}
-              </div>
+                        </Thead>
+                        <Tbody>
+                          {seminarAttendees?.map((attendee) => (
+                            <Tr key={attendee._id}>
+                              <Td>{seminarAttendees.indexOf(attendee) + 1}</Td>
+                              <Td>{attendee.name}</Td>
+                              <Td>{attendee.phone}</Td>
+                              <Td>{attendee.city}</Td>
+                              <Td>{attendee.qualification}</Td>
+                              <Td>
+                                <span className="">
+                                  {attendee.attend_type.map(
+                                    (type, index) =>
+                                      ("" + type)
+                                        ?.toString()
+                                        .replace(/,/g, "") +
+                                      (index < attendee.attend_type.length - 1
+                                        ? ", "
+                                        : "")
+                                  )}
+                                </span>
+                              </Td>
+                            </Tr>
+                          ))}
+                        </Tbody>
+                      </Table>
+                    </TableContainer>
+                  )}
+                </div>
+                <TablePagination
+                  pagination={pagination}
+                  setLimitFilter={setLimitFilter}
+                  setPageFilter={setPageFilter}
+                  method={fetchAttendeesBySeminar}
+                  payload={{ seminarId: seminar._id }}
+                />
+              </>
             )}
           </ModalBody>
           <ModalFooter>

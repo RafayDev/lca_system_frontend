@@ -21,7 +21,8 @@ const initialState = {
 const fetchAttendeesBySeminar = createAsyncThunk('seminarAttendees/fetchAttendeesBySeminar', async (payload, { getState }) => {
     const state = getState();
     const { authToken, seminarId } = payload;
-    const response = await axios.get(`${BASE_URL}/seminarAttendees/${seminarId}`, {
+    console.log(state.seminarAttendees.filters);
+    const response = await axios.get(`${BASE_URL}/attendees/seminar/${seminarId}`, {
         headers: {
             Authorization: `Bearer ${authToken}`,
         },

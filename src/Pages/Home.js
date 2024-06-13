@@ -53,7 +53,7 @@ function Home() {
       icon: <DollarSign size={32} color="#d69e2e" />,
     },
     {
-      key: "total_fee_recovred",
+      key: "total_fee_recovered",
       title: "Total Fee Recovered",
       helpText: "Total fee recovered from all students",
       icon: <HandCoins size={32} color="#d69e2e" />,

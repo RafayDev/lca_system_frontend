@@ -18,6 +18,7 @@ import {
   GraduationCap,
   HandCoins,
   RotateCw,
+  AlertTriangle,
 } from "lucide-react";
 
 function Home() {
@@ -68,7 +69,7 @@ function Home() {
       key: "total_fee_defaulters",
       title: "Total Fee defaulters",
       helpText: "Total fee pending students",
-      icon: <ArrowDown01 size={32} color="#d69e2e" />,
+      icon: <AlertTriangle size={32} color="#d69e2e" />,
     },
   ];
 

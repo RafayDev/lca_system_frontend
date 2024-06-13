@@ -2,13 +2,18 @@ import { createSlice } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { createStandaloneToast } from "@chakra-ui/react";
 import { config } from "../utlls/config.js";
+import axios from 'axios';
 
 const { toast } = createStandaloneToast();
 
 const BASE_URL = config.BASE_URL;
+const TABLE_FILTERS = config.TABLE_FILTERS;
+const TABLE_PAGINATION = config.TABLE_PAGINATION;
 
 const initialState = {
     courses: [],
+    filters: TABLE_FILTERS,
+    pagination: TABLE_PAGINATION,
     fetchStatus: 'idle',
     addStatus: 'idle',
     updateStatus: 'idle',
@@ -16,15 +21,16 @@ const initialState = {
     error: null,
 };
 
-const fetchCourses = createAsyncThunk('courses/fetchCourses', async (payload) => {
-    const { authToken, query } = payload;
-    const response = await fetch(`${BASE_URL}/courses?query=${query ? query : ""}`, {
+const fetchCourses = createAsyncThunk('courses/fetchCourses', async (payload, { getState }) => {
+    const state = getState();
+    const { authToken } = payload;
+    const response = await axios.get(`${BASE_URL}/courses`, {
         headers: {
             Authorization: `Bearer ${authToken}`,
-        }
+        },
+        params: state.courses.filters,
     });
-    const data = await response.json();
-    return data;
+    return response.data;
 });
 
 const addCourse = createAsyncThunk('courses/addCourse', async (payload) => {
@@ -70,7 +76,18 @@ const deleteCourse = createAsyncThunk('courses/deleteCourse', async (payload) =>
 const courseSlice = createSlice({
     name: 'courses',
     initialState,
-    reducers: {},
+    reducers: {
+        setQueryFilter(state, action) {
+            state.filters.query = action.payload;
+        },
+        setPageFilter(state, action) {
+            state.filters.page = action.payload;
+        },
+        setLimitFilter(state, action) {
+            state.filters.page = 1;
+            state.filters.limit = action.payload;
+        },
+    },
 
     extraReducers: (builder) => {
         builder
@@ -80,7 +97,18 @@ const courseSlice = createSlice({
             })
             .addCase(fetchCourses.fulfilled, (state, action) => {
                 state.fetchStatus = 'success';
-                state.courses = action.payload;
+                state.courses = action.payload.docs;
+                state.pagination = {
+                    totalDocs: action.payload.totalDocs,
+                    limit: action.payload.limit,
+                    totalPages: action.payload.totalPages,
+                    page: action.payload.page,
+                    pagingCounter: action.payload.pagingCounter,
+                    hasPrevPage: action.payload.hasPrevPage,
+                    hasNextPage: action.payload.hasNextPage,
+                    prevPage: action.payload.prevPage,
+                    nextPage: action.payload.nextPage,
+                };
             })
             .addCase(fetchCourses.rejected, (state, action) => {
                 state.fetchStatus = 'failure';
@@ -146,5 +174,6 @@ const courseSlice = createSlice({
 export const selectAllCourses = (state) => state.courses.courses;
 
 export { fetchCourses, addCourse, updateCourse, deleteCourse };
+export const { setQueryFilter, setPageFilter, setLimitFilter } = courseSlice.actions;
 
 export default courseSlice.reducer;

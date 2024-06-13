@@ -2,14 +2,19 @@ import { createSlice } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { createStandaloneToast } from "@chakra-ui/react";
 import { config } from "../utlls/config.js";
+import axios from 'axios';
 
 const { toast } = createStandaloneToast();
 
 const BASE_URL = config.BASE_URL;
+const TABLE_FILTERS = config.TABLE_FILTERS;
+const TABLE_PAGINATION = config.TABLE_PAGINATION;
 
 const initialState = {
     roles: [],
     assignedPermissions: [],
+    filters: TABLE_FILTERS,
+    pagination: TABLE_PAGINATION,
     fetchStatus: 'idle',
     addStatus: 'idle',
     updateStatus: 'idle',
@@ -19,15 +24,16 @@ const initialState = {
     error: null,
 };
 
-const fetchRoles = createAsyncThunk('roles/fetchRoles', async (payload) => {
-    const { authToken, query } = payload;
-    const response = await fetch(`${BASE_URL}/roles?query=${query ? query : ""}`, {
+const fetchRoles = createAsyncThunk('roles/fetchRoles', async (payload, { getState }) => {
+    const state = getState();
+    const { authToken } = payload;
+    const response = await axios.get(`${BASE_URL}/roles`, {
         headers: {
             Authorization: `Bearer ${authToken}`,
-        }
+        },
+        params: state.roles.filters,
     });
-    const data = await response.json();
-    return data;
+    return response.data;
 });
 
 const addRole = createAsyncThunk('roles/addRole', async (payload) => {
@@ -98,7 +104,18 @@ const assignPermissions = createAsyncThunk('roles/assignPermissions', async (pay
 const roleSlice = createSlice({
     name: 'roles',
     initialState,
-    reducers: {},
+    reducers: {
+        setQueryFilter(state, action) {
+            state.filters.query = action.payload;
+        },
+        setPageFilter(state, action) {
+            state.filters.page = action.payload;
+        },
+        setLimitFilter(state, action) {
+            state.filters.page = 1;
+            state.filters.limit = action.payload;
+        },
+    },
 
     extraReducers: (builder) => {
         builder
@@ -108,7 +125,18 @@ const roleSlice = createSlice({
             })
             .addCase(fetchRoles.fulfilled, (state, action) => {
                 state.fetchStatus = 'success';
-                state.roles = action.payload;
+                state.roles = action.payload.docs;
+                state.pagination = {
+                    totalDocs: action.payload.totalDocs,
+                    limit: action.payload.limit,
+                    totalPages: action.payload.totalPages,
+                    page: action.payload.page,
+                    pagingCounter: action.payload.pagingCounter,
+                    hasPrevPage: action.payload.hasPrevPage,
+                    hasNextPage: action.payload.hasNextPage,
+                    prevPage: action.payload.prevPage,
+                    nextPage: action.payload.nextPage,
+                };
             })
             .addCase(fetchRoles.rejected, (state, action) => {
                 state.fetchStatus = 'failure';
@@ -206,5 +234,6 @@ export const selectAllRoles = (state) => state.roles.roles;
 export const selectAllAssignedPermissions = (state) => state.roles.assignedPermissions;
 
 export { fetchRoles, addRole, updateRole, deleteRole, fetchAssignedPermissions, assignPermissions };
+export const { setQueryFilter, setPageFilter, setLimitFilter } = roleSlice.actions;
 
 export default roleSlice.reducer;

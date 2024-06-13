@@ -2,13 +2,18 @@ import { createSlice } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { createStandaloneToast } from "@chakra-ui/react";
 import { config } from "../utlls/config.js";
+import axios from 'axios';
 
 const { toast } = createStandaloneToast();
 
 const BASE_URL = config.BASE_URL;
+const TABLE_FILTERS = config.TABLE_FILTERS;
+const TABLE_PAGINATION = config.TABLE_PAGINATION;
 
 const initialState = {
     students: [],
+    filters: TABLE_FILTERS,
+    pagination: TABLE_PAGINATION,
     fetchStatus: 'idle',
     addStatus: 'idle',
     updateStatus: 'idle',
@@ -16,15 +21,16 @@ const initialState = {
     error: null,
 };
 
-const fetchStudents = createAsyncThunk('students/fetchStudents', async (payload) => {
-    const { authToken, query } = payload;
-    const response = await fetch(`${BASE_URL}/students?query=${query ? query : ""}`, {
+const fetchStudents = createAsyncThunk('students/fetchStudents', async (payload, { getState }) => {
+    const state = getState();
+    const { authToken } = payload;
+    const response = await axios.get(`${BASE_URL}/students`, {
         headers: {
             Authorization: `Bearer ${authToken}`,
-        }
+        },
+        params: state.students.filters,
     });
-    const data = await response.json();
-    return data;
+    return response.data;
 });
 
 const addStudent = createAsyncThunk('students/addStudent', async (payload) => {
@@ -84,7 +90,18 @@ const deleteStudent = createAsyncThunk('students/deleteStudent', async (payload)
 const studentSlice = createSlice({
     name: 'students',
     initialState,
-    reducers: {},
+    reducers: {
+        setQueryFilter(state, action) {
+            state.filters.query = action.payload;
+        },
+        setPageFilter(state, action) {
+            state.filters.page = action.payload;
+        },
+        setLimitFilter(state, action) {
+            state.filters.page = 1;
+            state.filters.limit = action.payload;
+        },
+    },
 
     extraReducers: (builder) => {
         builder
@@ -94,7 +111,18 @@ const studentSlice = createSlice({
             })
             .addCase(fetchStudents.fulfilled, (state, action) => {
                 state.fetchStatus = 'success';
-                state.students = action.payload;
+                state.students = action.payload.docs;
+                state.pagination = {
+                    totalDocs: action.payload.totalDocs,
+                    limit: action.payload.limit,
+                    totalPages: action.payload.totalPages,
+                    page: action.payload.page,
+                    pagingCounter: action.payload.pagingCounter,
+                    hasPrevPage: action.payload.hasPrevPage,
+                    hasNextPage: action.payload.hasNextPage,
+                    prevPage: action.payload.prevPage,
+                    nextPage: action.payload.nextPage,
+                };
             })
             .addCase(fetchStudents.rejected, (state, action) => {
                 state.fetchStatus = 'failure';
@@ -178,5 +206,6 @@ const studentSlice = createSlice({
 export const selectAllStudents = (state) => state.students.students;
 
 export { fetchStudents, addStudent, updateStudent, basicUpdate, deleteStudent };
+export const { setQueryFilter, setPageFilter, setLimitFilter } = studentSlice.actions;
 
 export default studentSlice.reducer;

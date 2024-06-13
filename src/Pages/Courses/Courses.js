@@ -12,11 +12,18 @@ import {
 import AddModel from "./AddModel";
 import DeleteModal from "./DeleteModal";
 import UpdateModal from "./UpdateModal";
-import { Plus } from "lucide-react";
+import { FileX, Plus } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchCourses, selectAllCourses } from "../../Features/courseSlice";
+import {
+  fetchCourses,
+  selectAllCourses,
+  setLimitFilter,
+  setPageFilter,
+  setQueryFilter,
+} from "../../Features/courseSlice";
 import TableRowLoading from "../../Components/TableRowLoading";
 import TableSearch from "../../Components/TableSearch";
+import TablePagination from "../../Components/TablePagination";
 
 function Course() {
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -26,7 +33,7 @@ function Course() {
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
 
   const courses = useSelector(selectAllCourses);
-  const { fetchStatus } = useSelector((state) => state.courses);
+  const { fetchStatus, pagination } = useSelector((state) => state.courses);
   const dispatch = useDispatch();
 
   const hasPermission = (permissionsToCheck) => {
@@ -48,7 +55,7 @@ function Course() {
         <h1 className="text-xl font-semibold ml-6 text-nowrap">All Courses</h1>
         <div className="w-full flex justify-end gap-3">
           <div>
-            <TableSearch method={fetchCourses} />
+            <TableSearch setQueryFilter={setQueryFilter} method={fetchCourses} />
           </div>
           {hasPermission(["Add_Course"]) && (
             <button
@@ -75,10 +82,16 @@ function Course() {
             </Thead>
             <Tbody>
               {fetchStatus === "loading" ? (
-                <TableRowLoading
-                  nOfColumns={4}
-                  actions={["w-10", "w-10"]}
-                />
+                <TableRowLoading nOfColumns={4} actions={["w-10", "w-10"]} />
+              ) : courses.length === 0 ? (
+                <Tr>
+                  <Td colSpan={5}>
+                    <span className="flex justify-center items-center gap-2 text-[#A1A1A1]">
+                      <FileX />
+                      No course records found
+                    </span>
+                  </Td>
+                </Tr>
               ) : (
                 courses.map((course) => (
                   <Tr key={course._id}>
@@ -91,9 +104,7 @@ function Course() {
                         <UpdateModal course={course} />
                       )}
                       {hasPermission(["Delete_Course"]) && (
-                        <DeleteModal
-                          courseId={course._id}
-                        />
+                        <DeleteModal courseId={course._id} />
                       )}
                     </Td>
                   </Tr>
@@ -103,10 +114,15 @@ function Course() {
           </Table>
         </TableContainer>
       </div>
-      <AddModel
-        isOpen={isAddOpen}
-        onClose={onAddClose}
-      />
+      {fetchStatus !== "loading" && (
+        <TablePagination
+          pagination={pagination}
+          setLimitFilter={setLimitFilter}
+          setPageFilter={setPageFilter}
+          method={fetchCourses}
+        />
+      )}
+      <AddModel isOpen={isAddOpen} onClose={onAddClose} />
     </>
   );
 }

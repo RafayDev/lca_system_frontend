@@ -12,13 +12,20 @@ import {
 import AddModel from "./AddModel";
 import DeleteModal from "./DeleteModal";
 import UpdateModal from "./UpdateModal";
-import { Plus } from "lucide-react";
+import { FileX, Plus } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchSeminars, selectAllSeminars } from "../../Features/seminarSlice";
+import {
+  fetchSeminars,
+  selectAllSeminars,
+  setLimitFilter,
+  setPageFilter,
+  setQueryFilter,
+} from "../../Features/seminarSlice";
 import TableRowLoading from "../../Components/TableRowLoading";
 import moment from "moment";
 import AttendeesModal from "./AttendeesModal";
 import TableSearch from "../../Components/TableSearch";
+import TablePagination from "../../Components/TablePagination";
 
 function Seminar() {
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -27,7 +34,7 @@ function Seminar() {
 
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
 
-  const { fetchStatus } = useSelector((state) => state.seminars);
+  const { fetchStatus, pagination } = useSelector((state) => state.seminars);
   const { seminars } = useSelector((state) => state.seminars);
   const dispatch = useDispatch();
 
@@ -51,7 +58,7 @@ function Seminar() {
         <h1 className="text-xl font-semibold ml-6 text-nowrap">All Seminars</h1>
         <div className="w-full flex justify-end gap-3">
           <div>
-            <TableSearch method={fetchSeminars} />
+            <TableSearch setQueryFilter={setQueryFilter} method={fetchSeminars} />
           </div>
           {hasPermission(["Add_Seminar"]) && (
             <button
@@ -81,6 +88,16 @@ function Seminar() {
               {fetchStatus === "loading" ? (
                 <TableRowLoading nOfColumns={5} actions={["w-10", "w-10"]} />
               ) : (
+                seminars.length === 0 ? (
+                  <Tr>
+                    <Td colSpan={6}>
+                      <span className="flex justify-center items-center gap-2 text-[#A1A1A1]">
+                        <FileX />
+                        No seminar records found
+                      </span>
+                    </Td>
+                  </Tr>
+                ) :
                 seminars?.map((seminar) => (
                   <Tr key={seminar._id}>
                     <Td>{seminars.indexOf(seminar) + 1}</Td>
@@ -91,7 +108,7 @@ function Seminar() {
                     </Td>
                     <Td>
                       <p className="line-clamp-2 w-[300px] text-wrap">
-                      {seminar.description}
+                        {seminar.description}
                       </p>
                     </Td>
                     <Td>{moment(seminar.time, "HH:mm").format("hh:mm A")}</Td>
@@ -100,14 +117,10 @@ function Seminar() {
                     <Td className="space-x-3" isNumeric>
                       <AttendeesModal seminar={seminar} />
                       {hasPermission(["Update_Seminar"]) && (
-                        <UpdateModal
-                          seminar={seminar}
-                        />
+                        <UpdateModal seminar={seminar} />
                       )}
                       {hasPermission(["Delete_Seminar"]) && (
-                        <DeleteModal
-                          seminarId={seminar._id}
-                        />
+                        <DeleteModal seminarId={seminar._id} />
                       )}
                     </Td>
                   </Tr>
@@ -117,10 +130,15 @@ function Seminar() {
           </Table>
         </TableContainer>
       </div>
-      <AddModel
-        isOpen={isAddOpen}
-        onClose={onAddClose}
-      />
+      {fetchStatus !== "loading" && (
+        <TablePagination
+          pagination={pagination}
+          setLimitFilter={setLimitFilter}
+          setPageFilter={setPageFilter}
+          method={fetchSeminars}
+        />
+      )}
+      <AddModel isOpen={isAddOpen} onClose={onAddClose} />
     </>
   );
 }

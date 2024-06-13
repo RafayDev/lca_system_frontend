@@ -12,13 +12,21 @@ import {
 import AddModel from "./AddModel";
 import DeleteModal from "./DeleteModal";
 import UpdateModal from "./UpdateModal";
-import { Plus } from "lucide-react";
+import { FileX, Plus } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchBatches, selectAllBatches, selectCurrentActiveBatch } from "../../Features/batchSlice";
+import {
+  fetchBatches,
+  selectAllBatches,
+  selectCurrentActiveBatch,
+  setLimitFilter,
+  setPageFilter,
+  setQueryFilter,
+} from "../../Features/batchSlice";
 import TableRowLoading from "../../Components/TableRowLoading";
 import AssignCoursesModal from "./AssignCoursesModal";
 import AssignTeachersModal from "./AssignTeachersModal";
 import TableSearch from "../../Components/TableSearch";
+import TablePagination from "../../Components/TablePagination";
 
 function Batch() {
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
@@ -27,7 +35,7 @@ function Batch() {
   const onAddOpen = () => setIsAddOpen(true);
   const onAddClose = () => setIsAddOpen(false);
 
-  const { fetchStatus } = useSelector((state) => state.batches);
+  const { fetchStatus, pagination } = useSelector((state) => state.batches);
   const batches = useSelector(selectAllBatches);
   const activeBatch = useSelector(selectCurrentActiveBatch);
   const dispatch = useDispatch();
@@ -52,7 +60,7 @@ function Batch() {
         <h1 className="text-xl font-semibold ml-6 text-nowrap">All Batchs</h1>
         <div className="w-full flex justify-end gap-3">
           <div>
-            <TableSearch method={fetchBatches} />
+            <TableSearch setQueryFilter={setQueryFilter} method={fetchBatches} />
           </div>
           {hasPermission(["Add_Batch"]) && (
             <button
@@ -82,12 +90,26 @@ function Batch() {
             <Tbody>
               {fetchStatus === "loading" ? (
                 <TableRowLoading
-                  nOfColumns={7}
+                  nOfColumns={6}
                   actions={["w-10", "w-10", "w-20", "w-20"]}
                 />
+              ) : batches.length === 0 ? (
+                <Tr>
+                  <Td colSpan={7}>
+                    <span className="flex justify-center items-center gap-2 text-[#A1A1A1]">
+                      <FileX />
+                      No batch records found
+                    </span>
+                  </Td>
+                </Tr>
               ) : (
                 batches.map((batch) => (
-                  <Tr key={batch._id} className={activeBatch?._id === batch._id ? "bg-[#FFCB82]/20" : ""}>
+                  <Tr
+                    key={batch._id}
+                    className={
+                      activeBatch?._id === batch._id ? "bg-[#FFCB82]/20" : ""
+                    }
+                  >
                     <Td>{batches.indexOf(batch) + 1}</Td>
                     <Td>{batch.name}</Td>
                     <Td>{batch.description}</Td>
@@ -115,6 +137,14 @@ function Batch() {
           </Table>
         </TableContainer>
       </div>
+      {fetchStatus !== "loading" && (
+        <TablePagination
+          pagination={pagination}
+          setLimitFilter={setLimitFilter}
+          setPageFilter={setPageFilter}
+          method={fetchBatches}
+        />
+      )}
       <AddModel isOpen={isAddOpen} onClose={onAddClose} />
     </>
   );

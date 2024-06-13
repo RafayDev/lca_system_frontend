@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Input,
   InputGroup,
@@ -10,14 +10,20 @@ import { Search } from "lucide-react";
 import { useDispatch } from "react-redux";
 import Cookies from "js-cookie";
 
-export default function TableSearch({ method }) {
+export default function TableSearch({ setQueryFilter, method }) {
   const [authToken] = useState(Cookies.get("authToken"));
   const [searchQuery, setSearchQuery] = useState("");
   const dispatch = useDispatch();
 
   const handleSearch = (e) => {
-    dispatch(method({ authToken, query: searchQuery }));
+    dispatch(setQueryFilter(searchQuery));
+    dispatch(method({ authToken }));
   };
+
+  useEffect(() => {
+    setSearchQuery("");
+    dispatch(setQueryFilter(""));
+  }, []);
 
   return (
     <>

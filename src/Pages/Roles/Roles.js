@@ -13,11 +13,18 @@ import AddModel from "./AddModel";
 import DeleteModal from "./DeleteModal";
 import UpdateModal from "./UpdateModal";
 import AssignPermissions from "./AssignPermissions";
-import { Plus } from "lucide-react";
+import { FileX, Plus } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchRoles, selectAllRoles } from "../../Features/roleSlice";
+import {
+  fetchRoles,
+  selectAllRoles,
+  setLimitFilter,
+  setPageFilter,
+  setQueryFilter,
+} from "../../Features/roleSlice";
 import TableRowLoading from "../../Components/TableRowLoading";
 import TableSearch from "../../Components/TableSearch";
+import TablePagination from "../../Components/TablePagination";
 
 function Roles() {
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -26,7 +33,7 @@ function Roles() {
 
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
 
-  const { fetchStatus } = useSelector((state) => state.roles);
+  const { fetchStatus, pagination } = useSelector((state) => state.roles);
   const roles = useSelector(selectAllRoles);
   const dispatch = useDispatch();
 
@@ -50,7 +57,7 @@ function Roles() {
         <h1 className="text-xl font-semibold ml-6 text-nowrap">All Roles</h1>
         <div className="w-full flex justify-end gap-3">
           <div>
-            <TableSearch method={fetchRoles} />
+            <TableSearch setQueryFilter={setQueryFilter} method={fetchRoles} />
           </div>
           {hasPermission(["Add_Role"]) && (
             <button
@@ -81,6 +88,16 @@ function Roles() {
                   actions={["w-10", "w-10", "w-20"]}
                 />
               ) : (
+                roles.length === 0 ? (
+                  <Tr>
+                    <Td colSpan={4}>
+                      <span className="flex justify-center items-center gap-2 text-[#A1A1A1]">
+                        <FileX />
+                        No role records found
+                      </span>
+                    </Td>
+                  </Tr>
+                ) :
                 roles.map((role) => (
                   <Tr key={role._id}>
                     <Td>{roles.indexOf(role) + 1}</Td>
@@ -104,6 +121,14 @@ function Roles() {
           </Table>
         </TableContainer>
       </div>
+      {fetchStatus !== "loading" && (
+        <TablePagination
+          pagination={pagination}
+          setLimitFilter={setLimitFilter}
+          setPageFilter={setPageFilter}
+          method={fetchRoles}
+        />
+      )}
       <AddModel isOpen={isAddOpen} onClose={onAddClose} />
     </>
   );

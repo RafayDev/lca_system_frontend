@@ -7,9 +7,13 @@ import { config } from "../utlls/config.js";
 const { toast } = createStandaloneToast();
 
 const BASE_URL = config.BASE_URL;
+const TABLE_FILTERS = config.TABLE_FILTERS;
+const TABLE_PAGINATION = config.TABLE_PAGINATION;
 
 const initialState = {
     users: [],
+    filters: TABLE_FILTERS,
+    pagination: TABLE_PAGINATION,
     fetchStatus: 'idle',
     addStatus: 'idle',
     updateStatus: 'idle',
@@ -17,12 +21,14 @@ const initialState = {
     error: null,
 };
 
-const fetchUsers = createAsyncThunk('users/fetchUsers', async (payload) => {
-    const { authToken, query } = payload;
-    const response = await axios.get(`${BASE_URL}/users?query=${query ? query : ""}`, {
+const fetchUsers = createAsyncThunk('users/fetchUsers', async (payload, { getState }) => {
+    const state = getState();
+    const { authToken } = payload;
+    const response = await axios.get(`${BASE_URL}/users`, {
         headers: {
             Authorization: `Bearer ${authToken}`,
-        }
+        },
+        params: state.users.filters,
     });
     return response.data;
 });
@@ -61,7 +67,18 @@ const deleteUser = createAsyncThunk('users/deleteUser', async (payload) => {
 const userSlice = createSlice({
     name: 'users',
     initialState,
-    reducers: {},
+    reducers: {
+        setQueryFilter(state, action) {
+            state.filters.query = action.payload;
+        },
+        setPageFilter(state, action) {
+            state.filters.page = action.payload;
+        },
+        setLimitFilter(state, action) {
+            state.filters.page = 1;
+            state.filters.limit = action.payload;
+        },
+    },
 
     extraReducers: (builder) => {
         builder
@@ -71,7 +88,18 @@ const userSlice = createSlice({
             })
             .addCase(fetchUsers.fulfilled, (state, action) => {
                 state.fetchStatus = 'succeeded';
-                state.users = action.payload;
+                state.users = action.payload.docs;
+                state.pagination = {
+                    totalDocs: action.payload.totalDocs,
+                    limit: action.payload.limit,
+                    totalPages: action.payload.totalPages,
+                    page: action.payload.page,
+                    pagingCounter: action.payload.pagingCounter,
+                    hasPrevPage: action.payload.hasPrevPage,
+                    hasNextPage: action.payload.hasNextPage,
+                    prevPage: action.payload.prevPage,
+                    nextPage: action.payload.nextPage,
+                };
             })
             .addCase(fetchUsers.rejected, (state, action) => {
                 state.fetchStatus = 'failed';
@@ -138,5 +166,6 @@ export const selectAllUsers = (state) => state.users.users;
 export const selectUserById = (state, userId) => state.users.users.find((user) => user.id === userId);
 
 export { fetchUsers, addUser, updateUser, deleteUser };
+export const { setQueryFilter, setPageFilter, setLimitFilter } = userSlice.actions;
 
 export default userSlice.reducer;

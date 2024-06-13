@@ -19,11 +19,18 @@ import {
   selectCurrentActiveBatch,
 } from "../../Features/batchSlice";
 import QrCodeModal from "../../Components/Modals/Student/QrCodeModal";
-import { Plus } from "lucide-react";
-import { fetchStudents, selectAllStudents } from "../../Features/studentSlice";
+import { FileX, Plus } from "lucide-react";
+import {
+  fetchStudents,
+  selectAllStudents,
+  setLimitFilter,
+  setPageFilter,
+  setQueryFilter,
+} from "../../Features/studentSlice";
 import TableRowLoading from "../../Components/TableRowLoading";
 import EnrollmentModal from "./EnrollmentModal";
 import TableSearch from "../../Components/TableSearch";
+import TablePagination from "../../Components/TablePagination";
 
 function Student() {
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
@@ -31,7 +38,7 @@ function Student() {
   const onAddOpen = () => setIsAddOpen(true);
   const onAddClose = () => setIsAddOpen(false);
 
-  const { fetchStatus } = useSelector((state) => state.students);
+  const { fetchStatus, pagination } = useSelector((state) => state.students);
   const students = useSelector(selectAllStudents);
   const activeBatch = useSelector(selectCurrentActiveBatch);
   const dispatch = useDispatch();
@@ -56,7 +63,7 @@ function Student() {
         <h1 className="text-xl font-semibold ml-6 text-nowrap">All Students</h1>
         <div className="w-full flex justify-end gap-3">
           <div>
-            <TableSearch method={fetchStudents} />
+            <TableSearch setQueryFilter={setQueryFilter} method={fetchStudents} />
           </div>
           {hasPermission(["Add_Student"]) && (
             <button
@@ -92,6 +99,15 @@ function Student() {
                   nOfColumns={9}
                   actions={["w-10", "w-10", "w-20"]}
                 />
+              ) : students.length === 0 ? (
+                <Tr>
+                  <Td colSpan={10}>
+                    <span className="flex justify-center items-center gap-2 text-[#A1A1A1]">
+                      <FileX />
+                      No student records found
+                    </span>
+                  </Td>
+                </Tr>
               ) : (
                 students.map((student) => (
                   <Tr key={student._id}>
@@ -124,6 +140,14 @@ function Student() {
           </Table>
         </TableContainer>
       </div>
+      {fetchStatus !== "loading" && (
+        <TablePagination
+          pagination={pagination}
+          setLimitFilter={setLimitFilter}
+          setPageFilter={setPageFilter}
+          method={fetchStudents}
+        />
+      )}
       <AddModel isOpen={isAddOpen} onClose={onAddClose} />
     </>
   );

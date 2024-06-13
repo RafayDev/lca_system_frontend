@@ -2,13 +2,18 @@ import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { createStandaloneToast } from "@chakra-ui/react";
 import { config } from "../utlls/config.js";
+import axios from "axios";
 
 const { toast } = createStandaloneToast();
 
 const BASE_URL = config.BASE_URL;
+const TABLE_FILTERS = config.TABLE_FILTERS;
+const TABLE_PAGINATION = config.TABLE_PAGINATION;
 
 const initialState = {
   teachers: [],
+  filters: TABLE_FILTERS,
+  pagination: TABLE_PAGINATION,
   fetchStatus: "idle",
   addStatus: "idle",
   updateStatus: "idle",
@@ -18,15 +23,16 @@ const initialState = {
 
 const fetchTeachers = createAsyncThunk(
   "teachers/fetchTeachers",
-  async (payload) => {
-    const { authToken, query } = payload;
-    const response = await fetch(`${BASE_URL}/teachers?query=${query ? query : ""}`, {
+  async (payload, { getState }) => {
+    const state = getState();
+    const { authToken } = payload;
+    const response = await axios.get(`${BASE_URL}/teachers`, {
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
+      params: state.teachers.filters,
     });
-    const data = await response.json();
-    return data;
+    return response.data;
   }
 );
 
@@ -78,7 +84,18 @@ const deleteTeacher = createAsyncThunk(
 const teacherSlice = createSlice({
   name: "teachers",
   initialState,
-  reducers: {},
+  reducers: {
+      setQueryFilter(state, action) {
+          state.filters.query = action.payload;
+      },
+      setPageFilter(state, action) {
+          state.filters.page = action.payload;
+      },
+      setLimitFilter(state, action) {
+          state.filters.page = 1;
+          state.filters.limit = action.payload;
+      },
+  },
 
   extraReducers: (builder) => {
     builder
@@ -88,7 +105,18 @@ const teacherSlice = createSlice({
       })
       .addCase(fetchTeachers.fulfilled, (state, action) => {
         state.fetchStatus = "success";
-        state.teachers = action.payload;
+        state.teachers = action.payload.docs;
+        state.pagination = {
+            totalDocs: action.payload.totalDocs,
+            limit: action.payload.limit,
+            totalPages: action.payload.totalPages,
+            page: action.payload.page,
+            pagingCounter: action.payload.pagingCounter,
+            hasPrevPage: action.payload.hasPrevPage,
+            hasNextPage: action.payload.hasNextPage,
+            prevPage: action.payload.prevPage,
+            nextPage: action.payload.nextPage,
+        };
       })
       .addCase(fetchTeachers.rejected, (state, action) => {
         state.fetchStatus = "failure";
@@ -156,5 +184,6 @@ export const selectTeacherById = (state, teacherId) =>
   state.teachers.teachers.find((teacher) => teacher.id === teacherId);
 
 export { fetchTeachers, addTeacher, updateTeacher, deleteTeacher };
+export const { setQueryFilter, setPageFilter, setLimitFilter } = teacherSlice.actions;
 
 export default teacherSlice.reducer;

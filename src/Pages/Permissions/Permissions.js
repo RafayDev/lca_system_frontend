@@ -12,11 +12,18 @@ import {
 import AddModel from "./AddModel";
 import DeleteModal from "./DeleteModal";
 import UpdateModal from "./UpdateModal";
-import { Plus } from "lucide-react";
+import { FileX, Plus } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectAllPermissions, fetchPermissions } from "../../Features/permissionSlice";
+import {
+  selectAllPermissions,
+  fetchPermissions,
+  setLimitFilter,
+  setPageFilter,
+  setQueryFilter,
+} from "../../Features/permissionSlice";
 import TableRowLoading from "../../Components/TableRowLoading";
 import TableSearch from "../../Components/TableSearch";
+import TablePagination from "../../Components/TablePagination";
 
 function Permissions() {
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -25,7 +32,7 @@ function Permissions() {
 
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
 
-  const { fetchStatus } = useSelector((state) => state.permissions);
+  const { fetchStatus, pagination } = useSelector((state) => state.permissions);
   const permissions = useSelector(selectAllPermissions);
   const dispatch = useDispatch();
 
@@ -45,10 +52,12 @@ function Permissions() {
   return (
     <>
       <div className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold ml-6 text-nowrap">All Permissions</h1>
+        <h1 className="text-xl font-semibold ml-6 text-nowrap">
+          All Permissions
+        </h1>
         <div className="w-full flex justify-end gap-3">
           <div>
-            <TableSearch method={fetchPermissions} />
+            <TableSearch setQueryFilter={setQueryFilter} method={fetchPermissions} />
           </div>
           {hasPermission(["Add_Permission"]) && (
             <button
@@ -74,11 +83,18 @@ function Permissions() {
             </Thead>
             <Tbody>
               {fetchStatus === "loading" ? (
-                <TableRowLoading
-                  nOfColumns={3}
-                  actions={["w-10", "w-10"]}
-                />
+                <TableRowLoading nOfColumns={3} actions={["w-10", "w-10"]} />
               ) : (
+                permissions.length === 0 ? (
+                  <Tr>
+                    <Td colSpan={4}>
+                      <span className="flex justify-center items-center gap-2 text-[#A1A1A1]">
+                        <FileX />
+                        No permission records found
+                      </span>
+                    </Td>
+                  </Tr>
+                ) :
                 permissions.map((perm) => (
                   <Tr key={perm._id}>
                     <Td>{permissions.indexOf(perm) + 1}</Td>
@@ -99,6 +115,14 @@ function Permissions() {
           </Table>
         </TableContainer>
       </div>
+      {fetchStatus !== "loading" && (
+        <TablePagination
+          pagination={pagination}
+          setLimitFilter={setLimitFilter}
+          setPageFilter={setPageFilter}
+          method={fetchPermissions}
+        />
+      )}
       <AddModel isOpen={isAddOpen} onClose={onAddClose} />
     </>
   );

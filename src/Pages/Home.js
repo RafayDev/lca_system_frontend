@@ -64,6 +64,12 @@ function Home() {
       helpText: "Total fee pending from all students",
       icon: <ArrowDown01 size={32} color="#d69e2e" />,
     },
+    {
+      key: "total_fee_defaulters",
+      title: "Total Fee defaulters",
+      helpText: "Total fee pending students",
+      icon: <ArrowDown01 size={32} color="#d69e2e" />,
+    },
   ];
 
   const [statistics, setStatistics] = React.useState({});

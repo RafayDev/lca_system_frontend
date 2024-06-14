@@ -51,7 +51,7 @@ const Login = () => {
     }),
     onSubmit: async (values) => {
       try {
-        const response = await axios.post(`${BASE_URL}/users/login`, values);
+        const response = await axios.post(`${BASE_URL}/users/adminlogin`, values);
         if (response.status === 200) {
           // Login successful
           toast({

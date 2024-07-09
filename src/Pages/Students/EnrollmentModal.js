@@ -189,7 +189,7 @@ const EnrollmentModal = ({ studentId }) => {
                           <AccordionButton
                             style={{
                               backgroundColor:
-                                activeBatch._id === batch._id
+                                activeBatch?._id === batch?._id
                                   ? "#FFCB8280"
                                   : "",
                             }}

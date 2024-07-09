@@ -2,35 +2,50 @@ import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { config } from "../utlls/config.js";
 import axios from "axios";
-import moment from "moment";
 
 const BASE_URL = config.BASE_URL;
+const TABLE_FILTERS = config.TABLE_FILTERS;
 
 const initialState = {
   attendances: [],
+  filters: TABLE_FILTERS,
   status: "idle",
 };
 
 const fetchAttendances = createAsyncThunk(
   "attendances/fetchAll",
-  async (payload) => {
-    const { authToken, course_id, batch_id, date, query } = payload;
-    const response = await fetch(`${BASE_URL}/attendence?query=${query ? query : ""}`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${authToken}`,
-        },
-        body: JSON.stringify({ course_id, batch_id, date: date ? moment(date).format("YYYY-MM-DD") : null }),
-        });
-        return response.json();
-    }
+  async (payload, { getState }) => {
+    const state = getState();
+    const { authToken, course_id, batch_id, date } = payload;
+    const response = await axios.get(`${BASE_URL}/attendence`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+      params: {
+        ...state.attendance.filters,
+        course_id,
+        batch_id,
+        date,
+      }
+    });
+    return response.data;
+  }
 );
 
 const attendanceSlice = createSlice({
   name: "attendance",
   initialState,
   reducers: {
+    setQueryFilter(state, action) {
+        state.filters.query = action.payload;
+    },
+    setPageFilter(state, action) {
+        state.filters.page = action.payload;
+    },
+    setLimitFilter(state, action) {
+        state.filters.page = 1;
+        state.filters.limit = action.payload;
+    },
     addAttendance: (state, action) => {
       state.attendances.push(action.payload);
     },
@@ -53,5 +68,7 @@ const attendanceSlice = createSlice({
 export const selectAttendances = (state) => state.attendance.attendances;
 
 export { fetchAttendances };
+export const { setQueryFilter, setPageFilter, setLimitFilter } =
+  attendanceSlice.actions;
 
 export default attendanceSlice.reducer;

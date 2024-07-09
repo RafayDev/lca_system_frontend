@@ -13,17 +13,23 @@ import {
   FormLabel,
   Input,
   Select,
+  Button,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAttendances } from "../../Features/attendanceSlice";
-import { Box, FileX } from "lucide-react";
-import { fetchAttendances } from "../../Features/attendanceSlice";
-import { fetchBatches, selectAllBatches, setQueryFilter } from "../../Features/batchSlice";
+import { FileX, FilterX } from "lucide-react";
+import {
+  fetchAttendances,
+  setQueryFilter,
+} from "../../Features/attendanceSlice";
+import { fetchBatches, selectAllBatches } from "../../Features/batchSlice";
 import { fetchCourses, selectAllCourses } from "../../Features/courseSlice";
 import TableSearch from "../../Components/TableSearch";
 import TableRowLoading from "../../Components/TableRowLoading";
 
 function Attendance() {
+  const tableSearchRef = useRef();
+
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
   const [selectedBatch, setSelectedBatch] = useState("");
 
@@ -35,6 +41,60 @@ function Attendance() {
   const batches = useSelector(selectAllBatches);
   const { status } = useSelector((state) => state.attendance);
   const dispatch = useDispatch();
+
+  const handleFormBatchChange = (e) => {
+    setFormCourse("");
+    setFormDate("");
+    setFormBatch(e.target.value);
+    setSelectedBatch(batches.find((batch) => batch._id === e.target.value));
+    dispatch(
+      fetchAttendances({
+        authToken,
+        course_id: formCourse,
+        batch_id: e.target.value,
+        date: formDate,
+      })
+    );
+  };
+
+  const handleFormCourseChange = (e) => {
+    setFormCourse(e.target.value);
+    dispatch(
+      fetchAttendances({
+        authToken,
+        course_id: e.target.value,
+        batch_id: formBatch,
+        date: formDate,
+      })
+    );
+  };
+
+  const handleFormDateChange = (e) => {
+    setFormDate(e.target.value);
+    dispatch(
+      fetchAttendances({
+        authToken,
+        course_id: formCourse,
+        batch_id: formBatch,
+        date: e.target.value,
+      })
+    );
+  };
+
+  const handleClearFilters = () => {
+    tableSearchRef.current.clearSearch();
+    setFormCourse("");
+    setFormBatch("");
+    setFormDate("");
+    dispatch(
+      fetchAttendances({
+        authToken,
+        course_id: "",
+        batch_id: "",
+        date: "",
+      })
+    );
+  };
 
   useEffect(() => {
     dispatch(fetchBatches({ authToken }));
@@ -51,30 +111,24 @@ function Attendance() {
   return (
     <>
       <div className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold ml-6 text-nowrap">Attendance <span className="text-red-500 uppercase">[This Page is under development]</span></h1>
+        <h1 className="text-xl font-semibold ml-6 text-nowrap">Attendance</h1>
         <div className="w-full flex justify-end gap-3">
           <div>
-            <TableSearch setQueryFilter={setQueryFilter} method={fetchAttendances} />
+            <TableSearch
+              ref={tableSearchRef}
+              setQueryFilter={setQueryFilter}
+              method={fetchAttendances}
+            />
           </div>
-          <HStack spacing={4}>
+          <HStack spacing={3}>
             <FormControl>
               <Select
                 placeholder="Select Batch"
                 w={48}
-                onChange={(e) => {
-                  setFormBatch(e.target.value);
-                  setSelectedBatch(
-                    batches.find((batch) => batch._id === e.target.value)
-                  );
-                  dispatch(
-                    fetchAttendances({
-                      authToken,
-                      course_id: "",
-                      batch_id: e.target.value,
-                      date: formDate,
-                    })
-                  );
-                }}
+                size={"lg"}
+                borderRadius="xl"
+                value={formBatch}
+                onChange={(e) => handleFormBatchChange(e)}
               >
                 {batches.map((batch) => (
                   <option key={batch._id} value={batch._id}>
@@ -88,17 +142,10 @@ function Attendance() {
                 <Select
                   placeholder="Select Course"
                   w={48}
-                  onChange={(e) => {
-                    setFormCourse(e.target.value);
-                    dispatch(
-                      fetchAttendances({
-                        authToken,
-                        course_id: e.target.value,
-                        batch_id: formBatch,
-                        date: formDate,
-                      })
-                    );
-                  }}
+                  size={"lg"}
+                  borderRadius="xl"
+                  value={formCourse}
+                  onChange={(e) => handleFormCourseChange(e)}
                 >
                   {selectedBatch?.courses?.map((course) => (
                     <option key={course._id} value={course._id}>
@@ -112,19 +159,20 @@ function Attendance() {
               <Input
                 type="date"
                 w={48}
-                onChange={(e) => {
-                  setFormDate(e.target.value);
-                  dispatch(
-                    fetchAttendances({
-                      authToken,
-                      course_id: formCourse,
-                      batch_id: formBatch,
-                      date: e.target.value,
-                    })
-                  );
-                }}
+                size={"lg"}
+                borderRadius="xl"
+                value={formDate}
+                onChange={(e) => handleFormDateChange(e)}
               />
             </FormControl>
+            <Button
+              size="icon"
+              p={4}
+              borderRadius="xl"
+              onClick={(e) => handleClearFilters(e)}
+            >
+              <FilterX className="h-4 w-4" />
+            </Button>
           </HStack>
         </div>
       </div>

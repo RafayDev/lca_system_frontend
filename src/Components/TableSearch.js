@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, forwardRef, useImperativeHandle } from "react";
 import {
   IconButton,
   Input,
   InputGroup,
   InputLeftElement,
-  InputRightElement,
-  Stack,
+  InputRightElement
 } from "@chakra-ui/react";
-import { Cross, Search, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { useDispatch } from "react-redux";
 import Cookies from "js-cookie";
 
-export default function TableSearch({ setQueryFilter, method }) {
+
+const TableSearch = forwardRef(({ setQueryFilter, method }, ref) => {
   const [authToken] = useState(Cookies.get("authToken"));
   const [searchQuery, setSearchQuery] = useState("");
   const dispatch = useDispatch();
@@ -21,10 +21,20 @@ export default function TableSearch({ setQueryFilter, method }) {
     dispatch(method({ authToken }));
   };
 
+  const clearSearch = () => {
+    setSearchQuery("");
+    dispatch(setQueryFilter(""));
+    dispatch(method({ authToken }));
+  };
+
   useEffect(() => {
     setSearchQuery("");
     dispatch(setQueryFilter(""));
   }, []);
+
+  useImperativeHandle(ref, () => ({
+    clearSearch
+  }));
 
   return (
     <>
@@ -50,11 +60,7 @@ export default function TableSearch({ setQueryFilter, method }) {
               size="md"
               borderRadius={"lg"}
               marginRight={"0.5rem"}
-              onClick={() => {
-                setSearchQuery("");
-                dispatch(setQueryFilter(""));
-                dispatch(method({ authToken }));
-              }}
+              onClick={() => clearSearch()}
             >
               <X />
             </IconButton>
@@ -63,4 +69,6 @@ export default function TableSearch({ setQueryFilter, method }) {
       </InputGroup>
     </>
   );
-}
+});
+
+export default TableSearch;

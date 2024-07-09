@@ -177,10 +177,10 @@ export default function TimetableCalendar() {
         const formattedDateTime = data.map((event) => formateDateTime(event));
         const formattedData = data.map((event, index) => ({
           ...event,
-          title: event.course.name,
-          teacherName: event.teacher.name,
-          batchName: event.batch.name,
-          courseName: event.course.name,
+          title: event.course?.name || "ERR",
+          teacherName: event.teacher?.name || "ERR",
+          batchName: event.batch?.name || "ERR",
+          courseName: event.course?.name || "ERR",
           start: formattedDateTime[index].start,
           end: formattedDateTime[index].end,
         }));

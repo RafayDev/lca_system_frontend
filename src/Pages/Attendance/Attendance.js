@@ -20,15 +20,12 @@ import { selectAttendances } from "../../Features/attendanceSlice";
 import { FileX, FilterX } from "lucide-react";
 import {
   fetchAttendances,
-  setLimitFilter,
-  setPageFilter,
   setQueryFilter,
 } from "../../Features/attendanceSlice";
 import { fetchBatches, selectAllBatches } from "../../Features/batchSlice";
 import { fetchCourses, selectAllCourses } from "../../Features/courseSlice";
 import TableSearch from "../../Components/TableSearch";
 import TableRowLoading from "../../Components/TableRowLoading";
-import TablePagination from "../../Components/TablePagination";
 
 function Attendance() {
   const tableSearchRef = useRef();
@@ -42,7 +39,7 @@ function Attendance() {
 
   const attendances = useSelector(selectAttendances);
   const batches = useSelector(selectAllBatches);
-  const { status, pagination } = useSelector((state) => state.attendance);
+  const { status } = useSelector((state) => state.attendance);
   const dispatch = useDispatch();
 
   const handleFormBatchChange = (e) => {
@@ -224,14 +221,6 @@ function Attendance() {
           </Table>
         </TableContainer>
       </div>
-      {status === "succeeded" && (
-        <TablePagination
-          pagination={pagination}
-          setLimitFilter={setLimitFilter}
-          setPageFilter={setPageFilter}
-          method={fetchAttendances}
-        />
-      )}
     </>
   );
 }

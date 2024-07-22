@@ -59,7 +59,7 @@ export default function TimetableCalendar() {
 
   const [events, setEvents] = useState([]);
 
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
 
   const [start, setStart] = useState(new Date());
   const [end, setEnd] = useState(new Date());

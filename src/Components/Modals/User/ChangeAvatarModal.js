@@ -32,7 +32,7 @@ function ChangeAvatarModal() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const BASE_URL = config.BASE_URL;
-  const authToken = Cookies.get("authToken");
+  const authToken = Cookies.get("authToken") || sessionStorage.getItem("authToken");
 
   const handleChangeSource = async (selectedFile) => {
     setImageSource(selectedFile);

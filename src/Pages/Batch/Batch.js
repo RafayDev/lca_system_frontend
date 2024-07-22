@@ -29,7 +29,7 @@ import TableSearch from "../../Components/TableSearch";
 import TablePagination from "../../Components/TablePagination";
 
 function Batch() {
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
   const [isAddOpen, setIsAddOpen] = useState(false);
 
   const onAddOpen = () => setIsAddOpen(true);

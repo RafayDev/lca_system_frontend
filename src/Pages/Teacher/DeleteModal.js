@@ -19,7 +19,7 @@ const DeleteModal = ({ teacherId, getteachers }) => {
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
 
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
 
   const { deleteStatus } = useSelector((state) => state.teachers);
   const dispatch = useDispatch();

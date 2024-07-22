@@ -12,7 +12,7 @@ import Cookies from "js-cookie";
 
 
 const TableSearch = forwardRef(({ setQueryFilter, method }, ref) => {
-  const [authToken] = useState(Cookies.get("authToken"));
+  const [authToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
   const [searchQuery, setSearchQuery] = useState("");
   const dispatch = useDispatch();
 

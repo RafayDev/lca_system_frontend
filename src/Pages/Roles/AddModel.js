@@ -21,7 +21,7 @@ import { addRole, fetchRoles } from "../../Features/roleSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 function AddModel({ isOpen, onClose }) {
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
 
   const { addStatus } = useSelector((state) => state.roles);
   const dispatch = useDispatch();

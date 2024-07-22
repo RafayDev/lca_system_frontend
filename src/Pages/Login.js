@@ -33,7 +33,7 @@ const Login = () => {
 
   useEffect(() => {
     // Check if authToken is present in cookies
-    const authToken = Cookies.get("authToken");
+    const authToken = Cookies.get("authToken") || sessionStorage.getItem("authToken");
     if (authToken) {
       // Redirect to dashboard or the page the user came from
       navigate("/dashboard");

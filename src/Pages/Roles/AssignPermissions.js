@@ -34,7 +34,7 @@ const AssignPermissions = ({ roleId }) => {
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
 
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
 
   const permissions = useSelector(selectAllPermissions);
   const assignedPermissions = useSelector(selectAllAssignedPermissions);

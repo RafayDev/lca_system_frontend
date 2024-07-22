@@ -30,7 +30,7 @@ function Permissions() {
   const onAddOpen = () => setIsAddOpen(true);
   const onAddClose = () => setIsAddOpen(false);
 
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
 
   const { fetchStatus, pagination } = useSelector((state) => state.permissions);
   const permissions = useSelector(selectAllPermissions);

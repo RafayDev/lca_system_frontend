@@ -21,7 +21,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { addTeacher, fetchTeachers } from "../../Features/teacherSlice";
 
 function AddTeacher({ isOpen, onClose }) {
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
 
   const { addStatus } = useSelector((state) => state.teachers);
   const dispatch = useDispatch();

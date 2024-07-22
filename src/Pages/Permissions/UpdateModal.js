@@ -26,7 +26,7 @@ function AddModel({ perm }) {
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
 
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
 
   const { updateStatus } = useSelector((state) => state.permissions);
   const dispatch = useDispatch();

@@ -33,7 +33,7 @@ import TablePagination from "../../Components/TablePagination";
 function Attendance() {
   const tableSearchRef = useRef();
 
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
   const [selectedBatch, setSelectedBatch] = useState("");
 
   const [formCourse, setFormCourse] = useState("");

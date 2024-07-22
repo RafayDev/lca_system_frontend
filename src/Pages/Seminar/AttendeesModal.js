@@ -42,7 +42,7 @@ const AttendeesModal = ({ seminar }) => {
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
 
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
   const [loading, setLoading] = useState(false);
 
   const { fetchStatus, pagination } = useSelector(

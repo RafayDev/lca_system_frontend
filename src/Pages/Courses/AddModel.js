@@ -21,7 +21,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchCourses, addCourse } from "../../Features/courseSlice";
 
 function AddModel({ isOpen, onClose }) {
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
 
   const { addStatus } = useSelector((state) => state.courses);
   const dispatch = useDispatch();

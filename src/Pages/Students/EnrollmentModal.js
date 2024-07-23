@@ -42,7 +42,7 @@ const EnrollmentModal = ({ studentId }) => {
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
 
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
 
   const batches = useSelector((state) => state.batches.batches);
   const activeBatch = useSelector(selectCurrentActiveBatch);

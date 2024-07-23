@@ -32,7 +32,7 @@ function Seminar() {
   const onAddOpen = () => setIsAddOpen(true);
   const onAddClose = () => setIsAddOpen(false);
 
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
 
   const { fetchStatus, pagination } = useSelector((state) => state.seminars);
   const { seminars } = useSelector((state) => state.seminars);

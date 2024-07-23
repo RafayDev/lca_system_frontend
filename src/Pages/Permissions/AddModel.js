@@ -21,7 +21,7 @@ import { addPermission, fetchPermissions } from "../../Features/permissionSlice"
 import { useDispatch, useSelector } from "react-redux";
 
 function AddModel({ isOpen, onClose }) {
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
 
   const { addStatus } = useSelector((state) => state.permissions);
   const dispatch = useDispatch();

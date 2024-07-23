@@ -30,7 +30,7 @@ const AssignCoursesModal = ({ batchId }) => {
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
 
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
 
   const { assignCoursesStatus, fetchBatchCoursesStatus } = useSelector(
     (state) => state.batches

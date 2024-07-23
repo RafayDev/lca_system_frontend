@@ -16,7 +16,7 @@ export default function TablePagination({
   method,
   payload = {},
 }) {
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
   const {
     totalDocs,
     limit,

@@ -75,7 +75,7 @@ function Home() {
 
   const [statistics, setStatistics] = React.useState({});
 
-  const [authToken, setAuthToken] = React.useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
+  const [authToken, setAuthToken] = React.useState(Cookies.get("authToken"));
   const { status } = useSelector((state) => state.statistics);
   const dispatch = useDispatch();
 

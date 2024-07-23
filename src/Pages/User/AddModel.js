@@ -22,7 +22,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchUsers, addUser } from "../../Features/userSlice";
 
 function AddModel({ isOpen, onClose }) {
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
 
   const { addStatus } = useSelector((state) => state.users);
   const dispatch = useDispatch();

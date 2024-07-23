@@ -22,7 +22,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchBatches, addBatch } from "../../Features/batchSlice";
 
 function AddModel({ isOpen, onClose }) {
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
   const { addStatus } = useSelector((state) => state.batches);
   const dispatch = useDispatch();
 

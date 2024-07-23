@@ -21,7 +21,7 @@ const DeleteModal = ({ permId }) => {
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
 
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
 
   const { deleteStatus } = useSelector((state) => state.permissions);
   const dispatch = useDispatch();

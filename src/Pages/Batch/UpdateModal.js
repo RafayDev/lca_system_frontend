@@ -23,7 +23,7 @@ import { fetchBatches, updateBatch } from "../../Features/batchSlice";
 
 function AddModel({ batch }) {
   const [isOpen, setIsOpen] = React.useState(false);
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
   const { upadateStatus } = useSelector((state) => state.batches);
   const dispatch = useDispatch();
 

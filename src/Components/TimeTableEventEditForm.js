@@ -26,7 +26,7 @@ function TimeTableEventEditForm({
   batches,
   onClose,
 }) {
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
   const { updateStatus } = useSelector((state) => state.timetable);
   const dispatch = useDispatch();
 

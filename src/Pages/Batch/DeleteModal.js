@@ -16,7 +16,7 @@ import { fetchBatches, deleteBatch } from "../../Features/batchSlice";
 
 const DeleteModal = ({ batchId }) => {
   const [isOpen, setIsOpen] = React.useState(false);
-  const [authToken, setAuthToken] = useState(Cookies.get("authToken") || sessionStorage.getItem("authToken"));
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
   const { deleteStatus } = useSelector((state) => state.batches);
   const dispatch = useDispatch();
 

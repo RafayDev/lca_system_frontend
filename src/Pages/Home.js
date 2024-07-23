@@ -20,6 +20,7 @@ import {
   RotateCw,
   AlertTriangle,
 } from "lucide-react";
+import MonthlyColumnChart from "../Components/MonthlyStudentChart";
 
 function Home() {
   const data = [
@@ -150,6 +151,23 @@ function Home() {
           )
         ))}
       </div>
+
+      {/* charts data  */}
+      <div className="grid grid-cols-12 gap-4">
+        <div className="col-span-12 md:col-span-4 w-full">
+        <MonthlyColumnChart chartTitle="Student Data"/>
+        </div>
+        <div className="col-span-12 md:col-span-4 w-full">
+        <MonthlyColumnChart chartTitle="Batches Data"/>
+        </div>
+        <div className="col-span-12 md:col-span-4 w-full">
+        <MonthlyColumnChart chartTitle="Seminar Data"/>
+        </div>
+    
+       
+
+     
+    </div>
     </>
   );
 }

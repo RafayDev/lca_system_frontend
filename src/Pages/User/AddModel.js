@@ -31,13 +31,13 @@ function AddModel({ isOpen, onClose }) {
     initialValues: {
       name: "",
       email: "",
-      password: "",
+      // password: "",
       role: "",
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Required"),
       email: Yup.string().email("Invalid email address").required("Required"),
-      password: Yup.string().required("Required"),
+      // password: Yup.string().required("Required"),
       role: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
@@ -89,7 +89,7 @@ function AddModel({ isOpen, onClose }) {
                   </Box>
                 ) : null}
               </FormControl>
-              <FormControl id="password">
+              {/* <FormControl id="password">
                 <FormLabel fontSize={14}>Password</FormLabel>
                 <Input
                   type="password"
@@ -103,7 +103,7 @@ function AddModel({ isOpen, onClose }) {
                     {formik.errors.password}
                   </Box>
                 ) : null}
-              </FormControl>
+              </FormControl> */}
               <FormControl id="role">
                 <FormLabel fontSize={14}>Role</FormLabel>
                 <Select

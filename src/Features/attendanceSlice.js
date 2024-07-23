@@ -39,14 +39,14 @@ const attendanceSlice = createSlice({
   initialState,
   reducers: {
     setQueryFilter(state, action) {
-        state.filters.query = action.payload;
+      state.filters.query = action.payload;
     },
     setPageFilter(state, action) {
-        state.filters.page = action.payload;
+      state.filters.page = action.payload;
     },
     setLimitFilter(state, action) {
-        state.filters.page = 1;
-        state.filters.limit = action.payload;
+      state.filters.page = 1;
+      state.filters.limit = action.payload;
     },
     addAttendance: (state, action) => {
       state.attendances.push(action.payload);
@@ -61,15 +61,15 @@ const attendanceSlice = createSlice({
         state.status = "succeeded";
         state.attendances = action.payload.docs;
         state.pagination = {
-            totalDocs: action.payload.totalDocs,
-            limit: action.payload.limit,
-            totalPages: action.payload.totalPages,
-            page: action.payload.page,
-            pagingCounter: action.payload.pagingCounter,
-            hasPrevPage: action.payload.hasPrevPage,
-            hasNextPage: action.payload.hasNextPage,
-            prevPage: action.payload.prevPage,
-            nextPage: action.payload.nextPage,
+          totalDocs: action.payload.totalDocs,
+          limit: action.payload.limit,
+          totalPages: action.payload.totalPages,
+          page: action.payload.page,
+          pagingCounter: action.payload.pagingCounter,
+          hasPrevPage: action.payload.hasPrevPage,
+          hasNextPage: action.payload.hasNextPage,
+          prevPage: action.payload.prevPage,
+          nextPage: action.payload.nextPage,
         };
       })
       .addCase(fetchAttendances.rejected, (state) => {

@@ -19,6 +19,7 @@ import * as Yup from "yup";
 import { Check } from "lucide-react";
 import {
   selectAllPermissions,
+  setLimitFilter,
   fetchPermissions,
 } from "../../Features/permissionSlice";
 import { useSelector, useDispatch } from "react-redux";
@@ -53,6 +54,7 @@ const AssignPermissions = ({ roleId }) => {
   };
 
   useEffect(() => {
+    dispatch(setLimitFilter(999999));
     dispatch(fetchPermissions({ authToken }));
   }, []);
 

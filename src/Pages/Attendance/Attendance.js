@@ -205,7 +205,7 @@ function Attendance() {
                   </Td>
                 </Tr>
               ) : (
-                attendances.map((attendance) => (
+                (attendances ?? [])?.map((attendance) => (
                   <Tr key={attendance._id}>
                     <Td>{attendances.indexOf(attendance) + 1}</Td>
                     <Td>{attendance.date}</Td>

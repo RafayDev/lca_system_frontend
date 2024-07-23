@@ -5,10 +5,12 @@ import axios from "axios";
 
 const BASE_URL = config.BASE_URL;
 const TABLE_FILTERS = config.TABLE_FILTERS;
+const TABLE_PAGINATION = config.TABLE_PAGINATION;
 
 const initialState = {
   attendances: [],
   filters: TABLE_FILTERS,
+  pagination: TABLE_PAGINATION,
   status: "idle",
 };
 
@@ -37,14 +39,14 @@ const attendanceSlice = createSlice({
   initialState,
   reducers: {
     setQueryFilter(state, action) {
-        state.filters.query = action.payload;
+      state.filters.query = action.payload;
     },
     setPageFilter(state, action) {
-        state.filters.page = action.payload;
+      state.filters.page = action.payload;
     },
     setLimitFilter(state, action) {
-        state.filters.page = 1;
-        state.filters.limit = action.payload;
+      state.filters.page = 1;
+      state.filters.limit = action.payload;
     },
     addAttendance: (state, action) => {
       state.attendances.push(action.payload);
@@ -56,8 +58,19 @@ const attendanceSlice = createSlice({
         state.status = "loading";
       })
       .addCase(fetchAttendances.fulfilled, (state, action) => {
-        state.attendances = action.payload;
-        state.status = "idle";
+        state.status = "succeeded";
+        state.attendances = action.payload.docs;
+        state.pagination = {
+          totalDocs: action.payload.totalDocs,
+          limit: action.payload.limit,
+          totalPages: action.payload.totalPages,
+          page: action.payload.page,
+          pagingCounter: action.payload.pagingCounter,
+          hasPrevPage: action.payload.hasPrevPage,
+          hasNextPage: action.payload.hasNextPage,
+          prevPage: action.payload.prevPage,
+          nextPage: action.payload.nextPage,
+        };
       })
       .addCase(fetchAttendances.rejected, (state) => {
         state.status = "failed";

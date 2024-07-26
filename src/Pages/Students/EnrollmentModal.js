@@ -34,6 +34,7 @@ import {
 import {
   fetchBatches,
   selectCurrentActiveBatch,
+  setLimitFilter,
 } from "../../Features/batchSlice";
 import { fetchStudents } from "../../Features/studentSlice";
 
@@ -80,6 +81,7 @@ const EnrollmentModal = ({ studentId }) => {
   };
 
   useEffect(() => {
+    dispatch(setLimitFilter(999999));
     dispatch(fetchBatches({ authToken }));
   }, []);
 

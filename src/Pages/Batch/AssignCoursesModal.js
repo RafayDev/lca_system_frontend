@@ -23,7 +23,7 @@ import {
   fetchBatches,
   selectBatchCourses,
 } from "../../Features/batchSlice";
-import { fetchCourses, selectAllCourses } from "../../Features/courseSlice";
+import { fetchCourses, selectAllCourses, setLimitFilter } from "../../Features/courseSlice";
 
 const AssignCoursesModal = ({ batchId }) => {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -69,6 +69,7 @@ const AssignCoursesModal = ({ batchId }) => {
   };
 
   useEffect(() => {
+    dispatch(setLimitFilter(999999));
     dispatch(fetchCourses({ authToken }));
   }, []);
 

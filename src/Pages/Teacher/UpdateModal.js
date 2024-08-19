@@ -39,13 +39,13 @@ function AddModel({ teacher, getTeachers }) {
       name: teacher.name,
       email: teacher.email,
       phone: teacher.phone,
-      // role: teacher.role,
+      image: null,
+      resume: null,
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Required"),
       email: Yup.string().email("Invalid email address").required("Required"),
       phone: Yup.string().required("Required"),
-      // role: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
       dispatch(updateTeacher({ teacherId: teacher._id, values, authToken }))

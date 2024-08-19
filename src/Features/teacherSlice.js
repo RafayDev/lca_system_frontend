@@ -52,14 +52,13 @@ const addTeacher = createAsyncThunk("teachers/addTeacher", async (payload) => {
 const updateTeacher = createAsyncThunk(
   "teachers/updateTeacher",
   async (payload) => {
-    const { teacherId, values, authToken } = payload;
+    const { teacherId, formData, authToken } = payload;
     const response = await fetch(`${BASE_URL}/teachers/update/${teacherId}`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${authToken}`,
       },
-      body: JSON.stringify(values),
+      body: formData
     });
     const data = await response.json();
     return data;

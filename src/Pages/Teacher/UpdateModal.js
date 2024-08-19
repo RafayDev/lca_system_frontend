@@ -48,7 +48,16 @@ function AddModel({ teacher, getTeachers }) {
       phone: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
-      dispatch(updateTeacher({ teacherId: teacher._id, values, authToken }))
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("email", values.email);
+      formData.append("phone", values.phone);
+      formData.append("image", values.image);
+      formData.append("resume", values.resume);
+
+      console.log(formData);
+
+      dispatch(updateTeacher({ teacherId: teacher._id, formData, authToken }))
         .unwrap()
         .then(() => {
           onClose();

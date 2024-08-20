@@ -9,6 +9,7 @@ import {
   Th,
   Td,
   TableContainer,
+  ButtonGroup,
 } from "@chakra-ui/react";
 import AddModel from "./AddModel";
 import DeleteModal from "./DeleteModal";
@@ -31,6 +32,7 @@ import TableRowLoading from "../../Components/TableRowLoading";
 import EnrollmentModal from "./EnrollmentModal";
 import TableSearch from "../../Components/TableSearch";
 import TablePagination from "../../Components/TablePagination";
+import StudentCardModal from "../../Components/Modals/Student/StudentCardModal";
 
 function Student() {
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
@@ -113,7 +115,10 @@ function Student() {
                   <Tr key={student._id}>
                     <Td>{students.indexOf(student) + 1}</Td>
                     <Td>
-                      <QrCodeModal student={student} />
+                      <ButtonGroup variant='outline'>
+                        <QrCodeModal student={student} />
+                        <StudentCardModal student={student} />
+                      </ButtonGroup>
                     </Td>
                     <Td>{student.name}</Td>
                     <Td>{student.email}</Td>

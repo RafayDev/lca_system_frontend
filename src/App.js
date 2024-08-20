@@ -4,7 +4,6 @@ import "./App.css";
 import Login from "./Pages/Login.js";
 import NoPage from "./Pages/NoPage.js";
 import Dashboard from "./Layouts/Dashboard.js";
-import Card from "./Pages/Card/Card.js";
 import { routes } from "./routes.js";
 import { useEffect } from "react";
 import Cookies from "js-cookie";
@@ -36,10 +35,6 @@ function App() {
               path={route.path}
             />
           ))}
-          <Route 
-            path="/card"
-            element={<Card />}
-          />
         </Route>
         {/* Redirect any other paths to the 404 page */}
         <Route path="*" element={<NoPage />} />

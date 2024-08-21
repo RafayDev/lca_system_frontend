@@ -1,16 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import html2canvas from "html2canvas";
 import { Button } from "@chakra-ui/react";
+import jsPDF from "jspdf";
 
 const StudentCard = ({ student, qrCode }) => {
-    console.log(student, qrCode);
+    const [qrCodeLoaded, setQrCodeLoaded] = useState(false);
+
+    const handleQrCodeLoad = () => {
+        setQrCodeLoaded(true);
+    };
+
     const captureAndDownload = async () => {
+        if (!qrCodeLoaded) return;
+
         const cardFront = document.querySelector(".card-front");
         const cardBack = document.querySelector(".card-back");
 
         // Capture front and back of the card
-        const frontCanvas = await html2canvas(cardFront);
-        const backCanvas = await html2canvas(cardBack);
+        const frontCanvas = await html2canvas(cardFront, { scale: 5 });
+        const backCanvas = await html2canvas(cardBack, { scale: 5 });
 
         // Convert canvases to images
         const frontImage = frontCanvas.toDataURL("image/png");
@@ -29,60 +37,39 @@ const StudentCard = ({ student, qrCode }) => {
         backLink.click();
     };
 
+    const generatePDF = async () => {
+        if (!qrCodeLoaded) return;
+
+        const cardFront = document.querySelector(".card-front");
+        const cardBack = document.querySelector(".card-back");
+
+        // Capture front and back of the card
+        const frontCanvas = await html2canvas(cardFront, { scale: 5 });
+        const backCanvas = await html2canvas(cardBack, { scale: 5 });
+
+        // Create jsPDF document
+        const pdf = new jsPDF({
+            orientation: "portrait",
+            unit: "px",
+            format: [288, 576], // set format based on your card size
+        });
+
+        // Add front card to PDF
+        pdf.addImage(frontCanvas.toDataURL("image/png"), "PNG", 0, 0, 288, 288);
+
+        // Add a new page and add back card to PDF
+        pdf.addPage();
+        pdf.addImage(backCanvas.toDataURL("image/png"), "PNG", 0, 0, 288, 288);
+
+        // Save the PDF
+        pdf.save(`student-card-${(student.name)?.replace(' ', '')}-${student._id}.pdf`);
+    };
+
     return (
         <>
             <div style={{ justifyContent: "center", alignItems: "center", display: "flex" }}>
-                <div
-                    className="card-front"
-                    style={{ display: "grid", width: "288px" }}
-                >
-                    <div className="relative w-72 h-56 bg-black p-6">
-                        <img src="/card-logo.png" className="w-36 mx-auto" alt="random" />
-                    </div>
-                    <div className="relative w-72 h-20 bg-white">
-                        <img
-                            src={student.image || "/17698878.jpg"}
-                            style={{ border: "4px solid goldenrod" }}
-                            className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-36"
-                            alt="random"
-                        />
-                    </div>
-                    <div className="relative w-72 h-48 p-5 bg-white">
-                        <table style={{ textAlign: "left" }}>
-                            <tbody>
-                                <tr>
-                                    <th>Name:</th>
-                                    <td>
-                                        <u>{student.name || "N/A"}</u>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>S/O:</th>
-                                    <td>
-                                        <u>{student.father_name || "N/A"}</u>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Batch:</th>
-                                    <td>
-                                        <u>{student.batch.startdate || "N/A"}</u>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>ID:</th>
-                                    <td>
-                                        <u>{student._id || "N/A"}</u>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div className="w-72 h-9 p-2" style={{ backgroundColor: "goldenrod" }}>
-                        <p className="text-center text-black font-bold">
-                            0331-000-111-0 / 0333-9800938
-                        </p>
-                    </div>
+                <div className="card-front" style={{ display: "grid", width: "288px" }}>
+                    {/* Front card content here */}
                 </div>
                 <div
                     className="card-back ml-4"
@@ -103,62 +90,24 @@ const StudentCard = ({ student, qrCode }) => {
                         </p>
                     </div>
                     <div className="relative w-72 h-36 p-10 bg-white">
-                        <table style={{ textAlign: "center" }}>
-                            <tbody>
-                                <tr>
-                                    <th>Issued on:</th>
-                                    <td>
-                                        <u> August/18/2024</u>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Valid Till:</th>
-                                    <td>
-                                        <u> August/18/2025</u>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        {/* Back card content */}
                     </div>
-
-                    <div className="w-72 h-9 p-1" style={{ backgroundColor: "goldenrod" }}>
-                        <p className="text-center text-black font-bold text-xl">
-                            INSTRUCTIONS
-                        </p>
-                    </div>
-                    <div className="relative w-72 h-64 p-7 bg-white">
-                        <ol
-                            style={{
-                                fontSize: "12px",
-                                fontFamily: "calibri",
-                                listStyleType: "decimal",
-                            }}
-                        >
-                            <li>This card is property of Lahore CSS Academy.</li>
-                            <li>This card is for personal use only and is not transferable.</li>
-                            <li> If found please return to the below address.</li>
-                        </ol>
-                        <div className="absolute bottom-2 left-2">
-                            {/* QR Code component goes here */}
-                            <img src={`data:image/svg+xml;utf8,${encodeURIComponent(qrCode)}`} alt="QR Code" className="w-32 h-32" />
+                    <div className="relative w-72 h-64 bg-white" style={{ paddingTop: "5px", overflow: "hidden" }}>
+                        {/* Instructions */}
+                        <div className="absolute bottom-1 left-1" style={{ paddingBottom: "20px" }}>
+                            <img
+                                src={`data:image/png;base64,${qrCode}`}
+                                alt="QR Code"
+                                className="w-28 h-28"
+                                onLoad={handleQrCodeLoad}
+                            />
                         </div>
                         <div className="absolute bottom-2 right-2 text-right">
                             <hr className="border-t-2 border-black mb-1" />
                             <span className="font-semibold">Issuing Authority</span>
                         </div>
                     </div>
-                    <div className="w-72 h-9 p-1" style={{ backgroundColor: "goldenrod" }}>
-                        <p style={{
-                            fontSize: "11px",
-                            fontFamily: "calibri",
-                            textAlign: "center",
-                            color: "black",
-                            fontWeight: "bold",
-                            padding: "6px",
-                        }}>
-                            13- Sher Shah, New Garden Town, Barkat Market, Lahore
-                        </p>
-                    </div>
+                    {/* Address */}
                 </div>
             </div>
             <div style={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}>
@@ -178,6 +127,24 @@ const StudentCard = ({ student, qrCode }) => {
                     onClick={captureAndDownload}
                 >
                     Download Card Images
+                </Button>
+                <Button
+                    marginTop={"0.75rem"}
+                    marginBottom={"0.75rem"}
+                    marginLeft={"1rem"}
+                    borderRadius={"0.75rem"}
+                    backgroundColor={"#FFCB82"}
+                    color={"#85652D"}
+                    _hover={{
+                        backgroundColor: "#E3B574",
+                        color: "#654E26",
+                    }}
+                    fontWeight={"500"}
+                    type="button"
+                    loadingText="Generating PDF"
+                    onClick={generatePDF}
+                >
+                    Download PDF
                 </Button>
             </div>
         </>

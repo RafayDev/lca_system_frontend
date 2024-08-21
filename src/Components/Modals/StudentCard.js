@@ -4,8 +4,6 @@ import { Button } from "@chakra-ui/react";
 import jsPDF from "jspdf";
 
 const StudentCard = ({ student, qrCode }) => {
-    console.log(student, qrCode);
-
     const captureAndDownload = async () => {
         const cardFront = document.querySelector(".card-front");
         const cardBack = document.querySelector(".card-back");
@@ -18,13 +16,12 @@ const StudentCard = ({ student, qrCode }) => {
         const frontImage = frontCanvas.toDataURL("image/png");
         const backImage = backCanvas.toDataURL("image/png");
 
-        // Create a download link for the front card
+        // Create download links for front and back card
         const frontLink = document.createElement("a");
         frontLink.href = frontImage;
         frontLink.download = `card-front-${(student.name)?.replace(' ', '')}-${student._id}.png`;
         frontLink.click();
 
-        // Create a download link for the back card
         const backLink = document.createElement("a");
         backLink.href = backImage;
         backLink.download = `card-back-${(student.name)?.replace(' ', '')}-${student._id}.png`;
@@ -36,22 +33,35 @@ const StudentCard = ({ student, qrCode }) => {
         const cardBack = document.querySelector(".card-back");
 
         // Capture front and back of the card
-        const frontCanvas = await html2canvas(cardFront, { scale: 5, });
+        const frontCanvas = await html2canvas(cardFront, { scale: 5 });
         const backCanvas = await html2canvas(cardBack, { scale: 5 });
 
-        // Create jsPDF document
+        // Create jsPDF document with A4 page size
         const pdf = new jsPDF({
             orientation: "portrait",
             unit: "px",
-            format: [288, 576], // set format based on your card size
+            format: "a4",
         });
 
-        // Add front card to PDF
-        pdf.addImage(frontCanvas.toDataURL("image/png"), "PNG", 0, 0, 288, 288);
+        // A4 page dimensions in pixels
+        const pageWidth = 595;
+        const pageHeight = 842;
 
-        // Add a new page and add back card to PDF
+        // Set fixed card size for PDF based on A4 height, maintaining aspect ratio
+        const cardWidth = pageWidth - 40;
+        const cardHeight = (cardFront.offsetHeight / cardFront.offsetWidth) * cardWidth;
+
+        const finalCardHeight = Math.min(cardHeight, pageHeight - 40);
+        const finalCardWidth = (cardFront.offsetWidth / cardFront.offsetHeight) * finalCardHeight;
+
+        const xOffsetFront = (pageWidth - finalCardWidth) / 2;
+        const yOffsetFront = (pageHeight - finalCardHeight) / 2;
+        pdf.addImage(frontCanvas.toDataURL("image/png"), "PNG", xOffsetFront, yOffsetFront, finalCardWidth, finalCardHeight);
+
         pdf.addPage();
-        pdf.addImage(backCanvas.toDataURL("image/png"), "PNG", 0, 0, 288, 288);
+        const xOffsetBack = (pageWidth - finalCardWidth) / 2;
+        const yOffsetBack = (pageHeight - finalCardHeight) / 2;
+        pdf.addImage(backCanvas.toDataURL("image/png"), "PNG", xOffsetBack, yOffsetBack, finalCardWidth, finalCardHeight);
 
         // Save the PDF
         pdf.save(`student-card-${(student.name)?.replace(' ', '')}-${student._id}.pdf`);
@@ -159,7 +169,7 @@ const StudentCard = ({ student, qrCode }) => {
                         </div>
 
                         <div className="absolute bottom-1 left-1" style={{ paddingBottom: "20px" }}>
-                            <img src={`data:image/png;base64,${qrCode}`} alt="QR Code" className="w-28 h-28" />
+                            <img src={`data:image/svg+xml;utf8,${encodeURIComponent(qrCode)}`} alt="QR Code" className="w-24 h-24" />
                         </div>
                         <div className="absolute bottom-2 right-2 text-right">
                             <hr className="border-t-2 border-black mb-1" />

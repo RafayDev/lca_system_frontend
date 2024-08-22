@@ -10,6 +10,9 @@ import {
   Button,
   VStack,
   MenuItem,
+  Input,
+  FormControl,
+  FormLabel,
 } from "@chakra-ui/react";
 import { Avatar } from "@files-ui/react";
 import { useDisclosure } from "@chakra-ui/react";
@@ -28,8 +31,17 @@ function ChangeAvatarModal() {
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isPasswordOpen,
+    onOpen: onPasswordOpen,
+    onClose: onPasswordClose,
+  } = useDisclosure();
   const [imageSource, setImageSource] = useState(user?.avatar ?? imageSrc);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  const [email, setEmail] = useState(user?.email ?? "");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
 
   const BASE_URL = config.BASE_URL;
   const authToken = Cookies.get("authToken");
@@ -61,8 +73,32 @@ function ChangeAvatarModal() {
       });
   };
 
+  const handleChangePassword = async () => {
+    setIsLoaded(true);
+    const passwordData = {
+      email,
+      currentPassword,
+      newPassword,
+    };
+    await axios
+      .post(`${BASE_URL}/users/changePassword`, passwordData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      })
+      .then((response) => {
+        setIsLoaded(false);
+        onPasswordClose();
+      })
+      .catch((error) => {
+        console.log(error);
+        setIsLoaded(false);
+      });
+  };
+
   useEffect(() => {
     setImageSource(user?.avatar ?? imageSrc);
+    setEmail(user?.email ?? "");
   }, [user]);
 
   return (
@@ -70,6 +106,12 @@ function ChangeAvatarModal() {
       <MenuItem onClick={onOpen} className="rounded-lg">
         Change Avatar
       </MenuItem>
+
+      <MenuItem onClick={onPasswordOpen} className="rounded-lg">
+        Change Password
+      </MenuItem>
+
+      {/* Avatar Modal */}
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -92,6 +134,65 @@ function ChangeAvatarModal() {
             </Button>
             <Button
               onClick={handleChangeAvatar}
+              borderRadius={"0.75rem"}
+              backgroundColor={"#FFCB82"}
+              color={"#85652D"}
+              _hover={{
+                backgroundColor: "#E3B574",
+                color: "#654E26",
+              }}
+              fontWeight={"500"}
+              type="submit"
+              loadingText="Saving"
+              isLoading={isLoaded}
+            >
+              Save
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Change Password Modal */}
+      <Modal isOpen={isPasswordOpen} onClose={onPasswordClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader className="text-xl font-semibold">Change Password</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack spacing={4}>
+              <FormControl>
+                <FormLabel>Email</FormLabel>
+                <Input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  isReadOnly
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Current Password</FormLabel>
+                <Input
+                  type="password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel>New Password</FormLabel>
+                <Input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+              </FormControl>
+            </VStack>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button variant="ghost" mr={3} borderRadius={"0.75rem"} onClick={onPasswordClose}>
+              Close
+            </Button>
+            <Button
+              onClick={handleChangePassword}
               borderRadius={"0.75rem"}
               backgroundColor={"#FFCB82"}
               color={"#85652D"}

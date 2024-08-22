@@ -1,41 +1,68 @@
 import React from "react";
 import html2canvas from "html2canvas";
 import { Button } from "@chakra-ui/react";
+import jsPDF from "jspdf";
 
 const StudentCard = ({ student, qrCode }) => {
-    console.log(student, qrCode);
     const captureAndDownload = async () => {
         const cardFront = document.querySelector(".card-front");
         const cardBack = document.querySelector(".card-back");
 
         // Capture front and back of the card
-        const frontCanvas = await html2canvas(cardFront);
-        const backCanvas = await html2canvas(cardBack);
+        const frontCanvas = await html2canvas(cardFront, { scale: 5 });
+        const backCanvas = await html2canvas(cardBack, { scale: 5 });
 
         // Convert canvases to images
         const frontImage = frontCanvas.toDataURL("image/png");
         const backImage = backCanvas.toDataURL("image/png");
 
-        // Create a download link for the front card
+        // Create download links for front and back card
         const frontLink = document.createElement("a");
         frontLink.href = frontImage;
         frontLink.download = `card-front-${(student.name)?.replace(' ', '')}-${student._id}.png`;
         frontLink.click();
 
-        // Create a download link for the back card
         const backLink = document.createElement("a");
         backLink.href = backImage;
         backLink.download = `card-back-${(student.name)?.replace(' ', '')}-${student._id}.png`;
         backLink.click();
     };
 
+    const generatePDF = async () => {
+        const cardFront = document.querySelector(".card-front");
+        const cardBack = document.querySelector(".card-back");
+    
+        // Capture front and back of the card
+        const frontCanvas = await html2canvas(cardFront, { scale: 5 });
+        const backCanvas = await html2canvas(cardBack, { scale: 5 });
+    
+        // Get card dimensions from the front canvas
+        const cardWidth = frontCanvas.width;
+        const cardHeight = frontCanvas.height;
+    
+        // Initialize jsPDF with custom page size based on card dimensions
+        const pdf = new jsPDF({
+            orientation: cardWidth > cardHeight ? "landscape" : "portrait",
+            unit: "px",
+            format: [cardWidth, cardHeight], // Set the page size to match the card size
+        });
+    
+        // Add the front of the card to the first page
+        pdf.addImage(frontCanvas.toDataURL("image/png"), "PNG", 0, 0, cardWidth, cardHeight);
+    
+        // Add a new page for the back of the card
+        pdf.addPage([cardWidth, cardHeight]); // Same size as the front page
+        pdf.addImage(backCanvas.toDataURL("image/png"), "PNG", 0, 0, cardWidth, cardHeight);
+    
+        // Save the PDF with the student's name and ID
+        pdf.save(`student-card-${(student.name)?.replace(' ', '')}-${student._id}.pdf`);
+    };
+    
+
     return (
         <>
             <div style={{ justifyContent: "center", alignItems: "center", display: "flex" }}>
-                <div
-                    className="card-front"
-                    style={{ display: "grid", width: "288px" }}
-                >
+                <div className="card-front" style={{ display: "grid", width: "288px" }}>
                     <div className="relative w-72 h-56 bg-black p-6">
                         <img src="/card-logo.png" className="w-36 mx-auto" alt="random" />
                     </div>
@@ -44,7 +71,7 @@ const StudentCard = ({ student, qrCode }) => {
                             src={student.image || "/17698878.jpg"}
                             style={{ border: "4px solid goldenrod" }}
                             className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-36"
-                            alt="random"
+                            alt="Student"
                         />
                     </div>
                     <div className="relative w-72 h-48 p-5 bg-white">
@@ -68,17 +95,11 @@ const StudentCard = ({ student, qrCode }) => {
                                         <u>{student.batch.name || "N/A"}</u>
                                     </td>
                                 </tr>
-                                {/* <tr>
-                                    <th>ID:</th>
-                                    <td>
-                                        <u>{student._id || "N/A"}</u>
-                                    </td>
-                                </tr> */}
                             </tbody>
                         </table>
                     </div>
 
-                    <div className="w-72 h-9 p-2" style={{ backgroundColor: "goldenrod" }}>
+                    <div className="w-72 h-9 p-.5" style={{ backgroundColor: "goldenrod" }}>
                         <p className="text-center text-black font-bold">
                             0331-000-111-0 / 0333-9800938
                         </p>
@@ -108,13 +129,13 @@ const StudentCard = ({ student, qrCode }) => {
                                 <tr>
                                     <th>Issued on:</th>
                                     <td>
-                                        <u>{new Date().toLocaleDateString('en-GB', {year: 'numeric', month: '2-digit', day: '2-digit'}).split('/').join('-')}</u>
+                                        <u>{new Date().toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }).split('/').join('-')}</u>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th>Valid Till:</th>
                                     <td>
-                                        <u>{new Date(student.batch.enddate).toLocaleDateString('en-GB', {year: 'numeric', month: '2-digit', day: '2-digit'}).split('/').join('-')} </u>
+                                        <u>{new Date(student.batch.enddate).toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }).split('/').join('-')} </u>
                                     </td>
                                 </tr>
                             </tbody>
@@ -126,22 +147,24 @@ const StudentCard = ({ student, qrCode }) => {
                             INSTRUCTIONS
                         </p>
                     </div>
-                    <div className="relative w-72 h-64 bg-white">
-                        <ol
-                            style={{
-                                fontSize: "12px",
-                                fontFamily: "calibri",
-                                listStyleType: "decimal",
-                                padding: "20px",
-                            }}
-                        >
-                            <li>This card is property of Lahore CSS Academy.</li>
-                            <li>This card is for personal use only and is not transferable.</li>
-                            <li> If found please return to the below address.</li>
-                        </ol>
-                        <div className="absolute bottom-2 left-2">
-                            {/* QR Code component goes here */}
-                            <img src={`data:image/svg+xml;utf8,${encodeURIComponent(qrCode)}`} alt="QR Code" className="w-32 h-32" />
+                    <div className="relative w-72 h-64 bg-white" style={{ paddingTop: "5px", overflow: "hidden" }}>
+                        <div style={{
+                            fontSize: "12px",
+                            fontFamily: "calibri",
+                            listStyleType: "decimal",
+                            padding: "20px",
+                        }}>
+                            <h6>1. This card is property of Lahore CSS Academy.</h6>
+                            <h6>2. This card is for personal use only and is not</h6>
+                            <h6 style={{ marginLeft: "13px" }}>transferable.</h6>
+                            <h6>3. If found please return to the below address.</h6>
+                        </div>
+
+                        <div className="absolute bottom-1 left-1" style={{ paddingBottom: "20px" }}>
+                            <div
+                                dangerouslySetInnerHTML={{ __html: qrCode }}
+                                style={{ width: "128px", height: "128px" }}
+                            />
                         </div>
                         <div className="absolute bottom-2 right-2 text-right">
                             <hr className="border-t-2 border-black mb-1" />
@@ -179,6 +202,24 @@ const StudentCard = ({ student, qrCode }) => {
                     onClick={captureAndDownload}
                 >
                     Download Card Images
+                </Button>
+                <Button
+                    marginTop={"0.75rem"}
+                    marginBottom={"0.75rem"}
+                    marginLeft={"1rem"}
+                    borderRadius={"0.75rem"}
+                    backgroundColor={"#FFCB82"}
+                    color={"#85652D"}
+                    _hover={{
+                        backgroundColor: "#E3B574",
+                        color: "#654E26",
+                    }}
+                    fontWeight={"500"}
+                    type="button"
+                    loadingText="Generating PDF"
+                    onClick={generatePDF}
+                >
+                    Download PDF
                 </Button>
             </div>
         </>

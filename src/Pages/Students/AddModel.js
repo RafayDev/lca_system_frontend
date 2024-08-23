@@ -58,7 +58,7 @@ function AddStudnet({ isOpen, onClose }) {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader className="text-xl font-semibold">
-            Add Studnet
+            Add Student
           </ModalHeader>
           <ModalCloseButton />
           <form onSubmit={formik.handleSubmit}>
@@ -134,7 +134,7 @@ function AddStudnet({ isOpen, onClose }) {
                 loadingText="Adding"
                 isLoading={addStatus === "loading"}
               >
-                Add Studnet
+                Add Student
               </Button>
             </ModalFooter>
           </form>

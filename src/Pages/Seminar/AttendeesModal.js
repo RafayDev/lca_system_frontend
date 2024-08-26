@@ -35,6 +35,8 @@ const AttendeesModal = ({ seminar }) => {
     "Phone",
     "City",
     "Qualification",
+    "Attend Type",
+    "age",
   ];
 
   const [isOpen, setIsOpen] = React.useState(false);
@@ -78,7 +80,12 @@ const AttendeesModal = ({ seminar }) => {
               attendee.phone,
               attendee.city,
               attendee.qualification,
-              
+              attendee.age,
+              attendee.attend_type.map(
+                (type, index) =>
+                  ("" + type)?.toString().replace(/,/g, "") +
+                  (index < attendee.attend_type.length - 1 ? ", " : "")
+              ),
             ]),
           },
         });
@@ -154,6 +161,8 @@ const AttendeesModal = ({ seminar }) => {
                             <Th>Phone</Th>
                             <Th>City</Th>
                             <Th>Qualification</Th>
+                            <Th>Age</Th>
+                            <Th>Attend Type</Th>
                           </Tr>
                         </Thead>
                         <Tbody>
@@ -164,7 +173,24 @@ const AttendeesModal = ({ seminar }) => {
                               <Td>{attendee.phone}</Td>
                               <Td>{attendee.city}</Td>
                               <Td>{attendee.qualification}</Td>
-                              
+                              <Td>{attendee.age}</Td>
+                              <Td>
+                                {attendee.attend_type && attendee.attend_type.length > 0 ? (
+                                  <span className="">
+                                    {attendee.attend_type.map(
+                                      (type, index) =>
+                                        ("" + type)
+                                          ?.toString()
+                                          .replace(/,/g, "") +
+                                        (index < attendee.attend_type.length - 1
+                                          ? ", "
+                                          : "")
+                                    )}
+                                  </span>
+                                ) : (
+                                  <span className="">N/A</span>
+                                )}
+                              </Td>
                             </Tr>
                           ))}
                         </Tbody>

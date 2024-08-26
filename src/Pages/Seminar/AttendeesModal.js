@@ -35,7 +35,6 @@ const AttendeesModal = ({ seminar }) => {
     "Phone",
     "City",
     "Qualification",
-    "Attend Type",
   ];
 
   const [isOpen, setIsOpen] = React.useState(false);
@@ -79,11 +78,7 @@ const AttendeesModal = ({ seminar }) => {
               attendee.phone,
               attendee.city,
               attendee.qualification,
-              attendee.attend_type.map(
-                (type, index) =>
-                  ("" + type)?.toString().replace(/,/g, "") +
-                  (index < attendee.attend_type.length - 1 ? ", " : "")
-              ),
+              
             ]),
           },
         });
@@ -159,7 +154,6 @@ const AttendeesModal = ({ seminar }) => {
                             <Th>Phone</Th>
                             <Th>City</Th>
                             <Th>Qualification</Th>
-                            <Th>Attend Type</Th>
                           </Tr>
                         </Thead>
                         <Tbody>
@@ -170,19 +164,7 @@ const AttendeesModal = ({ seminar }) => {
                               <Td>{attendee.phone}</Td>
                               <Td>{attendee.city}</Td>
                               <Td>{attendee.qualification}</Td>
-                              <Td>
-                                <span className="">
-                                  {attendee.attend_type.map(
-                                    (type, index) =>
-                                      ("" + type)
-                                        ?.toString()
-                                        .replace(/,/g, "") +
-                                      (index < attendee.attend_type.length - 1
-                                        ? ", "
-                                        : "")
-                                  )}
-                                </span>
-                              </Td>
+                              
                             </Tr>
                           ))}
                         </Tbody>

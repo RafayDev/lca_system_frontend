@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect , useState} from "react";
 import html2canvas from "html2canvas";
 import { Button } from "@chakra-ui/react";
 import jsPDF from "jspdf";
 
 const StudentCard = ({ student, qrCode }) => {
+    const [image, setImage] = useState(null);
     const captureAndDownload = async () => {
         const cardFront = document.querySelector(".card-front");
         const cardBack = document.querySelector(".card-back");
@@ -57,7 +58,31 @@ const StudentCard = ({ student, qrCode }) => {
         // Save the PDF with the student's name and ID
         pdf.save(`student-card-${(student.name)?.replace(' ', '')}-${student._id}.pdf`);
     };
-    
+    const getBase64Image = (url) => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = 'Anonymous'; // This is important if your image is hosted on a different domain
+            img.src = url;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, img.width, img.height);
+                const dataURL = canvas.toDataURL('image/png');
+                resolve(dataURL);
+            };
+            img.onerror = (error) => {
+                reject(error);
+            };
+        });
+    };
+    useEffect(() => {
+        getBase64Image(student.image).then((data) => {
+            console.log(data);
+            setImage(data);
+        });
+    }, [qrCode]);
 
     return (
         <>
@@ -68,7 +93,7 @@ const StudentCard = ({ student, qrCode }) => {
                     </div>
                     <div className="relative w-72 h-20 bg-white">
                         <img
-                            src={student.image || "/17698878.jpg"}
+                            src={image || "/17698878.jpg"}
                             style={{ border: "4px solid goldenrod" }}
                             className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-36"
                             alt="Student"

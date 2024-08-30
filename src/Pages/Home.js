@@ -21,6 +21,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import MonthlyColumnChart from "../Components/MonthlyStudentChart";
+import BatchChart from "../Components/BatchChart";
 
 function Home() {
   const data = [
@@ -154,13 +155,13 @@ function Home() {
 
       {/* charts data  */}
       <div className="grid grid-cols-12 gap-4">
-        <div className="col-span-12 md:col-span-4 w-full">
+        <div className="col-span-12 md:col-span-12 w-full">
         <MonthlyColumnChart chartTitle="Student Data"/>
         </div>
-        <div className="col-span-12 md:col-span-4 w-full">
-        <MonthlyColumnChart chartTitle="Batches Data"/>
+        <div className="col-span-12 md:col-span-12 w-full">
+        <BatchChart chartTitle="Batches Data"/>
         </div>
-        <div className="col-span-12 md:col-span-4 w-full">
+        <div className="col-span-12 md:col-span-12 w-full">
         <MonthlyColumnChart chartTitle="Seminar Data"/>
         </div>
     

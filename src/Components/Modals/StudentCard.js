@@ -9,8 +9,8 @@ const StudentCard = ({ student, qrCode }) => {
         const cardBack = document.querySelector(".card-back");
 
         // Capture front and back of the card
-        const frontCanvas = await html2canvas(cardFront, { scale: 5 });
-        const backCanvas = await html2canvas(cardBack, { scale: 5 });
+        const frontCanvas = await html2canvas(cardFront, { useCORS: true });
+        const backCanvas = await html2canvas(cardBack, { useCORS: true });
 
         // Convert canvases to images
         const frontImage = frontCanvas.toDataURL("image/png");
@@ -33,8 +33,8 @@ const StudentCard = ({ student, qrCode }) => {
         const cardBack = document.querySelector(".card-back");
     
         // Capture front and back of the card
-        const frontCanvas = await html2canvas(cardFront, { scale: 5 });
-        const backCanvas = await html2canvas(cardBack, { scale: 5 });
+        const frontCanvas = await html2canvas(cardFront, {useCors: true });
+        const backCanvas = await html2canvas(cardBack, {useCors: true });
     
         // Get card dimensions from the front canvas
         const cardWidth = frontCanvas.width;

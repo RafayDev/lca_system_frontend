@@ -9,11 +9,13 @@ import Home from "./Pages/Home.js";
 import User from "./Pages/User/User.js";
 import Teacher from "./Pages/Teacher/Teacher.js";
 import Courses from "./Pages/Courses/Courses.js";
+import Mcq from "./Pages/Mcqs/Mcqs.js";
 import Batches from "./Pages/Batch/Batch.js";
 import Students from "./Pages/Students/Student.js";
 import Roles from "./Pages/Roles/Roles.js";
 import Permissions from "./Pages/Permissions/Permissions.js";
 import Seminars from "./Pages/Seminar/seminar.js";
+import { FaQuestionCircle } from "react-icons/fa";
 import { Boxes, BrainCircuit, CalendarRange, GraduationCap, Layers, LayoutDashboard, ListChecks, Presentation, School, UserRoundCheck, UserRoundCog, Users, UsersRound } from "lucide-react";
 import Timetable from "./Pages/Timetable/Timetable.js";
 import Attendance from "./Pages/Attendance/Attendance.js";
@@ -62,6 +64,12 @@ export const routes = [
     icon: Presentation,
     component: <Seminars />,
     path: "/seminar",
+  },
+  {
+    name: "Mcqs",
+    icon: FaQuestionCircle,
+    component: <Mcq />,
+    path: "/mcq",
   },
   {
     name: "Roles",

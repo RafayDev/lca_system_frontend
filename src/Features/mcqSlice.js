@@ -48,7 +48,7 @@ const addMcq = createAsyncThunk("mcqs/addMcq", async ({ mcqData, authToken }) =>
 
 // Async thunk to update an MCQ
 const updateMcq = createAsyncThunk("mcqs/updateMcq", async ({ mcqId, mcqData, authToken }) => {
-  const response = await fetch(`${BASE_URL}/mcqs/update/${mcqId}`, {
+  const response = await fetch(`${BASE_URL}/mcqs/update/${mcqData._id}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -63,7 +63,7 @@ const updateMcq = createAsyncThunk("mcqs/updateMcq", async ({ mcqId, mcqData, au
 // Async thunk to delete an MCQ
 const deleteMcq = createAsyncThunk("mcqs/deleteMcq", async ({ mcqId, authToken }) => {
   const response = await fetch(`${BASE_URL}/mcqs/delete/${mcqId}`, {
-    method: "POST",
+    method: "DELETE",
     headers: {
       Authorization: `Bearer ${authToken}`,
     },

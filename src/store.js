@@ -15,6 +15,7 @@ import seminarAttendeeReducer from './Features/seminarAttendeeSlice';
 import enrollmentReducer from './Features/enrollmentSlice';
 import attendanceReducer from './Features/attendanceSlice';
 import mcqReducer from './Features/mcqSlice';
+import feeReducer from './Features/feeSlice';
 
 export const store = configureStore({
   reducer: {
@@ -32,6 +33,7 @@ export const store = configureStore({
     seminarAttendees: seminarAttendeeReducer,
     enrollments: enrollmentReducer,
     attendance: attendanceReducer,
-    mcqs: mcqReducer
+    mcqs: mcqReducer,
+    fees: feeReducer
   },
 });

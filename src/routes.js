@@ -16,9 +16,10 @@ import Roles from "./Pages/Roles/Roles.js";
 import Permissions from "./Pages/Permissions/Permissions.js";
 import Seminars from "./Pages/Seminar/seminar.js";
 import { FaQuestionCircle } from "react-icons/fa";
-import { Boxes, BrainCircuit, CalendarRange, GraduationCap, Layers, LayoutDashboard, ListChecks, Presentation, School, UserRoundCheck, UserRoundCog, Users, UsersRound } from "lucide-react";
+import { Boxes, BrainCircuit, CalendarRange, CircleDollarSign, CircleHelp, GraduationCap, Layers, LayoutDashboard, ListChecks, Presentation, School, UserRoundCheck, UserRoundCog, Users, UsersRound } from "lucide-react";
 import Timetable from "./Pages/Timetable/Timetable.js";
 import Attendance from "./Pages/Attendance/Attendance.js";
+import Fees from "./Pages/Fees/Fees.js";
 
 export const routes = [
   { name: "Dashboard", icon: LayoutDashboard, component: <Home />, path: "/dashboard" },
@@ -28,6 +29,12 @@ export const routes = [
     icon: GraduationCap,
     component: <Students />,
     path: "/student",
+  },
+  {
+    name: "Fees",
+    icon: CircleDollarSign,
+    component: <Fees />,
+    path: "/fees",
   },
   {
     name: "Teachers",
@@ -67,7 +74,7 @@ export const routes = [
   },
   {
     name: "Mcqs",
-    icon: FaQuestionCircle,
+    icon: CircleHelp,
     component: <Mcq />,
     path: "/mcq",
   },

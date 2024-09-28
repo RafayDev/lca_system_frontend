@@ -48,14 +48,14 @@ const fetchFeeById = createAsyncThunk('fees/fetchFeeById', async (payload) => {
 });
 
 const createFee = createAsyncThunk('fees/createFee', async (payload) => {
-    const { authToken, studentId, amount } = payload;
+    const { authToken, studentId, batchId, amount } = payload;
     const response = await fetch(`${BASE_URL}/fees/create`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${authToken}`,
         },
-        body: JSON.stringify({ studentId, amount }),
+        body: JSON.stringify({ student_id: studentId, batch_id: batchId, amount }),
     });
     const data = await response.json();
     return data;
@@ -127,7 +127,18 @@ const fetchFeesByStudent = createAsyncThunk('fees/fetchFeesByStudent', async (pa
 const feeSlice = createSlice({
     name: 'fees',
     initialState,
-    reducers: {},
+    reducers: {
+        setQueryFilter(state, action) {
+            state.filters.query = action.payload;
+        },
+        setPageFilter(state, action) {
+            state.filters.page = action.payload;
+        },
+        setLimitFilter(state, action) {
+            state.filters.page = 1;
+            state.filters.limit = action.payload;
+        },
+    },
     extraReducers: (builder) => {
         builder
             // FETCH FEES
@@ -135,12 +146,25 @@ const feeSlice = createSlice({
                 state.fetchStatus = 'loading';
             })
             .addCase(fetchFees.fulfilled, (state, action) => {
-                state.fees = action.payload;
+                state.fees = action.payload.docs;
+                console.log(action.payload);
                 state.fetchStatus = 'idle';
+                state.pagination = {
+                    totalDocs: action.payload.totalDocs,
+                    limit: action.payload.limit,
+                    totalPages: action.payload.totalPages,
+                    page: action.payload.page,
+                    pagingCounter: action.payload.pagingCounter,
+                    hasPrevPage: action.payload.hasPrevPage,
+                    hasNextPage: action.payload.hasNextPage,
+                    prevPage: action.payload.prevPage,
+                    nextPage: action.payload.nextPage,
+                };
             })
             .addCase(fetchFees.rejected, (state) => {
                 state.fetchStatus = 'failed';
             })
+            
             // FETCH FEE BY ID
             .addCase(fetchFeeById.pending, (state) => {
                 state.fetchStatus = 'loading';

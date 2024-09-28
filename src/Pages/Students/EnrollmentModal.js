@@ -37,6 +37,7 @@ import {
   setLimitFilter,
 } from "../../Features/batchSlice";
 import { fetchStudents } from "../../Features/studentSlice";
+import { createFee } from "../../Features/feeSlice";
 
 const EnrollmentModal = ({ studentId }) => {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -124,6 +125,9 @@ const EnrollmentModal = ({ studentId }) => {
         })
       ).then(() => {
         dispatch(fetchStudents({ authToken }));
+        enrollments.forEach(enrollment => {
+          dispatch(createFee({ authToken, studentId, batchId: enrollment.batch, amount: enrollment.fees.reduce((a, b) => a + b, 0) }));
+        });
         onClose();
       });
     },

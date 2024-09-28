@@ -33,6 +33,7 @@ import EnrollmentModal from "./EnrollmentModal";
 import TableSearch from "../../Components/TableSearch";
 import TablePagination from "../../Components/TablePagination";
 import StudentCardModal from "../../Components/Modals/Student/StudentCardModal";
+import ViewModal from "./ViewModal";
 
 function Student() {
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
@@ -116,6 +117,7 @@ function Student() {
                     <Td>{students.indexOf(student) + 1}</Td>
                     <Td>
                       <ButtonGroup variant='outline'>
+                      <ViewModal student={student} />
                         <QrCodeModal student={student} />
                         <StudentCardModal student={student} />
                       </ButtonGroup>

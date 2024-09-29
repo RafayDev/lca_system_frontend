@@ -37,6 +37,7 @@ import {
   setLimitFilter,
 } from "../../Features/batchSlice";
 import { fetchStudents } from "../../Features/studentSlice";
+import { createFee } from "../../Features/feeSlice";
 
 const EnrollmentModal = ({ studentId }) => {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -124,19 +125,22 @@ const EnrollmentModal = ({ studentId }) => {
         })
       ).then(() => {
         dispatch(fetchStudents({ authToken }));
+        enrollments.forEach(enrollment => {
+          dispatch(createFee({ authToken, studentId, batchId: enrollment.batch, amount: enrollment.fees.reduce((a, b) => a + b, 0) }));
+        });
         onClose();
       });
     },
   });
 
-  const handleCheckboxChange = (e, batchId, courseId) => {
+  const handleCheckboxChange = (e, batchId, courseId, courseFee) => {
     const valueArray = formik.values[`batch-${batchId}-courses`] || [];
     if (e.target.checked) {
       formik.setFieldValue(`batch-${batchId}-courses`, [
         ...valueArray,
         courseId,
       ]);
-      formik.setFieldValue(`fee-${batchId}-${courseId}`, 15000);
+      formik.setFieldValue(`fee-${batchId}-${courseId}`, courseFee);
     } else {
       formik.setFieldValue(
         `batch-${batchId}-courses`,
@@ -240,7 +244,8 @@ const EnrollmentModal = ({ studentId }) => {
                                     handleCheckboxChange(
                                       e,
                                       batch._id,
-                                      course._id
+                                      course._id,
+                                      course.fee
                                     )
                                   }
                                   isChecked={formik.values[
@@ -250,11 +255,12 @@ const EnrollmentModal = ({ studentId }) => {
                                   {course.name}
                                 </Checkbox>
                                 <Input
-                                  isDisabled={
-                                    !formik.values[
-                                      "batch-" + batch._id + "-courses"
-                                    ]?.includes(course._id)
-                                  }
+                                  isDisabled={true}
+                                  // isDisabled={
+                                  //   !formik.values[
+                                  //     "batch-" + batch._id + "-courses"
+                                  //   ]?.includes(course._id)
+                                  // }
                                   type="number"
                                   min="0"
                                   borderRadius={"0.5rem"}

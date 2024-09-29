@@ -40,12 +40,12 @@ function AddModel({ student }) {
     initialValues: {
       name: student.name,
       phone: student.phone,
-      paid_fee: student.paid_fee,
+      paid_fee: 0,
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Required"),
       phone: Yup.string().required("Required"),
-      paid_fee: Yup.number().required("Required"),
+      paid_fee: Yup.number(),
     }),
     onSubmit: async (values) => {
       dispatch(basicUpdate({ authToken, studentId: student._id, student: values }))
@@ -104,7 +104,7 @@ function AddModel({ student }) {
                     </Box>
                   ) : null}
                 </FormControl>
-                <FormControl id="paid_fee">
+                {/* <FormControl id="paid_fee">
                   <FormLabel fontSize={14}>Paid Fee</FormLabel>
                   <Input
                     type="number"
@@ -119,7 +119,7 @@ function AddModel({ student }) {
                       {formik.errors.paid_fee}
                     </Box>
                   ) : null}
-                </FormControl>
+                </FormControl> */}
               </VStack>
             </ModalBody>
 

@@ -85,7 +85,7 @@ function Student() {
             <Thead>
               <Tr>
                 <Th>No</Th>
-                <Th>QR | Card</Th>
+                <Th>View | QR | Card</Th>
                 <Th data-searchable>Name</Th>
                 <Th data-searchable>Email</Th>
                 <Th data-searchable>Phone</Th>
@@ -117,7 +117,7 @@ function Student() {
                     <Td>{students.indexOf(student) + 1}</Td>
                     <Td>
                       <ButtonGroup variant='outline'>
-                      <ViewModal student={student} />
+                        <ViewModal student={student} />
                         <QrCodeModal student={student} />
                         <StudentCardModal student={student} />
                       </ButtonGroup>

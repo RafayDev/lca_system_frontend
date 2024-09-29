@@ -89,9 +89,9 @@ function Student() {
                 <Th data-searchable>Name</Th>
                 <Th data-searchable>Email</Th>
                 <Th data-searchable>Phone</Th>
-                <Th>Total Fee</Th>
+                {/* <Th>Total Fee</Th>
                 <Th>Paid Fee</Th>
-                <Th>Remaining Fee</Th>
+                <Th>Remaining Fee</Th> */}
                 <Th>Last Active Batch</Th>
                 <Th isNumeric>Actions</Th>
               </Tr>
@@ -125,9 +125,9 @@ function Student() {
                     <Td>{student.name}</Td>
                     <Td>{student.email}</Td>
                     <Td>{student.phone}</Td>
-                    <Td>{student.total_fee}</Td>
+                    {/* <Td>{student.total_fee}</Td>
                     <Td>{student.paid_fee}</Td>
-                    <Td>{student.pending_fee}</Td>
+                    <Td>{student.pending_fee}</Td> */}
                     <Td>{student.batch ? student.batch.name : "No Batch"}</Td>
                     <Td className="space-x-3" isNumeric>
                       <div className="flex flex-nowrap justify-end items-center gap-2">

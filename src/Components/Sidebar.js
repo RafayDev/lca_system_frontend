@@ -25,21 +25,21 @@ export default function Sidebar({ onClose, ...rest }) {
   return (
     <Box
       transition="3s ease"
-      bg={useColorModeValue("white", "gray.900")}
+      bg={useColorModeValue("#222222", "gray.900")}
       borderRight="1px"
-      borderRightColor={useColorModeValue("gray.200", "gray.700")}
+      borderRightColor={useColorModeValue("#E0E0E0", "gray.700")}
       w={{ base: "full", md: 60 }}
       pos="fixed"
       h="full"
       {...rest}
     >
       <Flex alignItems="center" mx="8" my="0" justifyContent="space-between">
-        <Box boxSize="sm" h={20}>
-          <Image src="./logo.png" alt="Dan Abramov" className="w-36 mx-auto" />
+        <Box boxSize="sm" h={32} className="flex justify-center items-center">
+          <Image src="./logo_dark.svg" alt="Dan Abramov" className="w-40 mx-auto" />
         </Box>
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
-      <div className="mt-16 flex flex-col gap-2">
+      <div className="flex flex-col gap-2">
       {routes.map((link) => (
         <NavItem key={link.name} icon={link.icon} to={link.path}>
           {link.name}
@@ -66,11 +66,12 @@ const NavItem = ({ icon, children, to, ...rest }) => {
         role="group"
         cursor="pointer"
         _hover={{
-          bg: to !== window.location.pathname ? "gray.100" : "",
-          color: to !== window.location.pathname ? "gray.900" : "",
+          bg: to !== window.location.pathname ? "#2C2C2C" : "",
+          color: to !== window.location.pathname ? "white" : "",
         }}
         bg={to === window.location.pathname ? "#FFCB82" : ""}
-        color={to === window.location.pathname ? "#5B451F" : ""}
+        color={to === window.location.pathname ? "#222222" : "#D0D0D0"}
+        fontWeight={to === window.location.pathname ? "semibold" : "normal"}
         {...rest}
       >
         {icon && (
@@ -78,7 +79,7 @@ const NavItem = ({ icon, children, to, ...rest }) => {
             mr="5"
             fontSize="20"
             _groupHover={{
-              color: to !== window.location.pathname ? "gray.900" : "",
+              color: to !== window.location.pathname ? "white" : "",
             }}
             as={icon}
           />

@@ -93,9 +93,9 @@ const Login = () => {
 
   return (
     <Box
-      minHeight="calc(100vh)"
-      paddingTop={"3.5rem"}
-      className="bg-[#F9FBFC]"
+      height={"100vh"}
+      width={"100vw"}
+      className="bg-[#F9FBFC] flex justify-center items-center"
     >
       <VStack
         spacing={6}
@@ -106,20 +106,20 @@ const Login = () => {
         paddingX="4"
       >
         <Image
-          h={190}
-          src="./logo.png"
+          h={70}
+          src="./logo_light.svg"
           alt="Dan Abramov"
-          className="mx-auto -mb-10"
+          className="mx-auto"
         />
-        <Box textAlign="center" fontSize="2xl" fontWeight="semibold">
+        {/* <Box textAlign="center" fontSize="2xl" fontWeight="semibold" className="invisible">
           LCA Dashboard
-        </Box>
-        <p className="text-center text-sm text-gray-500 -mt-6">
+        </Box> */}
+        <p className="text-center text-md text-gray-500 -mt-3">
           Welcome back! Please login to your account.
         </p>
         <form
           onSubmit={formik.handleSubmit}
-          className="flex flex-col gap-5 mt-6 bg-white shadow-xl rounded-2xl p-8"
+          className="flex flex-col gap-5 mt-3 bg-white shadow-xl rounded-2xl p-8"
         >
           <h1 className="text-xl font-medium">Login Form</h1>
           <FormControl

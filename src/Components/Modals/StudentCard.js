@@ -9,8 +9,8 @@ const StudentCard = ({ student, qrCode }) => {
         const cardBack = document.querySelector(".card-back");
 
         // Capture front and back of the card
-        const frontCanvas = await html2canvas(cardFront, { useCORS: true });
-        const backCanvas = await html2canvas(cardBack, { useCORS: true });
+        const frontCanvas = await html2canvas(cardFront, { scale: 5, useCORS: true });
+        const backCanvas = await html2canvas(cardBack, { scale: 5, useCORS: true });
 
         // Convert canvases to images
         const frontImage = frontCanvas.toDataURL("image/png");
@@ -63,8 +63,8 @@ const StudentCard = ({ student, qrCode }) => {
         <>
             <div style={{ justifyContent: "center", alignItems: "center", display: "flex" }}>
                 <div className="card-front" style={{ display: "grid", width: "288px" }}>
-                    <div className="relative w-72 h-56 bg-black p-6">
-                        <img src="/card-logo.png" className="w-36 mx-auto" alt="random" />
+                    <div className="relative w-72 h-56 bg-black">
+                        <img src="/logo_dark.svg" className="w-60 mx-auto p-6 mt-10" alt="random" />
                     </div>
                     <div className="relative w-72 h-20 bg-white">
                         <img

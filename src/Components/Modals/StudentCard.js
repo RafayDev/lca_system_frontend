@@ -99,7 +99,7 @@ const StudentCard = ({ student, qrCode }) => {
                         </table>
                     </div>
 
-                    <div className="w-72 h-9 p-.5" style={{ backgroundColor: "goldenrod" }}>
+                    <div className="w-72 h-9 p-.5" style={{ backgroundColor: "#FCB436" }}>
                         <p className="text-center text-black font-bold">
                             0331-000-111-0 / 0333-9800938
                         </p>
@@ -111,7 +111,7 @@ const StudentCard = ({ student, qrCode }) => {
                 >
                     <div className="relative w-72 h-16 bg-black p-2">
                         <h2
-                            style={{ color: "goldenrod", textAlign: "center" }}
+                            style={{ color: "#FCB436", textAlign: "center" }}
                             className="font-bold text-xl"
                         >
                             LAHORE CSS ACADEMY
@@ -142,7 +142,7 @@ const StudentCard = ({ student, qrCode }) => {
                         </table>
                     </div>
 
-                    <div className="w-72 h-9 p-.5" style={{ backgroundColor: "goldenrod" }}>
+                    <div className="w-72 h-9 p-.5" style={{ backgroundColor: "#FCB436" }}>
                         <p className="text-center text-black font-bold text-xl">
                             INSTRUCTIONS
                         </p>
@@ -171,7 +171,7 @@ const StudentCard = ({ student, qrCode }) => {
                             <span className="font-semibold">Issuing Authority</span>
                         </div>
                     </div>
-                    <div className="w-72 h-9 p-.5" style={{ backgroundColor: "goldenrod" }}>
+                    <div className="w-72 h-9 p-.5" style={{ backgroundColor: "#FCB436" }}>
                         <p style={{
                             fontSize: "11px",
                             fontFamily: "calibri",
@@ -193,7 +193,7 @@ const StudentCard = ({ student, qrCode }) => {
                     backgroundColor={"#FFCB82"}
                     color={"#85652D"}
                     _hover={{
-                        backgroundColor: "#E3B574",
+                        backgroundColor: "#FCB436",
                         color: "#654E26",
                     }}
                     fontWeight={"500"}
@@ -211,7 +211,7 @@ const StudentCard = ({ student, qrCode }) => {
                     backgroundColor={"#FFCB82"}
                     color={"#85652D"}
                     _hover={{
-                        backgroundColor: "#E3B574",
+                        backgroundColor: "#FCB436",
                         color: "#654E26",
                     }}
                     fontWeight={"500"}

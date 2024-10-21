@@ -163,6 +163,14 @@ function ViewModal({ student }) {
                       <Box color="red.500">No CNIC back image available</Box>
                     )}
                   </FormControl>
+                  <FormControl id="latest_degree_image">
+                    <FormLabel fontSize={14}>Latest Degree Image</FormLabel>
+                    {student.latest_degree_image ? (
+                      <Image src={student.latest_degree_image} alt="latest degree" boxSize="150px" objectFit="cover" />
+                    ) : (
+                      <Box color="red.500">No latest degree image available</Box>
+                    )}
+                  </FormControl>
                 </VStack>
               </GridItem>
               

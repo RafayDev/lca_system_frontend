@@ -34,6 +34,7 @@ import TableSearch from "../../Components/TableSearch";
 import TablePagination from "../../Components/TablePagination";
 import StudentCardModal from "../../Components/Modals/Student/StudentCardModal";
 import ViewModal from "./ViewModal";
+import ExportModal from "./ExportModal";
 
 function Student() {
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
@@ -77,6 +78,7 @@ function Student() {
               Add Student
             </button>
           )}
+          <ExportModal />
         </div>
       </div>
       <div className="w-full bg-white mt-3 rounded-xl border border-[#E0E8EC]">

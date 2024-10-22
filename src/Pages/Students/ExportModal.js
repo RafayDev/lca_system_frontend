@@ -105,16 +105,16 @@ const ExportModal = () => {
             ])
           },
         });
-        setTimeout(() => {
-          setLoading(false);
-          onClose();
-          dispatch(setQueryFilter(""));
+        setLoading(false);
+        onClose();
+        // setTimeout(() => {
+        //   dispatch(setQueryFilter(""));
           dispatch(setPageFilter(1));
           dispatch(setLimitFilter(tempLimit));
           // setTimeout(() => {
-          //   dispatch(fetchStudents({ authToken }));
+            dispatch(fetchStudents({ authToken }));
           // }, 1000);
-        }, 1000);
+        // }, 1000);
       });
   }
 
@@ -139,7 +139,7 @@ const ExportModal = () => {
             {/* <div className="flex flex-col gap-2 mb-6 border-l-4 border-blue-400 pl-6 ml-5 py-4">
               // TODO: add checkbox filters for all the fields in the table here in the future. These will be used to filter the data in the table before exporting.
             </div> */}
-            {fetchStatus === "loading" || loading ? (
+            {fetchStatus === "loading" ? (
               <div className="flex justify-center items-center h-40 rounded-xl border border-[#E0E8EC]">
                 <Spinner />
               </div>

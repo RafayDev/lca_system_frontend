@@ -80,6 +80,11 @@ const ExportModal = () => {
     onOpen();
   };
 
+  const handleModalClose = () => {
+    dispatch(fetchStudents({ authToken }));
+    onClose();
+  };
+
   const handleFormBatchChange = (e) => {
     setFormBatch(e.target.value);
     console.log(e.target.value);
@@ -153,7 +158,7 @@ const ExportModal = () => {
         Excel File
       </button>
 
-      <Modal isOpen={isOpen} onClose={onClose} size="6xl">
+      <Modal isOpen={isOpen} onClose={handleModalClose} size="6xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader className="text-xl font-semibold">

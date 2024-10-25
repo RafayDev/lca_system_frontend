@@ -33,6 +33,7 @@ const AttendeesModal = ({ seminar }) => {
     "No",
     "Name",
     "Phone",
+    "email",
     "City",
     "Qualification",
     "Attend Type",
@@ -78,6 +79,7 @@ const AttendeesModal = ({ seminar }) => {
               attendees.indexOf(attendee) + 1,
               attendee.name,
               attendee.phone,
+              attendee.email,
               attendee.city,
               attendee.qualification,
               attendee.age,
@@ -159,6 +161,7 @@ const AttendeesModal = ({ seminar }) => {
                             <Th>No</Th>
                             <Th>Name</Th>
                             <Th>Phone</Th>
+                            <Th>Email</Th>
                             <Th>City</Th>
                             <Th>Qualification</Th>
                             <Th>Age</Th>
@@ -171,9 +174,10 @@ const AttendeesModal = ({ seminar }) => {
                               <Td>{seminarAttendees.indexOf(attendee) + 1}</Td>
                               <Td>{attendee.name}</Td>
                               <Td>{attendee.phone}</Td>
+                              <Td>{attendee.email ? attendee.email : 'N/A'}</Td>
                               <Td>{attendee.city}</Td>
                               <Td>{attendee.qualification}</Td>
-                              <Td>{attendee.age}</Td>
+                              <Td>{attendee.age ? attendee.email : 'N/A'}</Td>
                               <Td>
                                 {attendee.attend_type && attendee.attend_type.length > 0 ? (
                                   <span className="">

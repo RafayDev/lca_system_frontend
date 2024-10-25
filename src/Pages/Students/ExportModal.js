@@ -11,11 +11,9 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
-import { Text, Divider } from "@chakra-ui/react";
-import TableRowLoading from "../../Components/TableRowLoading";
 import { TableContainer } from "@chakra-ui/react";
 import Cookies from "js-cookie";
-import { Download, Eye } from "lucide-react";
+import { Download } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchStudents,
@@ -27,6 +25,10 @@ import {
 import moment from "moment";
 import { downloadExcel } from "react-export-table-to-excel";
 import TablePagination from "../../Components/TablePagination";
+import { fetchBatches } from "../../Features/batchSlice";
+import { Select, FormControl } from "@chakra-ui/react";
+import { selectAllBatches } from "../../Features/batchSlice";
+import { fetchStudentsByBatch } from "../../Features/studentSlice";
 
 const ExportModal = () => {
   const fileHeaders = [
@@ -56,15 +58,38 @@ const ExportModal = () => {
   const onClose = () => setIsOpen(false);
 
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
+  const [selectedBatch, setSelectedBatch] = useState("");
+  const [formBatch, setFormBatch] = useState("");
   const [loading, setLoading] = useState(false);
 
   const { fetchStatus, pagination } = useSelector((state) => state.students);
+  const batches = useSelector(selectAllBatches);
   const students = useSelector(selectAllStudents);
   const dispatch = useDispatch();
 
   const handleModalOpen = () => {
     dispatch(fetchStudents({ authToken }));
+    dispatch(fetchBatches({ authToken }))
+      .unwrap()
+      .then((data) => {
+        console.log(data.docs);
+        setFormBatch(data.docs[0]._id);
+        setSelectedBatch(data.docs[0]);
+        dispatch(fetchStudentsByBatch({ authToken, batchId: data.docs[0]._id }));
+      });
     onOpen();
+  };
+
+  const handleFormBatchChange = (e) => {
+    setFormBatch(e.target.value);
+    console.log(e.target.value);
+    setSelectedBatch(batches.find((batch) => batch._id === e.target.value));
+    dispatch(
+      fetchStudentsByBatch({
+        authToken,
+        batchId: e.target.value,
+      })
+    );
   };
 
   function handleDownloadExcel() {
@@ -73,7 +98,7 @@ const ExportModal = () => {
     dispatch(setPageFilter(1));
     dispatch(setQueryFilter(""));
     setLoading(true);
-    dispatch(fetchStudents({ authToken }))
+    dispatch(fetchStudentsByBatch({ authToken, batchId: formBatch }))
       .unwrap()
       .then((data) => {
         const students = data.docs;
@@ -109,11 +134,11 @@ const ExportModal = () => {
         onClose();
         // setTimeout(() => {
         //   dispatch(setQueryFilter(""));
-          dispatch(setPageFilter(1));
-          dispatch(setLimitFilter(tempLimit));
-          // setTimeout(() => {
-            dispatch(fetchStudents({ authToken }));
-          // }, 1000);
+        dispatch(setPageFilter(1));
+        dispatch(setLimitFilter(tempLimit));
+        // setTimeout(() => {
+        dispatch(fetchStudents({ authToken }));
+        // }, 1000);
         // }, 1000);
       });
   }
@@ -136,9 +161,24 @@ const ExportModal = () => {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {/* <div className="flex flex-col gap-2 mb-6 border-l-4 border-blue-400 pl-6 ml-5 py-4">
-              // TODO: add checkbox filters for all the fields in the table here in the future. These will be used to filter the data in the table before exporting.
-            </div> */}
+            <div className="flex flex-col gap-2 mb-6 border-l-4 border-blue-400 pl-6 ml-5 py-4">
+              <FormControl>
+                <Select
+                  placeholder="Select Batch"
+                  w={48}
+                  size={"lg"}
+                  borderRadius="xl"
+                  value={formBatch}
+                  onChange={(e) => handleFormBatchChange(e)}
+                >
+                  {batches.map((batch) => (
+                    <option key={batch._id} value={batch._id}>
+                      {batch.name}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
             {fetchStatus === "loading" ? (
               <div className="flex justify-center items-center h-40 rounded-xl border border-[#E0E8EC]">
                 <Spinner />

@@ -33,6 +33,16 @@ const fetchStudents = createAsyncThunk('students/fetchStudents', async (payload,
     return response.data;
 });
 
+const fetchStudentsByBatch = createAsyncThunk('students/fetchStudentsByBatch', async (payload) => {
+    const { authToken, batchId } = payload;
+    const response = await axios.get(`${BASE_URL}/students/batch/${batchId}`, {
+        headers: {
+            Authorization: `Bearer ${authToken}`,
+        },
+    });
+    return response.data;
+});
+
 const addStudent = createAsyncThunk('students/addStudent', async (payload) => {
     const { authToken, student } = payload;
     const response = await fetch(`${BASE_URL}/students/add`, {
@@ -129,6 +139,30 @@ const studentSlice = createSlice({
                 state.error = action.error.message;
             })
 
+            // Fetch students by batch
+            .addCase(fetchStudentsByBatch.pending, (state) => {
+                state.fetchStatus = 'loading';
+            })
+            .addCase(fetchStudentsByBatch.fulfilled, (state, action) => {
+                state.fetchStatus = 'success';
+                state.students = action.payload.docs;
+                state.pagination = {
+                    totalDocs: action.payload.totalDocs,
+                    limit: action.payload.limit,
+                    totalPages: action.payload.totalPages,
+                    page: action.payload.page,
+                    pagingCounter: action.payload.pagingCounter,
+                    hasPrevPage: action.payload.hasPrevPage,
+                    hasNextPage: action.payload.hasNextPage,
+                    prevPage: action.payload.prevPage,
+                    nextPage: action.payload.nextPage,
+                };
+            })
+            .addCase(fetchStudentsByBatch.rejected, (state, action) => {
+                state.fetchStatus = 'failure';
+                state.error = action.error.message;
+            })
+
             // Add student
             .addCase(addStudent.pending, (state) => {
                 state.addStatus = 'loading';
@@ -205,7 +239,7 @@ const studentSlice = createSlice({
 
 export const selectAllStudents = (state) => state.students.students;
 
-export { fetchStudents, addStudent, updateStudent, basicUpdate, deleteStudent };
+export { fetchStudents, fetchStudentsByBatch, addStudent, updateStudent, basicUpdate, deleteStudent };
 export const { setQueryFilter, setPageFilter, setLimitFilter } = studentSlice.actions;
 
 export default studentSlice.reducer;

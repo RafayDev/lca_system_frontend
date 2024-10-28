@@ -150,7 +150,7 @@ function ViewModal({ student }) {
                   <FormControl id="cnic_image">
                     <FormLabel fontSize={14}>CNIC Front Image</FormLabel>
                     {student.cnic_image ? (
-                      <Image src={student.cnic_image} alt="CNIC Front" boxSize="150px" objectFit="cover" />
+                      <Image src={student.cnic_image} alt="CNIC Front" objectFit="cover" />
                     ) : (
                       <Box color="red.500">No CNIC front image available</Box>
                     )}
@@ -158,7 +158,7 @@ function ViewModal({ student }) {
                   <FormControl id="cnic_back_image">
                     <FormLabel fontSize={14}>CNIC Back Image</FormLabel>
                     {student.cnic_back_image ? (
-                      <Image src={student.cnic_back_image} alt="CNIC Back" boxSize="150px" objectFit="cover" />
+                      <Image src={student.cnic_back_image} alt="CNIC Back" objectFit="cover" />
                     ) : (
                       <Box color="red.500">No CNIC back image available</Box>
                     )}
@@ -166,7 +166,7 @@ function ViewModal({ student }) {
                   <FormControl id="latest_degree_image">
                     <FormLabel fontSize={14}>Latest Degree Image</FormLabel>
                     {student.latest_degree_image ? (
-                      <Image src={student.latest_degree_image} alt="latest degree" boxSize="150px" objectFit="cover" />
+                      <Image src={student.latest_degree_image} alt="latest degree" objectFit="cover" />
                     ) : (
                       <Box color="red.500">No latest degree image available</Box>
                     )}

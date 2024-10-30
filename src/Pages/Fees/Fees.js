@@ -17,10 +17,16 @@ import TableRowLoading from "../../Components/TableRowLoading";
 import TableSearch from "../../Components/TableSearch";
 import TablePagination from "../../Components/TablePagination";
 import { FileX } from "lucide-react";
-import { selectAllFees, setLimitFilter, setPageFilter, setQueryFilter } from "../../Features/feeSlice";
-import { fetchFees } from "../../Features/feeSlice";
+import {
+  selectAllFees,
+  setLimitFilter,
+  setPageFilter,
+  setQueryFilter,
+  fetchFees,
+} from "../../Features/feeSlice";
 import FeeHistoryModal from "./FeeHistoryModal";
 import PayFeeModal from "./PayFeeModal";
+import DeleteFeeModal from "./DeleteFeeModal";
 import DiscountFeeModal from "./DiscountFeeModal";
 
 function Fees() {
@@ -43,7 +49,7 @@ function Fees() {
 
   useEffect(() => {
     dispatch(fetchFees({ authToken }));
-  }, []);
+  }, [dispatch, authToken]);
 
   return (
     <>
@@ -71,52 +77,76 @@ function Fees() {
               </Tr>
             </Thead>
             <Tbody>
-              {
-                fetchStatus == "loading" ? (
-                  <TableRowLoading
-                    nOfColumns={8}
-                    actions={["w-10", "w-10", "w-10", "w-10", "w-10", "w-10", "w-10", "w-20"]}
-                  />
-                ) : (
-                  fees.length === 0 ? (
-                    <Tr>
-                      <Td colSpan={8}>
-                        <span className="flex justify-center items-center gap-2 text-[#A1A1A1]">
-                          <FileX />
-                          No role records found
-                        </span>
-                      </Td>
-                    </Tr>
-                  ) :
-                    (fees.length > 0 ? fees : [])?.map((fee) => (
-                      <Tr key={fee._id}>
-                        <Td>{fees.indexOf(fee) + 1}</Td>
-                        <Td>
-                          <ButtonGroup variant='outline'>
-                            <FeeHistoryModal isOpen={isOpen} onClose={onClose} onOpen={onOpen} fee={fee} />
-                          </ButtonGroup>
-                        </Td>
-                        <Td>{fee.student?.name}</Td>
-                        <Td>{fee.batch?.name}</Td>
-                        <Td>{fee?.amount}</Td>
-                        <Td>{fee?.due_date}</Td>
-                        <Td>
-                          <Badge colorScheme={fee.status === "Paid" ? "green" : "red"}>{fee?.status}</Badge>
-                        </Td>
-                        <Td className="space-x-3" isNumeric>
-                          <div className="flex flex-nowrap justify-end items-center gap-2">
-                          {hasPermission(["Pay_Fee"]) && (
-                            <PayFeeModal fee={fee} isDisabled={fee.amount === 0 || fee.status == "Paid" } />
-                          )}
-                          {hasPermission(["Discount_Fee"]) && (
-                            <DiscountFeeModal fee={fee} isDisabled={fee.amount === 0 || fee.status == "Paid" } />
-                          )}
-                          </div>
-                        </Td>
-                      </Tr>
-                    ))
-                )
-              }
+              {fetchStatus === "loading" ? (
+                <TableRowLoading
+                  nOfColumns={8}
+                  actions={[
+                    "w-10",
+                    "w-10",
+                    "w-10",
+                    "w-10",
+                    "w-10",
+                    "w-10",
+                    "w-10",
+                    "w-20",
+                  ]}
+                />
+              ) : Array.isArray(fees) && fees.length > 0 ? (
+                fees.map((fee) => (
+                  <Tr key={fee._id}>
+                    <Td>{fees.indexOf(fee) + 1}</Td>
+                    <Td>
+                      <ButtonGroup variant="outline">
+                        <FeeHistoryModal
+                          isOpen={isOpen}
+                          onClose={onClose}
+                          onOpen={onOpen}
+                          fee={fee}
+                        />
+                      </ButtonGroup>
+                    </Td>
+                    <Td>{fee.student?.name}</Td>
+                    <Td>{fee.batch?.name}</Td>
+                    <Td>{fee?.amount}</Td>
+                    <Td>{fee?.due_date}</Td>
+                    <Td>
+                      <Badge
+                        colorScheme={fee.status === "Paid" ? "green" : "red"}
+                      >
+                        {fee?.status}
+                      </Badge>
+                    </Td>
+                    <Td className="space-x-3" isNumeric>
+                      <div className="flex flex-nowrap justify-end items-center gap-2">
+                        {hasPermission(["Pay_Fee"]) && (
+                          <PayFeeModal
+                            fee={fee}
+                            isDisabled={fee.amount === 0 || fee.status === "Paid"}
+                          />
+                         )}
+                        {hasPermission(["Discount_Fee"]) && (
+                          <DiscountFeeModal
+                            fee={fee}
+                            isDisabled={fee.amount === 0 || fee.status === "Paid"}
+                          />
+                         )}
+                        {hasPermission(["Delete_Fee"]) && (
+                          <DeleteFeeModal fee={fee} />
+                        )}
+                      </div>
+                    </Td>
+                  </Tr>
+                ))
+              ) : (
+                <Tr>
+                  <Td colSpan={8}>
+                    <span className="flex justify-center items-center gap-2 text-[#A1A1A1]">
+                      <FileX />
+                      No fee records found
+                    </span>
+                  </Td>
+                </Tr>
+              )}
             </Tbody>
           </Table>
         </TableContainer>

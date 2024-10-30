@@ -186,6 +186,7 @@ function ViewModal({ student }) {
                           size="sm"
                           ml={2}
                         />
+                      </>
                     ) : (
                       <Box color="red.500">No CNIC front image available</Box>
                     )}

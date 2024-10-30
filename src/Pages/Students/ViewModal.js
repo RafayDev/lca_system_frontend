@@ -16,7 +16,8 @@ import {
   IconButton,
   Image,
   Grid,
-  GridItem
+  GridItem,
+  Flex
 } from "@chakra-ui/react";
 import Cookies from "js-cookie";
 import { useSelector } from "react-redux";
@@ -30,15 +31,20 @@ function ViewModal({ student }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
-  
+
   const [authToken] = useState(Cookies.get("authToken"));
   const dispatch = useDispatch();
-  
+
   return (
     <>
-      <IconButton onClick={onOpen} colorScheme="gray">
+      <IconButton
+        onClick={onOpen}
+        colorScheme="gray"
+        style={student.image ? { backgroundColor: "#ffcb82" } : {}}
+      >
         <View />
       </IconButton>
+
       <Modal isOpen={isOpen} onClose={onClose} size="4xl">
         <ModalOverlay />
         <ModalContent>
@@ -49,7 +55,6 @@ function ViewModal({ student }) {
           <ModalBody>
             {/* Grid Layout */}
             <Grid templateColumns="repeat(2, 1fr)" gap={6}>
-              
               {/* Left Column (Form Fields) */}
               <GridItem colSpan={1}>
                 <VStack spacing={4}>
@@ -135,45 +140,114 @@ function ViewModal({ student }) {
                   </FormControl>
                 </VStack>
               </GridItem>
-              
               {/* Right Column (Images) */}
               <GridItem colSpan={1}>
                 <VStack spacing={4}>
                   <FormControl id="image">
                     <FormLabel fontSize={14}>Student Image</FormLabel>
                     {student.image ? (
-                      <Image src={student.image} alt="Student Image" boxSize="150px" objectFit="cover" />
+                      <Flex align="center">
+                        <Image
+                          src={student.image}
+                          alt="Student Image"
+                          boxSize="150px"
+                          objectFit="cover"
+                        />
+                        <IconButton
+                          icon={<View />} // Replace <View /> with an actual icon component
+                          onClick={() => window.open(student.image, "_blank")}
+                          colorScheme="blue"
+                          aria-label="View Student Image"
+                          size="sm"
+                          ml={2}
+                        />
+                      </Flex>
                     ) : (
                       <Box color="red.500">No image available</Box>
                     )}
                   </FormControl>
+
                   <FormControl id="cnic_image">
                     <FormLabel fontSize={14}>CNIC Front Image</FormLabel>
                     {student.cnic_image ? (
-                      <Image src={student.cnic_image} alt="CNIC Front" objectFit="cover" />
+                      <Flex align="center">
+                        <Image
+                          src={student.cnic_image}
+                          alt="CNIC Front"
+                          boxSize="150px"
+                          objectFit="cover"
+                        />
+                        <IconButton
+                          icon={<View />}
+                          onClick={() =>
+                            window.open(student.cnic_image, "_blank")
+                          }
+                          colorScheme="blue"
+                          aria-label="View CNIC Front Image"
+                          size="sm"
+                          ml={2}
+                        />
+                      </Flex>
                     ) : (
                       <Box color="red.500">No CNIC front image available</Box>
                     )}
                   </FormControl>
+
                   <FormControl id="cnic_back_image">
                     <FormLabel fontSize={14}>CNIC Back Image</FormLabel>
                     {student.cnic_back_image ? (
-                      <Image src={student.cnic_back_image} alt="CNIC Back" objectFit="cover" />
+                      <Flex align="center">
+                        <Image
+                          src={student.cnic_back_image}
+                          alt="CNIC Back"
+                          boxSize="150px"
+                          objectFit="cover"
+                        />
+                        <IconButton
+                          icon={<View />}
+                          onClick={() =>
+                            window.open(student.cnic_back_image, "_blank")
+                          }
+                          colorScheme="blue"
+                          aria-label="View CNIC Back Image"
+                          size="sm"
+                          ml={2}
+                        />
+                      </Flex>
                     ) : (
                       <Box color="red.500">No CNIC back image available</Box>
                     )}
                   </FormControl>
+
                   <FormControl id="latest_degree_image">
                     <FormLabel fontSize={14}>Latest Degree Image</FormLabel>
                     {student.latest_degree_image ? (
-                      <Image src={student.latest_degree_image} alt="latest degree" objectFit="cover" />
+                      <Flex align="center">
+                        <Image
+                          src={student.latest_degree_image}
+                          alt="Latest Degree"
+                          boxSize="150px"
+                          objectFit="cover"
+                        />
+                        <IconButton
+                          icon={<View />}
+                          onClick={() =>
+                            window.open(student.latest_degree_image, "_blank")
+                          }
+                          colorScheme="blue"
+                          aria-label="View Latest Degree Image"
+                          size="sm"
+                          ml={2}
+                        />
+                      </Flex>
                     ) : (
-                      <Box color="red.500">No latest degree image available</Box>
+                      <Box color="red.500">
+                        No latest degree image available
+                      </Box>
                     )}
                   </FormControl>
                 </VStack>
               </GridItem>
-              
             </Grid>
           </ModalBody>
 

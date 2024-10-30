@@ -45,7 +45,7 @@ function ViewModal({ student }) {
         <View />
       </IconButton>
 
-      <Modal isOpen={isOpen} onClose={onClose} size="4xl">
+      <Modal isOpen={isOpen} onClose={onClose} size="6xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader className="text-xl font-semibold">

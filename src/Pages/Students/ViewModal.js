@@ -174,7 +174,6 @@ function ViewModal({ student }) {
                         <Image
                           src={student.cnic_image}
                           alt="CNIC Front"
-                          boxSize="150px"
                           objectFit="cover"
                         />
                         <IconButton
@@ -200,7 +199,6 @@ function ViewModal({ student }) {
                         <Image
                           src={student.cnic_back_image}
                           alt="CNIC Back"
-                          boxSize="150px"
                           objectFit="cover"
                         />
                         <IconButton
@@ -226,7 +224,6 @@ function ViewModal({ student }) {
                         <Image
                           src={student.latest_degree_image}
                           alt="Latest Degree"
-                          boxSize="150px"
                           objectFit="cover"
                         />
                         <IconButton

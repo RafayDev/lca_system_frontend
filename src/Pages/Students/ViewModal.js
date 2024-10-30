@@ -170,7 +170,7 @@ function ViewModal({ student }) {
                   <FormControl id="cnic_image">
                     <FormLabel fontSize={14}>CNIC Front Image</FormLabel>
                     {student.cnic_image ? (
-                      <Flex align="center">
+                      <>
                         <Image
                           src={student.cnic_image}
                           alt="CNIC Front"
@@ -186,7 +186,6 @@ function ViewModal({ student }) {
                           size="sm"
                           ml={2}
                         />
-                      </Flex>
                     ) : (
                       <Box color="red.500">No CNIC front image available</Box>
                     )}
@@ -195,7 +194,7 @@ function ViewModal({ student }) {
                   <FormControl id="cnic_back_image">
                     <FormLabel fontSize={14}>CNIC Back Image</FormLabel>
                     {student.cnic_back_image ? (
-                      <Flex align="center">
+                      <>
                         <Image
                           src={student.cnic_back_image}
                           alt="CNIC Back"
@@ -211,7 +210,7 @@ function ViewModal({ student }) {
                           size="sm"
                           ml={2}
                         />
-                      </Flex>
+                      </>
                     ) : (
                       <Box color="red.500">No CNIC back image available</Box>
                     )}
@@ -220,7 +219,7 @@ function ViewModal({ student }) {
                   <FormControl id="latest_degree_image">
                     <FormLabel fontSize={14}>Latest Degree Image</FormLabel>
                     {student.latest_degree_image ? (
-                      <Flex align="center">
+                      <>
                         <Image
                           src={student.latest_degree_image}
                           alt="Latest Degree"
@@ -236,7 +235,7 @@ function ViewModal({ student }) {
                           size="sm"
                           ml={2}
                         />
-                      </Flex>
+                      </>
                     ) : (
                       <Box color="red.500">
                         No latest degree image available

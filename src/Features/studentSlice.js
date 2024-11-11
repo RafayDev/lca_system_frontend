@@ -33,12 +33,14 @@ const fetchStudents = createAsyncThunk('students/fetchStudents', async (payload,
     return response.data;
 });
 
-const fetchStudentsByBatch = createAsyncThunk('students/fetchStudentsByBatch', async (payload) => {
+const fetchStudentsByBatch = createAsyncThunk('students/fetchStudentsByBatch', async (payload, { getState }) => {
+    const state = getState();
     const { authToken, batchId } = payload;
     const response = await axios.get(`${BASE_URL}/students/batch/${batchId}`, {
         headers: {
             Authorization: `Bearer ${authToken}`,
         },
+        params: state.students.filters,
     });
     return response.data;
 });

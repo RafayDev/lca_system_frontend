@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAttendances } from "../../Features/attendanceSlice";
-import { FileX, FilterX } from "lucide-react";
+import { Download, FileX, FilterX } from "lucide-react";
 import {
   fetchAttendances,
   setLimitFilter,
@@ -29,6 +29,8 @@ import { fetchCourses, selectAllCourses } from "../../Features/courseSlice";
 import TableSearch from "../../Components/TableSearch";
 import TableRowLoading from "../../Components/TableRowLoading";
 import TablePagination from "../../Components/TablePagination";
+import { downloadExcel } from "react-export-table-to-excel";
+import moment from "moment";
 
 function Attendance() {
   const tableSearchRef = useRef();
@@ -39,6 +41,8 @@ function Attendance() {
   const [formCourse, setFormCourse] = useState("");
   const [formBatch, setFormBatch] = useState("");
   const [formDate, setFormDate] = useState("");
+
+  const [loading, setLoading] = useState(false);
 
   const attendances = useSelector(selectAttendances);
   const batches = useSelector(selectAllBatches);
@@ -99,6 +103,40 @@ function Attendance() {
     );
   };
 
+  const handleDownloadExcel = () => {
+    setLoading(true);
+    dispatch(
+      fetchAttendances({
+        authToken,
+        course_id: formCourse,
+        batch_id: formBatch,
+        date: formDate,
+        download: true,
+      })
+    )
+      .unwrap()
+      .then((data) => {
+        const attendances = data.data;
+        downloadExcel({
+          fileName: "StudentsAttendance[" + moment().format("DD/MM/YYYY") + "]",
+          sheet: "Students Attendance",
+          tablePayload: attendances.map((attendance) => [
+            attendances.indexOf(attendance) + 1,
+            attendance.date,
+            attendance.student.name,
+            attendance.batch.name,
+            attendance.course.name,
+            "Present",
+          ]),
+        });
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
+  };
+
   useEffect(() => {
     dispatch(fetchBatches({ authToken }));
     dispatch(
@@ -115,7 +153,7 @@ function Attendance() {
     <>
       <div className="flex justify-between items-center">
         <h1 className="text-xl font-semibold ml-6 text-nowrap">Attendance</h1>
-        <div className="w-full flex justify-end gap-3">
+        <div className="w-full flex items-center justify-end gap-3">
           <div>
             <TableSearch
               ref={tableSearchRef}
@@ -176,6 +214,13 @@ function Attendance() {
             >
               <FilterX className="h-4 w-4" />
             </Button>
+            <button
+              className="whitespace-nowrap bg-white hover:bg-[#FFCB82] hover:text-[#85652D] font-medium pl-[14px] pr-[18px] py-[10px] rounded-xl flex gap-1.5 transition-colors duration-300 border border-[#E0E8EC] hover:border-[#FFCB82]"
+              onClick={handleDownloadExcel}
+            >
+              <Download size={20} />
+              Excel File
+            </button>
           </HStack>
         </div>
       </div>

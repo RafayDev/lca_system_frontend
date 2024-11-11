@@ -99,7 +99,7 @@ const ExportModal = () => {
 
   function handleDownloadExcel() {
     const tempLimit = pagination.limit;
-    dispatch(setLimitFilter(pagination.totalDocs || 1000000));
+    dispatch(setLimitFilter(9999999));
     dispatch(setPageFilter(1));
     dispatch(setQueryFilter(""));
     setLoading(true);

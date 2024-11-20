@@ -28,14 +28,14 @@ function Home() {
     {
       key: "current_batches_count",
       title: "Current Batches",
-      helpText: "Number of batches in current year",
+      helpText: "Number of current batches",
       icon: <Box size={32} color="#d69e2e" />,
       permissions: ["view_current_batches"], // Required permissions
     },
     {
       key: "previous_batches_count",
       title: "Previous Batches",
-      helpText: "Number of batches in previous year",
+      helpText: "Number of previous batches",
       icon: <FileBox size={32} color="#d69e2e" />,
       permissions: ["view_previous_batches"], // Required permissions
     },

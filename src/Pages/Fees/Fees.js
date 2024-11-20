@@ -118,15 +118,21 @@ function Fees() {
                     </Td>
                     <Td className="space-x-3" isNumeric>
                       <div className="flex flex-nowrap justify-end items-center gap-2">
+                        {hasPermission(["Pay_Fee"]) && (
                           <PayFeeModal
                             fee={fee}
                             isDisabled={fee.amount === 0 || fee.status === "Paid"}
                           />
+                         )}
+                        {hasPermission(["Discount_Fee"]) && (
                           <DiscountFeeModal
                             fee={fee}
                             isDisabled={fee.amount === 0 || fee.status === "Paid"}
                           />
+                         )}
+                        {hasPermission(["Delete_Fee"]) && (
                           <DeleteFeeModal fee={fee} />
+                        )}
                       </div>
                     </Td>
                   </Tr>

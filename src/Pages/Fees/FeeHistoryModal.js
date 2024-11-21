@@ -20,7 +20,7 @@ import {
 import Cookies from "js-cookie";
 import { Logs } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchFeeLogs, selectFeeLogs } from "../../Features/feeSlice";
+import { fetchFeeById, fetchFeeLogs, selectFee, selectFeeLogs } from "../../Features/feeSlice";
 import moment from "moment";
 
 function FeeHistoryModal({ isOpen, onClose, onOpen, fee }) {
@@ -28,9 +28,11 @@ function FeeHistoryModal({ isOpen, onClose, onOpen, fee }) {
 
     const { fetchFeeLogsStatus } = useSelector((state) => state.fees);
     const feeLogs = useSelector(selectFeeLogs);
+    const curFee = useSelector(selectFee);
     const dispatch = useDispatch();
 
     const handleOpenModal = () => {
+        dispatch(fetchFeeById({ authToken, id: fee._id }));
         dispatch(fetchFeeLogs({ authToken, id: fee._id }));
         onOpen();
     };
@@ -50,11 +52,11 @@ function FeeHistoryModal({ isOpen, onClose, onOpen, fee }) {
                     <ModalBody>
                         <VStack spacing={4} align={"stretch"}>
                             <Stack spacing={0} className="text-left">
-                                <Text fontSize='md'><span className="font-semibold">Student Name:</span> {fee?.student?.name}</Text>
-                                <Text fontSize='md'><span className="font-semibold">Batch:</span> {fee?.batch?.name}</Text>
-                                <Text fontSize='md'><span className="font-semibold">Student Phone:</span> {fee?.student?.phone}</Text>
-                                <Text fontSize='md'><span className="font-semibold">Fee Due Date:</span> {moment(fee.due_date).format("DD-MM-YYYY")}</Text>
-                                <Text fontSize='md'><span className="font-semibold">Fee Status:</span> <Badge colorScheme={fee.status === "Paid" ? "green" : "red"}>{fee?.status}</Badge></Text>
+                                <Text fontSize='md'><span className="font-semibold">Student Name:</span> {curFee?.student?.name}</Text>
+                                <Text fontSize='md'><span className="font-semibold">Batch:</span> {curFee?.batch?.name}</Text>
+                                <Text fontSize='md'><span className="font-semibold">Student Phone:</span> {curFee?.student?.phone}</Text>
+                                <Text fontSize='md'><span className="font-semibold">Fee Due Date:</span> {moment(curFee.due_date).format("DD-MM-YYYY")}</Text>
+                                <Text fontSize='md'><span className="font-semibold">Fee Status:</span> <Badge colorScheme={curFee.status === "Paid" ? "green" : "red"}>{fee?.status}</Badge></Text>
                             </Stack>
                             <Divider />
                             {fetchFeeLogsStatus == "loading" && <Spinner />}

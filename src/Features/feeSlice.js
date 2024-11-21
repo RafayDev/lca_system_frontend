@@ -13,6 +13,7 @@ const TABLE_PAGINATION = config.TABLE_PAGINATION;
 const initialState = {
     fees: [],
     feeLogs: [],
+    fee: {},
     filters: TABLE_FILTERS,
     pagination: TABLE_PAGINATION,
     fetchStatus: 'idle',
@@ -173,7 +174,8 @@ const feeSlice = createSlice({
                 state.fetchStatus = 'loading';
             })
             .addCase(fetchFeeById.fulfilled, (state, action) => {
-                state.fees = action.payload;
+                state.fee = action.payload;
+                console.log(action.payload);
                 state.fetchStatus = 'idle';
             })
             .addCase(fetchFeeById.rejected, (state) => {
@@ -257,6 +259,7 @@ const feeSlice = createSlice({
 export const selectAllFees = (state) => state.fees.fees;
 export const selectFeeById = (state, id) => state.fees.fees.find((fee) => fee._id === id);
 export const selectFeeLogs = (state) => state.fees.feeLogs;
+export const selectFee = (state) => state.fees.fee;
 
 export { fetchFees, fetchFeeById, createFee, payFee, discountFee, deleteFee, fetchFeeLogs, fetchFeesByStudent };
 export const { setQueryFilter, setPageFilter, setLimitFilter } = feeSlice.actions;

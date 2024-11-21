@@ -25,12 +25,16 @@ const initialState = {
 
 const fetchFees = createAsyncThunk('fees/fetchFees', async (payload, { getState }) => {
     const state = getState();
-    const { authToken } = payload;
+    const { authToken, status = '', date = '' } = payload;
     const response = await axios.get(`${BASE_URL}/fees`, {
         headers: {
             Authorization: `Bearer ${authToken}`,
         },
-        params: state.fees.filters
+        params: {
+            ...state.fees.filters,
+            status,
+            date,
+        }
     });
     const data = await response.data;
     return data;

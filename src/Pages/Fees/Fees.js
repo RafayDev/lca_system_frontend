@@ -11,6 +11,10 @@ import {
   Badge,
   ButtonGroup,
   useDisclosure,
+  HStack,
+  FormControl,
+  Input,
+  Select,
 } from "@chakra-ui/react";
 import { useSelector, useDispatch } from "react-redux";
 import TableRowLoading from "../../Components/TableRowLoading";
@@ -33,9 +37,16 @@ function Fees() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
 
+  const [formDate, setFormDate] = useState("");
+
   const { fetchStatus, pagination } = useSelector((state) => state.fees);
   const fees = useSelector(selectAllFees);
   const dispatch = useDispatch();
+
+  const handleFormDateChange = (e) => {
+    setFormDate(e.target.value);
+    dispatch(fetchFees({ authToken, date: e.target.value }));
+  }
 
   const hasPermission = (permissionsToCheck) => {
     const storedPermissions = sessionStorage.getItem("permissions");
@@ -55,10 +66,36 @@ function Fees() {
     <>
       <div className="flex justify-between items-center">
         <h1 className="text-xl font-semibold ml-6 text-nowrap">Student Fees</h1>
-        <div className="w-full flex justify-end gap-3">
+        <div className="w-full flex items-center justify-end gap-3">
           <div>
             <TableSearch setQueryFilter={setQueryFilter} method={fetchFees} />
           </div>
+          <HStack spacing={3}>
+            <FormControl>
+              <Input
+                type="date"
+                w={48}
+                size={"lg"}
+                borderRadius="xl"
+                value={formDate}
+                onChange={(e) => handleFormDateChange(e)}
+              />
+            </FormControl>
+            <FormControl>
+              <Select
+                w={48}
+                size={"lg"}
+                borderRadius="xl"
+                onChange={(e) => {
+                  dispatch(fetchFees({ authToken, status: e.target.value }));
+                }}
+              >
+                <option value="">All Statuses</option>
+                <option value="Paid">Paid</option>
+                <option value="Pending">Pending</option>
+              </Select>
+            </FormControl>
+          </HStack>
         </div>
       </div>
       <div className="w-full bg-white mt-3 rounded-xl border border-[#E0E8EC]">
@@ -123,13 +160,13 @@ function Fees() {
                             fee={fee}
                             isDisabled={fee.amount === 0 || fee.status === "Paid"}
                           />
-                         )}
+                        )}
                         {hasPermission(["Discount_Fee"]) && (
                           <DiscountFeeModal
                             fee={fee}
                             isDisabled={fee.amount === 0 || fee.status === "Paid"}
                           />
-                         )}
+                        )}
                         {hasPermission(["Delete_Fee"]) && (
                           <DeleteFeeModal fee={fee} />
                         )}
